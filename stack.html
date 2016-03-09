@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Hello there, I'm a stack machine.<br>
+These are my valid commands:<br>
+int push the integer int on the stack<br>
++ push a + on the stack<br>
+s push an s on the stack<br>
+e evaluate the top of the stack<br>
+d display contents of the stack<br>
+x stop<br>
+</p>
+
+<button onclick="startMachine()">Start machine</button>
+
+<p id="result"></p>
+<p id="stack"></p>
+
+<script>
+function clearConsole(){
+	document.getElementById("stack").innerHTML ="";
+}
+
+function sum(){
+	//if(stack.size()>1){
+		var first = parseInt(stack.pop());
+		var second = parseInt(stack.pop());
+		var total = first+second;
+		stack.push(total);
+	//}
+}
+
+function topSwitch(){
+	//if(stack.size()>1){
+		var first = stack.pop();
+		var second = stack.pop();
+		stack.push(first);
+		stack.push(second);
+	//}
+}
+
+function evaluate(){
+	var Top = stack.pop();
+	switch (Top) {
+		case "+":
+			sum();
+			break;
+		case "s":
+			topSwitch();
+			break;
+		default:
+			stack.push(Top);
+			break;
+	}
+}
+
+function display(){
+	var revstack = stack;
+	revstack = revstack.reverse();
+	var toPrint = revstack.toString();
+	toPrint = toPrint.replace(/,/gi,"<br>");
+	document.getElementById("stack").innerHTML =
+	"CURRENT STACK<br>" + toPrint;
+}
+
+function exit(){
+	alert("Ok, thanks! Bye!");
+	stack = [];
+	return;
+}
+
+var stack = [];
+
+function startMachine() {
+	
+	while(true){
+		var command = prompt("Please enter command", "");
+		clearConsole();
+		if (command != null) {
+			switch (command) {
+				case "e":
+					evaluate();
+					break;
+				case "d":
+					display();
+					break;
+				case "x":
+					exit();
+					return;
+				default:
+					stack.push(command);
+			}
+		}
+    }
+}
+</script>
+
+</body>
+</html>
