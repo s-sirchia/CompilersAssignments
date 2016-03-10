@@ -12,7 +12,7 @@ d display contents of the stack<br>
 x stop<br>
 </p>
 
-<button onclick="startMachine()">Start machine</button>
+<input type="text" id="Comando"> <button onclick="startMachine()">Send Command</button>
 
 <p id="result"></p>
 <p id="stack"></p>
@@ -23,21 +23,21 @@ function clearConsole(){
 }
 
 function sum(){
-	//if(stack.size()>1){
+	if(stack.length>1){
 		var first = parseInt(stack.pop());
 		var second = parseInt(stack.pop());
 		var total = first+second;
 		stack.push(total);
-	//}
+	}
 }
 
 function topSwitch(){
-	//if(stack.size()>1){
+	if(stack.length>1){
 		var first = stack.pop();
 		var second = stack.pop();
 		stack.push(first);
 		stack.push(second);
-	//}
+	}
 }
 
 function evaluate(){
@@ -56,7 +56,7 @@ function evaluate(){
 }
 
 function display(){
-	var revstack = stack;
+	var revstack = JSON.parse(JSON.stringify(stack));
 	revstack = revstack.reverse();
 	var toPrint = revstack.toString();
 	toPrint = toPrint.replace(/,/gi,"<br>");
@@ -67,32 +67,32 @@ function display(){
 function exit(){
 	alert("Ok, thanks! Bye!");
 	stack = [];
+	document.getElementById("stack").innerHTML = "";
+	document.getElementById("Comando").value = "";
 	return;
 }
 
 var stack = [];
 
 function startMachine() {
-	
-	while(true){
-		var command = prompt("Please enter command", "");
-		clearConsole();
-		if (command != null) {
-			switch (command) {
-				case "e":
-					evaluate();
-					break;
-				case "d":
-					display();
-					break;
-				case "x":
-					exit();
-					return;
-				default:
-					stack.push(command);
-			}
+
+	command = document.getElementById("Comando").value;
+	if (command != null) {
+		switch (command) {
+			case "e":
+				evaluate();
+				break;
+			case "d":
+				display();
+				break;
+			case "x":
+				exit();
+				return;
+			default:
+				stack.push(command);
 		}
-    }
+	}
+	document.getElementById("Comando").value = "";
 }
 </script>
 
