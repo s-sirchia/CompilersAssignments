@@ -1,114 +1,127 @@
 <!DOCTYPE html>
 <html>
 <body>
-
-<p>Hello there, I'm a stack machine.<br>
-These are my valid commands:<br>
-int push the integer int on the stack<br>
-+ push a + on the stack<br>
-s push an s on the stack<br>
-e evaluate the top of the stack<br>
-d display contents of the stack<br>
-x stop<br>
-</p>
-
-<input type="text" id="Comando"> <button onclick="startMachine()">Send Command</button>
-
-<p id="result"></p>
-<p id="stack"></p>
-
-<script>
-function clearConsole(){
-	document.getElementById("stack").innerHTML ="";
-}
-
-function sum(){
-	if(stack.length>1){
-		var first = stack.pop();
-		var firstInt = parseInt(first);
-		if (!Number.isIngeger(firstInt)){
-			stack.push(first);
-			return;
+	<div>
+		<p>
+			Hello there, I'm a stack machine.<br>
+			These are my valid commands:<br>
+			<table border="1">
+				<tr><td>int</td><td>push the integer int on the stack</td></tr>
+				<tr><td>+</td><td>push a + on the stack</td></tr>
+				<tr><td>s</td><td>push an s on the stack</td></tr>
+				<tr><td>e</td><td>evaluate the top of the stack</td></tr>
+				<tr><td>d</td><td>display contents of the stack</td></tr>
+				<tr><td>x</td><td>stop</td></tr>
+			</table>
+		</p>
+	</div>
+	<div>
+		<input type="text" id="Comando"> <button onclick="startMachine()">Send Command</button>
+		<p id="result"></p>
+		<p id="stack"></p>
+	</div>
+	<script>
+		function clearConsole(){
+			document.getElementById("stack").innerHTML ="";
 		}
-		var second = stack.pop();
-		var secondInt = parseInt(second);
-		if (!Number.isIngeger(secondInt)){
-			stack.push(second);
-			stack.push(first);
-			return;
-		}
-		var total = firstInt+secondInt;
-		stack.push(total);
-	}
-}
 
-function topSwitch(){
-	if(stack.length>1){
-		var first = stack.pop();
-		var second = stack.pop();
-		stack.push(first);
-		stack.push(second);
-	}
-}
-
-function evaluate(){
-	var Top = stack.pop();
-	switch (Top) {
-		case "+":
-			sum();
-			break;
-		case "s":
-			topSwitch();
-			break;
-		default:
-			stack.push(Top);
-			break;
-	}
-}
-
-function display(){
-	var toPrint = stack.slice().reverse().toString();
-	toPrint = toPrint.replace(/,/gi,"<br>");
-	document.getElementById("stack").innerHTML =
-	"CURRENT STACK<br>" + toPrint;
-}
-
-function exit(){
-	alert("Ok, thanks! Bye!");
-	stack = [];
-	document.getElementById("stack").innerHTML = "";
-	document.getElementById("Comando").value = "";
-	return;
-}
-
-var stack = [];
-
-function startMachine() {
-
-	command = document.getElementById("Comando").value;
-	if (command != null) {
-		switch (command) {
-			case "e":
-				evaluate();
-				break;
-			case "d":
-				display();
-				break;
-			case "x":
-				exit();
-				return;
-			default:
-			{
-				var commandInt = parseInt(command);
-				if (Number.isIngeger(commandInt)||(command==+)||(command==s)){
-					stack.push(command);
+		function sum(){
+			if(stack.length>1){
+				var first = stack.pop();
+				var firstInt = parseInt(first);
+				if (!(Number.isInteger(firstInt))){
+					stack.push(first);
+					return;
 				}
-			}	
+				var second = stack.pop();
+				var secondInt = parseInt(second);
+				if (!(Number.isInteger(secondInt))){
+					stack.push(second);
+					stack.push(first);
+					return;
+				}
+				var total = firstInt+secondInt;
+				stack.push(total);
+			}
 		}
-	}
-	document.getElementById("Comando").value = "";
-}
-</script>
 
+		function topSwitch(){
+			if(stack.length>1){
+				var first = stack.pop();
+				var second = stack.pop();
+				stack.push(first);
+				stack.push(second);
+			}
+		}
+
+		function evaluate(){
+			var Top = stack.pop();
+			switch (Top) {
+				case "+":
+					sum();
+					break;
+				case "s":
+					topSwitch();
+					break;
+				default:
+					stack.push(Top);
+					break;
+			}
+		}
+
+		function display(){
+			var toPrint = stack.slice().reverse().toString();
+			toPrint = toPrint.replace(/,/gi,"<br>");
+			document.getElementById("stack").innerHTML =
+			"CURRENT STACK<br>" + toPrint;
+		}
+
+		function exit(){
+			alert("Ok, thanks! Bye!");
+			stack = [];
+			document.getElementById("stack").innerHTML = "";
+			document.getElementById("Comando").value = "";
+			return;
+		}
+
+		var stack = [];
+
+		function startMachine() {
+			clearConsole();
+			command = document.getElementById("Comando").value;
+			if (command != null) {
+				command = command.toLowerCase();
+				switch (command) {
+					case "e":
+						evaluate();
+						break;
+					case "d":
+						display();
+						break;
+					case "x":
+						exit();
+						return;
+					case "+":
+						stack.push(command);
+						break;
+					case "s":
+						stack.push(command);
+						break;
+					default:
+					{
+						var commandInt = parseInt(command);
+						if (Number.isInteger(commandInt)){
+							stack.push(command);
+						}
+						else{
+							document.getElementById("stack").innerHTML =
+							"INVALID COMMAND";
+						}
+					};
+				}
+			}
+			document.getElementById("Comando").value = "";
+		}
+	</script>
 </body>
 </html>
