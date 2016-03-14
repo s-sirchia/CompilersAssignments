@@ -56,9 +56,7 @@ function evaluate(){
 }
 
 function display(){
-	var revstack = JSON.parse(JSON.stringify(stack));
-	revstack = revstack.reverse();
-	var toPrint = revstack.toString();
+	var toPrint = stack.slice().reverse().toString();
 	toPrint = toPrint.replace(/,/gi,"<br>");
 	document.getElementById("stack").innerHTML =
 	"CURRENT STACK<br>" + toPrint;
