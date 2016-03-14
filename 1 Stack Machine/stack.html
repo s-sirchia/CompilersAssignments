@@ -24,9 +24,20 @@ function clearConsole(){
 
 function sum(){
 	if(stack.length>1){
-		var first = parseInt(stack.pop());
-		var second = parseInt(stack.pop());
-		var total = first+second;
+		var first = stack.pop();
+		var firstInt = parseInt(first);
+		if (!Number.isIngeger(firstInt)){
+			stack.push(first);
+			return;
+		}
+		var second = stack.pop();
+		var secondInt = parseInt(second);
+		if (!Number.isIngeger(secondInt)){
+			stack.push(second);
+			stack.push(first);
+			return;
+		}
+		var total = firstInt+secondInt;
 		stack.push(total);
 	}
 }
@@ -87,7 +98,12 @@ function startMachine() {
 				exit();
 				return;
 			default:
-				stack.push(command);
+			{
+				var commandInt = parseInt(command);
+				if (Number.isIngeger(commandInt)||(command==+)||(command==s)){
+					stack.push(command);
+				}
+			}	
 		}
 	}
 	document.getElementById("Comando").value = "";
