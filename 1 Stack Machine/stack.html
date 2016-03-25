@@ -16,6 +16,7 @@
 		</p>
 	</div>
 	<div>
+		<input type="text" id="Espressione"> <button onclick="convertExpression()">Send Expression</button>
 		<input type="text" id="Comando"> <button onclick="startMachine()">Send Command</button>
 		<p id="result"></p>
 		<p id="stack"></p>
@@ -25,7 +26,7 @@
 			document.getElementById("stack").innerHTML ="";
 		}
 
-		function sum(){
+		function operation(operation){
 			if(stack.length>1){
 				var first = stack.pop();
 				var firstInt = parseInt(first);
@@ -40,7 +41,9 @@
 					stack.push(first);
 					return;
 				}
-				var total = firstInt+secondInt;
+				var total = eval(second+operation+first);
+				console.log(second+operation+first);
+				console.log(total);
 				stack.push(total);
 			}
 		}
@@ -58,7 +61,10 @@
 			var Top = stack.pop();
 			switch (Top) {
 				case "+":
-					sum();
+					operation("+");
+					break;
+				case "-":
+					operation("-");
 					break;
 				case "s":
 					topSwitch();
@@ -66,6 +72,68 @@
 				default:
 					stack.push(Top);
 					break;
+			}
+		}
+
+		function convertExpression() {
+			var string =document.getElementById("Espressione").value;
+			string = string.replace(" ","");
+			var array = string.split("");
+			var lastNumber;
+			var lastOperations="";
+			for (var i = 0; i < array.length; i++) {
+				if (i==0){
+					var number = array[i];
+					while(!(isNaN(array[i+1]))){
+						number += array[i+1];
+						i++;
+					}
+					lastNumber = number;
+					stack.push(number);
+				}else{
+					var number = array[i];
+					if(isNaN(number)){
+						if (number=="*"){
+							var times="";
+							while(!(isNaN(array[i+1]))){
+								times += array[i+1];
+								i++;
+							}
+							if(lastOperations.indexOf("+") >= 0)
+								convertTimes(lastNumber,times);
+							else
+								convertTimes(stack[stack.length-1],times);
+
+							lastOperations += number;
+							continue;
+						}
+						lastOperations += number;
+						stack.push(number);
+						continue;
+					}
+					while(!(isNaN(array[i+1]))){
+							number += array[i+1];
+							i++;
+					}
+					lastNumber = number;
+					stack.push(number);
+					if (!(isNaN(array[i]))){
+						stack.push("s");
+						evaluate();
+						evaluate();
+					}
+				}
+			}
+		display();
+		document.getElementById("Espressione").value = "";
+		}
+
+		function convertTimes(lastNumber,times) {
+			var head = stack[stack.length-1];
+			for(i =0;i<times-1;i++){
+				stack.push(lastNumber);
+				stack.push("+");
+				evaluate();
 			}
 		}
 
@@ -104,13 +172,15 @@
 					case "+":
 						stack.push(command);
 						break;
+					case "-":
+						stack.push(command);
+						break;
 					case "s":
 						stack.push(command);
 						break;
 					default:
 					{
-						var commandInt = parseInt(command);
-						if (Number.isInteger(commandInt)){
+						if (!(isNaN(command))){
 							stack.push(command);
 						}
 						else{
