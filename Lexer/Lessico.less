@@ -1,0 +1,376 @@
+/* Main Elements*/
+
+InputElementDiv =
+	{WhiteSpace}
+	{LineTerminator}
+	{Comment}
+	{CommonToken}
+	{DivPunctuator}
+	{RightBracePunctuator}
+
+InputElementRegExp =
+	{WhiteSpace}
+	{LineTerminator}
+	{Comment}
+	{CommonToken}
+	{RightBracePunctuator}
+	{RegularExpressionLiteral}
+
+InputElementRegExpOrTemplateTail =
+	{WhiteSpace}
+	{LineTerminator}
+	{Comment}
+	{CommonToken}
+	{RegularExpressionLiteral}
+	{TemplateSubstitutionTail}
+
+InputElementTemplateTail =
+	{WhiteSpace}
+	{LineTerminator}
+	{Comment}
+	{CommonToken}
+	{DivPunctuator}
+	{TemplateSubstitutionTail}
+
+/* Space and Terminators*/ 
+
+	WhiteSpace = [\t\v\f \u00A0\uFEFF]
+			 	 {UnicodeWhiteSpace}
+
+		UnicodeWhiteSpace = [\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000]
+
+	LineTerminator = [\n\r\u2028\u2029]
+
+	LineTerminatorSequence = [\n\r\u2028\u2029]|(\r\n)
+
+/* Comments */
+
+	Comment =
+		{MultiLineComment}
+		{SingleLineComment}
+
+		MultiLineComment =
+			(\/\*){MultiLineCommentChars}*(\*\/)
+
+		MultiLineCommentChars =
+			{MultiLineNotAsteriskChar}{MultiLineCommentChars}*
+			(*){PostAsteriskCommentChars}*
+		
+		PostAsteriskCommentChars =
+			{MultiLineNotForwardSlashOrAsteriskChar}{MultiLineCommentChars}*
+			(*) {PostAsteriskCommentChars}*
+
+		SourceCharacter = .
+		
+		MultiLineNotAsteriskChar =
+			^((?!\*){SourceCharacter})$
+			
+		MultiLineNotForwardSlashOrAsteriskChar =
+			^((?!\*\/){SourceCharacter})$
+		
+		SingleLineComment =
+			/ {SingleLineCommentChars}*
+		
+		SingleLineCommentChars =
+			{SingleLineCommentChar}{SingleLineCommentChars}*
+		
+		SingleLineCommentChar =
+			^((?!{LineTerminator}){SourceCharacter})$
+
+/* Base Element */
+
+	CommonToken =
+		{IdentifierName}
+		{Punctuator}
+		{NumericLiteral}
+		{StringLiteral}
+		{Template}
+
+
+		IdentifierName = 
+			{IdentifierStart}
+			{IdentifierName}{IdentifierPart}
+
+
+		IdentifierStart = 
+			{UnicodeIDStart}
+			$
+			_
+			\ UnicodeEscapeSequence
+
+		IdentifierPart = 
+			{UnicodeIDContinue}
+			$
+			_
+			\ UnicodeEscapeSequence
+			\u200c
+			\u200d
+
+			UnicodeIDStart = any unicode having the ID_Start property
+
+			UnicodeIDContinue = any unicode having the ID_Continue property
+
+			/*
+
+			IditifierStart = \ UnicodeEscapeSequence
+
+			Qual'ora non è $ _ o UTF16Encoding matchato UnicodeIDStart viene 
+			inserito 
+
+			IditifierPart = \ UnicodeEscapeSequence
+
+			Qual'ora non è $, _, \u200c, \u200d, UTF16Encoding, matchato UnicodeIDPart viene 
+			inserito 
+				
+				
+			*/
+
+/* Reserved Word */
+
+	ReservedWord =
+		{Keyword}
+		{FutureReservedWord}
+		{NullLiteral}
+		{BooleanLiteral} 
+
+		Keyword = 
+			{break|do|in typeof|
+			case|else|instanceof|var|
+			catch|export|new|void|
+			class|extends|return|while|
+			const|finally|super|with|
+			continue|for|switch|yield|
+			debugger|function|this|
+			default|if|throw|
+			delete|import|try}
+
+		FutureReservedWord = {enum|await}
+
+		NullLiteral = null
+
+		BooleanLiteral = {true|false}
+
+/* Punctuator */
+
+	Punctuator = [\{\(\)\[\]\.\+\-\*%&|^:=!~;,<>?]|
+				(\.\.\.)|(<=)|(>=)|(==)|(!=)|(===)|(!==)|(\+\+)
+				(--)|(<<)|(>>)|(>>>)|(&&)|(\|\|)|(\+=)|(-=)|(\*=)
+				(%=)|(<<=)|(>>=)|(>>>=)|(&=)|(|=)|(\^=)|(=>)
+
+	DivPunctuator =
+		/
+		/=
+	
+	RightBracePunctuator =
+		}
+
+/* Literals */
+
+	NumericLiteral =
+		DecimalLiteral
+		BinaryIntegerLiteral
+		OctalIntegerLiteral
+		HexIntegerLiteral
+
+		DecimalLiteral =
+			{DecimalIntegerLiteral}.{DecimalDigits}*{ExponentPart}* 
+			. {DecimalDigits}{ExponentPart}* 
+			{DecimalIntegerLiteral}{ExponentPart}*
+
+			DecimalIntegerLiteral = 0 {NonZeroDigit}{DecimalDigits}*
+
+			DecimalDigits =
+				DecimalDigit
+				DecimalDigits DecimalDigit
+			
+			DecimalDigit = [0-9]
+			
+			NonZeroDigit = [1-9]
+
+
+			ExponentPart =
+				{ExponentIndicator}{SignedInteger}
+
+			ExponentIndicator = [eE]
+
+
+			SignedInteger =
+				{DecimalDigits}
+				+ {DecimalDigits}
+				- {DecimalDigits}
+		
+		BinaryIntegerLiteral =
+			0b {BinaryDigits}
+			0B {BinaryDigits}
+
+			BinaryDigits =
+				{BinaryDigit}
+				{BinaryDigits}{BinaryDigit}
+
+			BinaryDigit = [01]
+
+		OctalIntegerLiteral =
+			0o {OctalDigits}
+			0O {OctalDigits}
+		
+			OctalDigits =
+				{OctalDigit}
+				{OctalDigits}{OctalDigit}
+			
+			OctalDigit = [0-7]
+
+		HexIntegerLiteral =
+			0x {HexDigits}
+			0X {HexDigits}
+			
+			HexDigits =
+				{HexDigit}
+				{HexDigits}{HexDigit}
+
+			HexDigit = [0-9a-fA-F]
+
+/* String Literal */
+
+	StringLiteral =
+		" {DoubleStringCharacters}* "
+		' {SingleStringCharacters}* '
+		
+		DoubleStringCharacters =
+			{DoubleStringCharacter}{DoubleStringCharacters}*
+		
+		SingleStringCharacters =
+			{SingleStringCharacter}{SingleStringCharacters}*
+		
+			DoubleStringCharacter =
+				^((?!["\{LineTerminator}]){SourceCharacter})$
+				\{EscapeSequence}
+				{LineContinuation}
+			
+			SingleStringCharacter =
+				^((?!['\{LineTerminator}]){SourceCharacter})$
+				\{EscapeSequence}
+				{LineContinuation}
+		
+			LineContinuation =
+				\[LineTerminatorSequence]
+		
+			EscapeSequence =
+				{CharacterEscapeSequence}
+				0
+				[HexEscapeSequence]
+				[UnicodeEscapeSequence]
+			
+			CharacterEscapeSequence =
+				{SingleEscapeCharacter}
+				{NonEscapeCharacter}
+			
+			SingleEscapeCharacter = ['"\\bfnrtv]
+			
+			NonEscapeCharacter =
+			^((?![{LineTerminator}{EscapeCharacter}]){SourceCharacter})$
+			
+			EscapeCharacter =
+				{SingleEscapeCharacter}
+				{DecimalDigit}
+				x
+				u
+			
+			HexEscapeSequence =
+				x {HexDigit}[HexDigit]
+			
+			UnicodeEscapeSequence =
+				u{Hex4Digits}
+				u{ HexDigits }
+			
+			Hex4Digits =
+				{HexDigit}{HexDigit}{HexDigit}{HexDigit}
+
+/* Regular Expression */
+
+
+	RegularExpressionLiteral =
+		/{RegularExpressionBody}/{RegularExpressionFlags}
+		
+		RegularExpressionBody =
+			{RegularExpressionFirstChar}{RegularExpressionChars}
+		
+			RegularExpressionChars =
+				[]
+				{RegularExpressionChars}{RegularExpressionChar}
+
+			RegularExpressionFirstChar =
+				^((?![\*\\\/\[]){RegularExpressionNonTerminator})$
+				{RegularExpressionBackslashSequence}
+				{RegularExpressionClass}
+		
+			RegularExpressionChar =
+				^((?![\\\/\[]){RegularExpressionNonTerminator})$
+				{RegularExpressionBackslashSequence}
+				{RegularExpressionClass}
+			
+			RegularExpressionBackslashSequence =
+				\{RegularExpressionNonTerminator}
+			
+			RegularExpressionNonTerminator =
+				^((?![{LineTerminator}]){SourceCharacter})$
+			
+			RegularExpressionClass =
+				[ {RegularExpressionClassChars} ]
+			
+			RegularExpressionClassChars =
+				[]
+				{RegularExpressionClassChars}{RegularExpressionClassChar}
+			
+			RegularExpressionClassChar =
+				^((?![\]\\){RegularExpressionNonTerminator})$
+				{RegularExpressionBackslashSequence}
+			
+			RegularExpressionFlags =
+				[]
+				{RegularExpressionFlags}{IdentifierPart}
+
+
+/* Template Literal */
+
+	Template =
+		{NoSubstitutionTemplate}
+		{TemplateHead}
+		
+		NoSubstitutionTemplate =
+			`{TemplateCharacters}*`
+		
+		TemplateHead =
+			`{TemplateCharacters}*${
+		
+		TemplateSubstitutionTail =
+			{TemplateMiddle}
+			{TemplateTail}
+		
+		TemplateMiddle =
+			}{TemplateCharacters}*${
+		
+		TemplateTail =
+		}{TemplateCharacters}*`
+		
+		TemplateCharacters =
+			{TemplateCharacter}{TemplateCharacters}*
+		
+		TemplateCharacter =
+			$
+			\{EscapeSequence}
+			{LineContinuation}
+			{LineTerminatorSequence}
+			^((?![[`\\\$]|{LineTerminator}]){SourceCharacter})$
+
+
+
+
+
+
+
+
+
+
+
+
+
