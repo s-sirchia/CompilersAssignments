@@ -104,7 +104,7 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 		DecimalLiteral =
 			{DecimalIntegerLiteral}.{DecimalDigits}*{ExponentPart}*  | . {DecimalDigits}{ExponentPart}* | {DecimalIntegerLiteral}{ExponentPart}*
 
-			DecimalIntegerLiteral = 0 {NonZeroDigit}{DecimalDigits}*
+			DecimalIntegerLiteral = 0 | {NonZeroDigit}{DecimalDigits}*
 
 			DecimalDigits = {DecimalDigit} |{DecimalDigits} {DecimalDigit}
 			
@@ -118,7 +118,7 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 			ExponentIndicator = [eE]
 
 
-			SignedInteger = {DecimalDigits} | + {DecimalDigits} | - {DecimalDigits}
+			SignedInteger = {DecimalDigits} | "+" {DecimalDigits} | "-" {DecimalDigits}
 		
 		BinaryIntegerLiteral = 0b {BinaryDigits} | 0B {BinaryDigits}
 

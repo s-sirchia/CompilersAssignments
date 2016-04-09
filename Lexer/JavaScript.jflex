@@ -55,7 +55,7 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 			
 		MultiLineNotForwardSlashOrAsteriskChar = ^((?!\*\/){SourceCharacter})$
 		
-		SingleLineComment = "/" {SingleLineCommentChars}*
+		SingleLineComment = \/{SingleLineCommentChars}*
 		
 		SingleLineCommentChars = {SingleLineCommentChar}{SingleLineCommentChars}*
 		
@@ -113,7 +113,7 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 	NumericLiteral = {DecimalLiteral} | {BinaryIntegerLiteral} | {OctalIntegerLiteral} | {HexIntegerLiteral}
 
 		DecimalLiteral =
-			{DecimalIntegerLiteral}.{DecimalDigits}*{ExponentPart}*  | . {DecimalDigits}{ExponentPart}* | {DecimalIntegerLiteral}{ExponentPart}*
+			{DecimalIntegerLiteral}\.{DecimalDigits}*{ExponentPart}*  | \.{DecimalDigits}{ExponentPart}* | {DecimalIntegerLiteral}{ExponentPart}*
 
 			DecimalIntegerLiteral = 0 {NonZeroDigit}{DecimalDigits}*
 
@@ -129,7 +129,7 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 			ExponentIndicator = [eE]
 
 
-			SignedInteger = {DecimalDigits} | + {DecimalDigits} | - {DecimalDigits}
+			SignedInteger = {DecimalDigits} | \+{DecimalDigits} | \-{DecimalDigits}
 		
 		BinaryIntegerLiteral = "0b" {BinaryDigits} | "0B" {BinaryDigits}
 
