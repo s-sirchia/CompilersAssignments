@@ -112,7 +112,7 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 
 /* Punctuator */
 
-	Punctuator = [\{\(\)\[\]\.\+\-\*%&|\^:=!~;,<>?]|(\.\.\.)|(<=)|(>=)|(==)|(!=)|(===)|(!==)|(\+\+)|(--)|(<<)|(>>)|(>>>)|(&&)|(\|\|)|(\+=)|(-=)|(\*=)|(%=)|(<<=)|(>>=)|(>>>=)|(&=)|(|=)|(\^=)|(=>)
+	Punctuator = [\{\(\)\[\]\.\+\-\*%&|\^:=!~;,<>?]|(\.\.\.)|(<=)|(>=)|(==)|(\!=)|(===)|(\!==)|(\+\+)|(--)|(<<)|(>>)|(>>>)|(&&)|(\|\|)|(\+=)|(-=)|(\*=)|(%=)|(<<=)|(>>=)|(>>>=)|(&=)|(\|=)|(\^=)|(=>)
 
 	DivPunctuator = "/" | "/="
 	
@@ -275,6 +275,9 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 
 		{Punctuator}		{return symbol(sym.PUNCTUATOR, yytext());}
 
+		{DivPunctuator}		{return symbol(sym.DIVPUNCTUATOR, yytext());}
+
+		{RightBracePunctuator} {return symbol(sym.RBPUNCTUATOR);}
 
 		{WhiteSpace}		{ }
 
