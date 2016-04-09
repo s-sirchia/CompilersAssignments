@@ -66,17 +66,7 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 	CommonToken =
 		{IdentifierName} | {Punctuator} | {NumericLiteral} | {StringLiteral} | {Template}
 
-
-		IdentifierName = {IdentifierStart} | {IdentifierName}{IdentifierPart}
-
-
-		IdentifierStart = {UnicodeIDStart} | "$" | "_" | "\" UnicodeEscapeSequence
-
-		IdentifierPart =  {UnicodeIDContinue} | "$" | "_" | "\" UnicodeEscapeSequence | \u200c | \u200d
-
-			UnicodeIDStart =[a-zA-Z]
-
-			UnicodeIDContinue =[a-zA-Z0-9]
+		IdentifierName = ^([a-zA-Z_$][a-zA-Z0-9_$]*)$
 
 			/*
 
@@ -84,12 +74,12 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 
 			UnicodeIDContinue = any unicode having the ID_Continue property || [a-zA-Z0-9]
 
-			IditifierStart = \ UnicodeEscapeSequence
+			IditifierStart = \ {UnicodeEscapeSequence}
 
 			Qual'ora non è $ _ o UTF16Encoding matchato UnicodeIDStart viene 
 			inserito 
 
-			IditifierPart = \ UnicodeEscapeSequence
+			IditifierPart = \ {UnicodeEscapeSequence}
 
 			Qual'ora non è $, _, \u200c, \u200d, UTF16Encoding, matchato UnicodeIDPart viene 
 			inserito 
