@@ -1,6 +1,7 @@
+import java_cup.runtime.*
 %%
 
-%class Lexer
+%class JavascriptLexer
 %unicode
 %debug
 %line
@@ -54,7 +55,7 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 			
 		MultiLineNotForwardSlashOrAsteriskChar = ^((?!\*\/){SourceCharacter})$
 		
-		SingleLineComment = / {SingleLineCommentChars}*
+		SingleLineComment = "/" {SingleLineCommentChars}*
 		
 		SingleLineCommentChars = {SingleLineCommentChar}{SingleLineCommentChars}*
 		
@@ -69,9 +70,9 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 		IdentifierName = {IdentifierStart} | {IdentifierName}{IdentifierPart}
 
 
-		IdentifierStart = {UnicodeIDStart} | $ | _ | \ UnicodeEscapeSequence
+		IdentifierStart = {UnicodeIDStart} | "$" | "_" | "\" UnicodeEscapeSequence
 
-		IdentifierPart =  {UnicodeIDContinue} | $ | _ | \ UnicodeEscapeSequence | \u200c | \u200d
+		IdentifierPart =  {UnicodeIDContinue} | "$" | "_" | "\" UnicodeEscapeSequence | \u200c | \u200d
 
 			UnicodeIDStart =[a-zA-Z]
 
@@ -101,21 +102,21 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 	ReservedWord =
 		{Keyword} | {FutureReservedWord} | {NullLiteral} | {BooleanLiteral} 
 
-		Keyword = {break|do|in typeof|case|else|instanceof|var|catch|export|new|void|class|extends|return|while|const|finally|super|with|continue|for|switch|yield|debugger|function|this|default|if|throw|delete|import|try}
+		Keyword = "break"|"do"|"in"|"typeof"|"case"|"else"|"instanceof"|"var"|"catch"|"export"|"new"|"void"|"class"|"extends"|"return"|"while"|"const"|"finally"|"super"|"with"|"continue"|"for"|"switch"|"yield"|"debugger"|"function"|"this"|"default"|"if"|"throw"|"delete"|"import"|"try"
 
-		FutureReservedWord = {enum|await}
+		FutureReservedWord = "enum"|"await"
 
-		NullLiteral = null
+		NullLiteral = "null"
 
-		BooleanLiteral = {true|false}
+		BooleanLiteral = "true"|"false"
 
 /* Punctuator */
 
-	Punctuator = [\{\(\)\[\]\.\+\-\*%&|^:=!~;,<>?]|(\.\.\.)|(<=)|(>=)|(==)|(!=)|(===)|(!==)|(\+\+)|(--)|(<<)|(>>)|(>>>)|(&&)|(\|\|)|(\+=)|(-=)|(\*=)|(%=)|(<<=)|(>>=)|(>>>=)|(&=)|(|=)|(\^=)|(=>)
+	Punctuator = [\{\(\)\[\]\.\+\-\*%&|\^:=!~;,<>?]|(\.\.\.)|(<=)|(>=)|(==)|(!=)|(===)|(!==)|(\+\+)|(--)|(<<)|(>>)|(>>>)|(&&)|(\|\|)|(\+=)|(-=)|(\*=)|(%=)|(<<=)|(>>=)|(>>>=)|(&=)|(|=)|(\^=)|(=>)
 
-	DivPunctuator = / | /=
+	DivPunctuator = "/" | "/="
 	
-	RightBracePunctuator = }
+	RightBracePunctuator = "}"
 
 /* Literals */
 
@@ -140,19 +141,19 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 
 			SignedInteger = {DecimalDigits} | + {DecimalDigits} | - {DecimalDigits}
 		
-		BinaryIntegerLiteral = 0b {BinaryDigits} | 0B {BinaryDigits}
+		BinaryIntegerLiteral = "0b" {BinaryDigits} | "0B" {BinaryDigits}
 
 			BinaryDigits = {BinaryDigit} | {BinaryDigits}{BinaryDigit}
 
 			BinaryDigit = [01]
 
-		OctalIntegerLiteral = 0o {OctalDigits} | 0O {OctalDigits}
+		OctalIntegerLiteral = "0o" {OctalDigits} | "0O" {OctalDigits}
 		
 			OctalDigits = {OctalDigit} | {OctalDigits}{OctalDigit}
 			
 			OctalDigit = [0-7]
 
-		HexIntegerLiteral = 0x {HexDigits} | 0X {HexDigits}
+		HexIntegerLiteral = "0x" {HexDigits} | "0X" {HexDigits}
 			
 			HexDigits = {HexDigit} | {HexDigits}{HexDigit}
 
@@ -180,11 +181,11 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 			
 			NonEscapeCharacter = ^((?![{LineTerminator}{EscapeCharacter}]){SourceCharacter})$
 			
-			EscapeCharacter = {SingleEscapeCharacter} | {DecimalDigit} | x | u
+			EscapeCharacter = {SingleEscapeCharacter} | {DecimalDigit} | "x" | "u"
 			
 			HexEscapeSequence = x {HexDigit}{HexDigit}
 			
-			UnicodeEscapeSequence = u{Hex4Digits} | {HexDigits}
+			UnicodeEscapeSequence = "u"{Hex4Digits} | {HexDigits}
 			
 			Hex4Digits ={HexDigit}{HexDigit}{HexDigit}{HexDigit}
 
@@ -195,7 +196,7 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 		
 		RegularExpressionBody ={RegularExpressionFirstChar}{RegularExpressionChars}
 		
-			RegularExpressionChars =[] | {RegularExpressionChars}{RegularExpressionChar}
+			RegularExpressionChars ="[]" | {RegularExpressionChars}{RegularExpressionChar}
 
 			RegularExpressionFirstChar = ^((?![\*\\\/\[]){RegularExpressionNonTerminator})$ | {RegularExpressionBackslashSequence} | {RegularExpressionClass}
 		
@@ -207,11 +208,11 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 			
 			RegularExpressionClass = [ {RegularExpressionClassChars} ]
 			
-			RegularExpressionClassChars = [] | {RegularExpressionClassChars}{RegularExpressionClassChar}
+			RegularExpressionClassChars = "[]" | {RegularExpressionClassChars}{RegularExpressionClassChar}
 			
 			RegularExpressionClassChar = ^((?![\]\\){RegularExpressionNonTerminator})$ | {RegularExpressionBackslashSequence}
 			
-			RegularExpressionFlags =[] | {RegularExpressionFlags}{IdentifierPart}
+			RegularExpressionFlags = "[]" | {RegularExpressionFlags}{IdentifierPart}
 
 
 /* Template Literal */
@@ -236,9 +237,6 @@ InputElementTemplateTail = {WhiteSpace} | {LineTerminator} | {Comment} | {Common
 
 %%
 /* keywords */
-
-Keyword = {break|do|in|typeof|case|else|instanceof|var|catch|export|new|void|class|extends|return|while|const|finally|super|with|continue|for|switch|yield|debugger|function|this|default|if|throw|delete|import|try}
-
 <YYINITIAL>{
 		"break"				{return symbol(sym.BREAK); }
 		"do"				{return symbol(sym.DO); }
@@ -271,7 +269,7 @@ Keyword = {break|do|in|typeof|case|else|instanceof|var|catch|export|new|void|cla
 		"if"				{return symbol(sym.IF); }
 		"throw"				{return symbol(sym.THROW); }
 		"delete"			{return symbol(sym.DELETE); }
-		"import				{return symbol(sym.IMPORT); }
+		"import"			{return symbol(sym.IMPORT); }
 		"try"				{return symbol(sym.TRY); }
 
 
