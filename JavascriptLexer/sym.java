@@ -52,10 +52,9 @@ public class sym {
 	public static final int HEXLITERAL = 140;
 	public static final int BYNARYLITERAL = 136;
 	public static final int SIGNEDINTEGER = 149;
-	public static final int SINGLELINECOMMENT = 119;
-	public static final int MULTILINECOMMENT = 117;
+	public static final int COMMENT = 119;
 	public static final int STRING_LITERAL = 172;
-  
-
+	public static final int REGEXLITERAL = 209;
+	public static final int TEMPLATE = 184;
 }
 

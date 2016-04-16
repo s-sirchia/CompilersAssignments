@@ -83,7 +83,7 @@ HexIntegerLiteral = "0x"{HexDigits} | "0X"{HexDigits}
 	
 /* Reserved Words */
 
-Keyword = "break"|"do"|"in"|"typeof"|"case"|"else"|"instanceof"|"var"|"catch"|"export"|"new"|"void"|"class"|"extends"|"return"|"while"|"const"|"finally"|"super"|"with"|"continue"|"for"|"switch"|"yield"|"debugger"|"function"|"this"|"default"|"if"|"throw"|"delete"|"import"|"try"
+//Keyword = "break"|"do"|"in"|"typeof"|"case"|"else"|"instanceof"|"var"|"catch"|"export"|"new"|"void"|"class"|"extends"|"return"|"while"|"const"|"finally"|"super"|"with"|"continue"|"for"|"switch"|"yield"|"debugger"|"function"|"this"|"default"|"if"|"throw"|"delete"|"import"|"try"
 
 Punctuator = [\{\(\)\[\]\.\+\-\*\%\&\|\^\:\=\!\~\;\,\<\>\?]|(\.\.\.)|(<=)|(>=)|(==)|(\!=)|(===)|(\!==)|(\+\+)|(--)|(<<)|(>>)|(>>>)|(&&)|(\|\|)|(\+=)|(-=)|(\*=)|(%=)|(<<=)|(>>=)|(>>>=)|(&=)|(\|=)|(\^=)|(=>)
 
@@ -97,11 +97,69 @@ IdentifierName = ([a-zA-Z_$][a-zA-Z0-9_$]*)
 
 
 /*Regular Expressions*/
+RegularExpressionLiteral =\/{RegularExpressionBody}\/{RegularExpressionFlags}
+		
+		RegularExpressionBody = {RegularExpressionFirstChar}{RegularExpressionChars}
+			
+			RegularExpressionFirstChar = {RegularExpressionNonTerminatorFC} | {RegularExpressionBackslashSequence} | {RegularExpressionClass}
 
+			RegularExpressionChars = {RegularExpressionChar}*
 
+			RegularExpressionChar ={RegularExpressionNonTerminatorC} | {RegularExpressionBackslashSequence} | {RegularExpressionClass}
+			
+			RegularExpressionBackslashSequence = \\{RegularExpressionNonTerminator}
+			
+			RegularExpressionNonTerminator = [^\n\r\u2028\u2029]
+			
+			RegularExpressionNonTerminatorFC = [^\n\r\u2028\u2029\*\\\/\[\]]
+			
+			RegularExpressionNonTerminatorC = [^\n\r\u2028\u2029\\\/\[\]]
+			
+			RegularExpressionNonTerminatorCC = [^\n\r\u2028\u2029\[\]\\]
+			
+			RegularExpressionClass = \[ {RegularExpressionClassChars} \]
+			
+			RegularExpressionClassChars = {RegularExpressionClassChar}*
+			
+			RegularExpressionClassChar = {RegularExpressionNonTerminatorCC} | {RegularExpressionBackslashSequence}
+			
+			RegularExpressionFlags = [g]?[m]?[i]?[x]?[X]?[s]?[u]?[U]?[A]?[J]?
+
+/*Escapes*/
+EscapeSequence = {CharacterEscapeSequence} | 0[^0-9] | {HexEscapeSequence} | {UnicodeEscapeSequence}
+
+	CharacterEscapeSequence = {SingleEscapeCharacter} | {NonEscapeCharacter}
+			
+	SingleEscapeCharacter = [\'\"\\bfnrtv]
+
+	NonEscapeCharacter = [^[\n\r\u2028\u2029\'\"\\bfnrtv0-9xu]]
+
+	EscapeCharacter = {SingleEscapeCharacter} | {DecimalDigit} | x | u
+
+	HexEscapeSequence = x {HexDigit}{HexDigit}
+
+	UnicodeEscapeSequence = u{Hex4Digits} | {HexDigits}
+
+	Hex4Digits ={HexDigit}{HexDigit}{HexDigit}{HexDigit}
 
 /*Template Literals*/
-
+Template ={NoSubstitutionTemplate} | {TemplateHead}
+		
+		NoSubstitutionTemplate = \`{TemplateCharacters}*\`
+		
+		TemplateHead = \`{TemplateCharacters}*\$\{
+		
+		TemplateSubstitutionTail = {TemplateMiddle} | {TemplateTail}
+		
+		TemplateMiddle =\}{TemplateCharacters}*\$\{
+		
+		TemplateTail = \}{TemplateCharacters}*\`
+		
+		TemplateCharacters = {TemplateCharacter}+
+		
+		LineContinuation = \\[LineTerminatorSequence]
+				
+		TemplateCharacter = \$[^\{] | \\{EscapeSequence} | {LineContinuation} | {LineTerminatorSequence} | [^\`\\\$\n\r\u2028\u2029]
 
 
 %state STRING1
@@ -119,9 +177,7 @@ IdentifierName = ([a-zA-Z_$][a-zA-Z0-9_$]*)
 	
 	{LineTerminatorSequence}	{ }
 	
-	{MultiLineComment}			{return symbol(sym.MULTILINECOMMENT);}
-	
-	{SingleLineComment}			{return symbol(sym.SINGLELINECOMMENT);}
+	{Comment}					{return symbol(sym.COMMENT);}
 	
 	
 	/* keywords */
@@ -159,6 +215,9 @@ IdentifierName = ([a-zA-Z_$][a-zA-Z0-9_$]*)
 	"import"					{return symbol(sym.IMPORT); }
 	"try"						{return symbol(sym.TRY); }
 
+	{RegularExpressionLiteral}	{return symbol(sym.REGEXLITERAL, yytext());}
+	
+	
 	
 	/*Punctuators*/
 	{Punctuator}				{return symbol(sym.PUNCTUATOR, yytext());}
@@ -185,6 +244,8 @@ IdentifierName = ([a-zA-Z_$][a-zA-Z0-9_$]*)
 	\'                          { string.setLength(0); yybegin(STRING1); }
 	
 	\"                          { string.setLength(0); yybegin(STRING2); }
+	
+	{Template}					{return symbol(sym.TEMPLATE, yytext());}
 }
 
 
