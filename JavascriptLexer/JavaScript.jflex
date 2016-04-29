@@ -1,15 +1,22 @@
 import java_cup.runtime.*;
+import java.util.HashMap;
 
 %%
 
 %class JavascriptLexer
 %unicode
-%debug
+//%debug
 %line
 %column
+%yylexthrow Exception
+%type java_cup.runtime.Symbol
 
 %{
 	StringBuffer string = new StringBuffer();
+	
+	HashMap<String,Integer> table = new HashMap<String,Integer>();
+	
+	int lastKey = 0;
 
 	private Symbol symbol(int type){
 		return new Symbol(type, yyline, yycolumn);
@@ -18,6 +25,53 @@ import java_cup.runtime.*;
 	private Symbol symbol(int type, Object value){
 		return new Symbol(type, yyline, yycolumn, value);
 	}
+	
+	public static void main(String argv[]) {
+	    if (argv.length == 0) {
+	      System.out.println("Usage : java JavascriptLexer [ --encoding <name> ] <inputfile(s)>");
+	    }
+	    else {
+	      int firstFilePos = 0;
+	      String encodingName = "UTF-8";
+	      if (argv[0].equals("--encoding")) {
+	        firstFilePos = 2;
+	        encodingName = argv[1];
+	        try {
+	          java.nio.charset.Charset.forName(encodingName); // Side-effect: is encodingName valid? 
+	        } catch (Exception e) {
+	          System.out.println("Invalid encoding '" + encodingName + "'");
+	          return;
+	        }
+	      }
+	      for (int i = firstFilePos; i < argv.length; i++) {
+	        JavascriptLexer scanner = null;
+	        try {
+	          java.io.FileInputStream stream = new java.io.FileInputStream(argv[i]);
+	          java.io.Reader reader = new java.io.InputStreamReader(stream, encodingName);
+	          scanner = new JavascriptLexer(reader);
+	          do {
+	        	  Symbol current = scanner.yylex();
+	        	  if(current!=null&&current.value!=null){
+	        		  System.out.printf("%s , %s\n", current.toString(),current.value.toString());
+	        	  }
+	            System.out.println(current);
+	          } while (!scanner.zzAtEOF);
+
+	        }
+	        catch (java.io.FileNotFoundException e) {
+	          System.out.println("File not found : \""+argv[i]+"\"");
+	        }
+	        catch (java.io.IOException e) {
+	          System.out.println("IO error scanning file \""+argv[i]+"\"");
+	          System.out.println(e);
+	        }
+	        catch (Exception e) {
+	          System.out.println("Unexpected exception:");
+	          e.printStackTrace();
+	        }
+	      }
+	    }
+	  }
 %}
 
 
@@ -28,6 +82,8 @@ WhiteSpace = [\t\v\f \u00A0\uFEFF] | {UnicodeWhiteSpace}
 	UnicodeWhiteSpace = [\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000]
 
 LineTerminator = [\n\r\u2028\u2029]
+
+UnknownTerminators = [\u000D\u000A]
 
 LineTerminatorSequence = [\n\r\u2028\u2029] | (\r\n)
 
@@ -179,7 +235,6 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 	
 	{Comment}					{return symbol(sym.COMMENT);}
 	
-	
 	/* keywords */
 	"break"						{return symbol(sym.BREAK); }
 	"do"						{return symbol(sym.DO); }
@@ -234,7 +289,16 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 	
 	{HexIntegerLiteral}			{return symbol(sym.HEXLITERAL, yytext());}
 	
-	{IdentifierName}			{return symbol(sym.IDENTIFIERNAME, yytext());}
+	{IdentifierName}			{
+									if(table.containsKey(yytext())){
+										return symbol(sym.IDENTIFIERNAME, table.get(yytext()));
+									}
+									else{
+										table.put(yytext(),lastKey);
+										lastKey++;
+										return symbol(sym.IDENTIFIERNAME, lastKey-1);
+									}
+								}
 	
 	{DecimalLiteral}			{return symbol(sym.DECIMALLITERAL, yytext());}
 	
@@ -251,6 +315,7 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 
 /*String States*/
 <STRING1> {
+  <<EOF>>						 { throw new Exception("ERROR: String not closed before end of file");}
   \'                             { yybegin(YYINITIAL); 
 								   return symbol(sym.STRING_LITERAL, 
 								   string.toString()); }
@@ -261,9 +326,11 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
   \\r                            { string.append('\r'); }
   \\\'                           { string.append('\''); }
   \\                             { string.append('\\'); }
+  {UnknownTerminators}			 {	}
 }
 
 <STRING2> {
+  <<EOF>>						 { throw new Exception("ERROR: String not closed before end of file");}
   \"                             { yybegin(YYINITIAL); 
 								   return symbol(sym.STRING_LITERAL, 
 								   string.toString()); }
@@ -274,9 +341,12 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
   \\r                            { string.append('\r'); }
   \\\"                           { string.append('\"'); }
   \\                             { string.append('\\'); }
+  {UnknownTerminators}			 {	}
 }
 
-
+/* error fallback */
+[^]                              { throw new Error("Illegal character <"+
+													yytext()+"> at row "+(yyline+1)+" column "+yycolumn); }
 
 
 
