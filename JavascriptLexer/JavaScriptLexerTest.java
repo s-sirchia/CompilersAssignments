@@ -13,10 +13,11 @@ import java.util.HashMap;
 import java_cup.runtime.Symbol;
 
 
-public class SubstTest {
+public class JavaScriptLexerTest {
 	private static final String OUTPUT_FILE = "src/resources/output.txt";
 	private static Integer[] TOKEN_IDS;
 	private static String[] TOKEN_NAMES;
+	private static HashMap<Integer, String> tokenNames = new HashMap<Integer, String>();
 	
 	public static void main(String[] args) throws IOException {
 		// the standalon Subst prints status on stdout
@@ -49,7 +50,9 @@ public class SubstTest {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}		
+		}
+		for (int i = 0; i < TOKEN_IDS.length; i++)
+	    	  tokenNames.put(TOKEN_IDS[i], TOKEN_NAMES[i]);
 	}
 	
 	public static void scan(String argv[]) {
@@ -70,9 +73,6 @@ public class SubstTest {
 	        }
 	      }
 	      initializeTokenNames();
-	      HashMap<Integer, String> tokenNames = new HashMap<Integer, String>();
-	      for (int i = 0; i < TOKEN_IDS.length; i++)
-	    	  tokenNames.put(TOKEN_IDS[i], TOKEN_NAMES[i]);
 	      for (int i = firstFilePos; i < argv.length; i++) {
 	        JavascriptLexer scanner = null;
 	        try {
