@@ -56,5 +56,7 @@ public class sym {
 	public static final int STRING_LITERAL = 172;
 	public static final int REGEXLITERAL = 209;
 	public static final int TEMPLATE = 184;
+	public static final int ERROR = -1;
+	public static final int ERROR_B = -2;
 }
 

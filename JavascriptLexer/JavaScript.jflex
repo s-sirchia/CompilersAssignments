@@ -8,13 +8,12 @@ import java.util.HashMap;
 //%debug
 %line
 %column
-%yylexthrow Exception
 %type java_cup.runtime.Symbol
 
 %{
 	StringBuffer string = new StringBuffer();
 	
-	HashMap<String,Integer> table = new HashMap<String,Integer>();
+	public HashMap<String,Integer> table = new HashMap<String,Integer>();
 	
 	int lastKey = 0;
 
@@ -26,52 +25,6 @@ import java.util.HashMap;
 		return new Symbol(type, yyline, yycolumn, value);
 	}
 	
-	public static void main(String argv[]) {
-	    if (argv.length == 0) {
-	      System.out.println("Usage : java JavascriptLexer [ --encoding <name> ] <inputfile(s)>");
-	    }
-	    else {
-	      int firstFilePos = 0;
-	      String encodingName = "UTF-8";
-	      if (argv[0].equals("--encoding")) {
-	        firstFilePos = 2;
-	        encodingName = argv[1];
-	        try {
-	          java.nio.charset.Charset.forName(encodingName); // Side-effect: is encodingName valid? 
-	        } catch (Exception e) {
-	          System.out.println("Invalid encoding '" + encodingName + "'");
-	          return;
-	        }
-	      }
-	      for (int i = firstFilePos; i < argv.length; i++) {
-	        JavascriptLexer scanner = null;
-	        try {
-	          java.io.FileInputStream stream = new java.io.FileInputStream(argv[i]);
-	          java.io.Reader reader = new java.io.InputStreamReader(stream, encodingName);
-	          scanner = new JavascriptLexer(reader);
-	          do {
-	        	  Symbol current = scanner.yylex();
-	        	  if(current!=null&&current.value!=null){
-	        		  System.out.printf("%s , %s\n", current.toString(),current.value.toString());
-	        	  }
-	            System.out.println(current);
-	          } while (!scanner.zzAtEOF);
-
-	        }
-	        catch (java.io.FileNotFoundException e) {
-	          System.out.println("File not found : \""+argv[i]+"\"");
-	        }
-	        catch (java.io.IOException e) {
-	          System.out.println("IO error scanning file \""+argv[i]+"\"");
-	          System.out.println(e);
-	        }
-	        catch (Exception e) {
-	          System.out.println("Unexpected exception:");
-	          e.printStackTrace();
-	        }
-	      }
-	    }
-	  }
 %}
 
 
@@ -220,6 +173,7 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 
 %state STRING1
 %state STRING2
+%state COMMENT
 
 %%
 
@@ -233,8 +187,11 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 	
 	{LineTerminatorSequence}	{ }
 	
-	{Comment}					{return symbol(sym.COMMENT);}
+	{SingleLineComment}			{return symbol(sym.COMMENT);}
 	
+	"/*"						{yybegin(COMMENT); }
+	
+	"*/"						{return symbol(sym.ERROR, "Unmatched */");}
 	/* keywords */
 	"break"						{return symbol(sym.BREAK); }
 	"do"						{return symbol(sym.DO); }
@@ -315,7 +272,7 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 
 /*String States*/
 <STRING1> {
-  <<EOF>>						 { throw new Exception("ERROR: String not closed before end of file");}
+  <<EOF>>						 { return symbol(sym.ERROR_B,"EOF in string constant");}
   \'                             { yybegin(YYINITIAL); 
 								   return symbol(sym.STRING_LITERAL, 
 								   string.toString()); }
@@ -330,7 +287,7 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 }
 
 <STRING2> {
-  <<EOF>>						 { throw new Exception("ERROR: String not closed before end of file");}
+  <<EOF>>						 {  return symbol(sym.ERROR_B,"EOF in string constant");}
   \"                             { yybegin(YYINITIAL); 
 								   return symbol(sym.STRING_LITERAL, 
 								   string.toString()); }
@@ -344,8 +301,15 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
   {UnknownTerminators}			 {	}
 }
 
+<COMMENT> {
+  <<EOF>>						 {  return symbol(sym.ERROR_B,"EOF in comment");}
+  "*/"                           { yybegin(YYINITIAL); }
+  .                   			 {  }
+  {UnknownTerminators}			 {	}
+}
+
 /* error fallback */
-[^]                              { throw new Error("Illegal character <"+
+[^]                              { return symbol(sym.ERROR,"Illegal character <"+
 													yytext()+"> at row "+(yyline+1)+" column "+yycolumn); }
 
 
