@@ -94,12 +94,108 @@ HexIntegerLiteral = "0x"{HexDigits} | "0X"{HexDigits}
 
 //Keyword = "break"|"do"|"in"|"typeof"|"case"|"else"|"instanceof"|"var"|"catch"|"export"|"new"|"void"|"class"|"extends"|"return"|"while"|"const"|"finally"|"super"|"with"|"continue"|"for"|"switch"|"yield"|"debugger"|"function"|"this"|"default"|"if"|"throw"|"delete"|"import"|"try"
 
-Punctuator = [\{\(\)\[\]\.\+\-\*\%\&\|\^\:\=\!\~\;\,\<\>\?]|(\.\.\.)|(<=)|(>=)|(==)|(\!=)|(===)|(\!==)|(\+\+)|(--)|(<<)|(>>)|(>>>)|(&&)|(\|\|)|(\+=)|(-=)|(\*=)|(%=)|(<<=)|(>>=)|(>>>=)|(&=)|(\|=)|(\^=)|(=>)
 
-DivPunctuator = "/" | "/="
+LPar = "("
+
+RPar = ")"
+
+LSqPar = "["
+
+RSqPar = "]"
+
+Dot = "."
+
+Dot3 = "..."
+
+Comma = ","
+
+Semi = ";"
+
+Colon = ":"
+
+Plus = "+"
+
+Minus = "-"
+
+DPlus = "++"
+
+Div = "/"
+
+Mod = "%"
+
+DMinus = "--"
+
+Tilde = "~"
+
+Not = "!"
+
+Star = "*"
+
+And = "&"
+
+Or = "|"
+
+Hat = "^"
+
+LAng = "<"
+
+RAng = ">"
+
+Question = "?"
+
+LEq = "<="
+
+GEq = ">="
+
+Eq = "=="
+
+NEq = "!="
+
+TypeEq = "==="
+
+TypeNEq = "!=="
+
+TwoLAng = "<<"
+
+TwoRAng = ">>"
+
+ThreeRAng = ">>>"
+
+LogAnd = "&&"
+
+LogOr = "||"
+
+PlusEq = "+="
+
+MinusEq = "-="
+
+StarEq = "*="
+
+ModEq= "%="
+
+TwoLAngEq = "<<="
+
+TwoRAngEq = ">>="
+
+ThreeRAngEq = ">>>="
+
+AndEq = "&="
+
+OrEq = "|="
+
+HatEq = "^="
+
+Arrow = "=>"
+
+DivEq = "/="
+
+LeftBracePunctuator = "{"
 
 RightBracePunctuator = "}"
 
+Assign = "="
+
+TwoStarEq = "**="
 
 /* Identifiers */
 IdentifierName = ([a-zA-Z_$][a-zA-Z0-9_$]*)
@@ -226,19 +322,121 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 	"delete"					{return symbol(sym.DELETE); }
 	"import"					{return symbol(sym.IMPORT); }
 	"try"						{return symbol(sym.TRY); }
+    "null"						{return symbol(sym.NULL); }
+    "target"                    {return symbol(sym.TARGET); }
+    "let"                       {return symbol(sym.LET); }
+    "of"                        {return symbol(sym.OF); }
+    "get"                       {return symbol(sym.GET); }
+    "set"                       {return symbol(sym.SET); }
+    "static"                    {return symbol(sym.STATIC); }
+    
+    "true"|"false"              {return symbol (sym.BOOLEANLITERAL, yytext();}
 
 	{RegularExpressionLiteral}	{return symbol(sym.REGEXLITERAL, yytext());}
 	
 	
 	
 	/*Punctuators*/
-	{Punctuator}				{return symbol(sym.PUNCTUATOR, yytext());}
+	{LPar}						{return symbol(sym.LPAR);}
 	
-	{DivPunctuator}				{return symbol(sym.DIVPUNCTUATOR, yytext());}
+	{RPar}						{return symbol(sym.RPAR);}
+    
+    {LSqPar}                    {return symbol(sym.LSQPAR);}
+    
+    {RSqPar}                    {return symbol(sym.RSQPAR);}
 	
-	{RightBracePunctuator}		{return symbol(sym.RBPUNCTUATOR);}
+	{Dot3}						{return symbol(sym.DOT3);}
 	
+	{Comma}						{return symbol(sym.COMMA);}
+    
+    {Div}                       {return symbol(sym.DIV);}
+    
+    {DivEq}                     {return symbol(sym.DIVEQ);}
 	
+    {LeftBracePunctuator}		{return symbol(sym.LBPAR);}
+    
+	{RightBracePunctuator}		{return symbol(sym.RBPAR);}
+    
+    {Colon}                     {return symbol(sym.COLON);}
+	
+	{Assign}                    {return symbol(sym.ASSIGN);}
+    
+    {DPlus}                     {return symbol(sym.DPLUS);}
+    
+    {DMinus}                    {return symbol(sym.DMINUS);}
+
+    {Plus}                      {return symbol(sym.PLUS);}
+
+    {Minus}                     {return symbol(sym.MINUS);}
+
+    {Tilde}                     {return symbol(sym.TILDE);}
+
+    {Not}                       {return symbol(sym.NOT);}
+    
+    {Star}                      {return symbol(sym.STAR);}
+    
+    {Mod}                       {return symbol(sym.MOD);}
+    
+    {Dot}                       {return symbol(sym.DOT);}
+    
+    {And}                       {return symbol(sym.AND);}
+    
+    {Or}                        {return symbol(sym.OR);}
+    
+    {LAng}                      {return symbol(sym.LANG);}
+    
+    {RAng}                      {return symbol(sym.RANG);}
+    
+    {Hat}                       {return symbol(sym.HAT);}
+    
+    {Question}                  {return symbol(sym.QUESTION);}
+
+    {LEq}                       {return symbol(sym.LEQ);}
+
+    {GEq}                       {return symbol(sym.GEQ);}
+
+    {Eq}                        {return symbol(sym.EQ);}
+
+    {NEq}                       {return symbol(sym.NEQ);}
+
+    {TypeEq}                    {return symbol(sym.TYPEEQ);}
+
+    {TypeNEq}                   {return symbol(sym.TYPENEQ);}
+
+    {TwoLAng}                     {return symbol(sym.2LANG);}
+
+    {TwoRAng}                     {return symbol(sym.2RANG);}
+
+    {ThreeRAng}                     {return symbol(sym.3RANG);}
+
+    {LogAnd}                    {return symbol(sym.LOGAND);}
+
+    {LogOr}                     {return symbol(sym.LOGOR);}
+
+    {PlusEq}                    {return symbol(sym.PLUSEQ);}
+
+    {MinusEq}                   {return symbol(sym.MINUSEQ);}
+
+    {StarEq}                    {return symbol(sym.STAREQ);}
+
+    {ModEq}                     {return symbol(sym.MODEQ);}
+
+    {TwoLAngEq}                   {return symbol(sym.2LANGEQ);}
+
+    {TwoRAngEq}                   {return symbol(sym.2RANGEQ);}
+
+    {ThreeRAngEq}                   {return symbol(sym.3RANGEQ);}
+
+    {AndEq}                     {return symbol(sym.ANDEQ);}
+
+    {OrEq}                      {return symbol(sym.OREQ);}
+
+    {HatEq}                     {return symbol(sym.HATEQ);}
+
+    {Arrow}                     {return symbol(sym.ARROW);}
+    
+    {TwoStarEq}                     {return symbol(sym.TWOSTAREQ);}
+    
 	/*Numeric Literals*/
 	{BinaryIntegerLiteral}		{return symbol(sym.BYNARYLITERAL, yytext());}
 		

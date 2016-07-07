@@ -1,0 +1,777 @@
+import java_cup.runtime.*;
+
+action code {:
+    int curr_lineno() {
+	return ((CoolTokenLexer)parser.getScanner()).curr_lineno();
+    }
+
+    AbstractSymbol curr_filename() {
+	return ((CoolTokenLexer)parser.getScanner()).curr_filename();
+    }
+:} 
+
+parser code {:
+    int omerrs = 0;
+
+    public void syntax_error(Symbol cur_token) {
+        int lineno = action_obj.curr_lineno();
+	String filename = action_obj.curr_filename().getString();
+        System.err.print("\"" + filename + "\", line " + lineno + 
+		         ": parse error at or near ");
+        Utilities.printToken(cur_token);
+	omerrs++;
+	if (omerrs>50) {
+	   System.err.println("More than 50 errors");
+	   System.exit(1);
+	}
+    }
+
+    public void unrecovered_syntax_error(Symbol cur_token) {
+    }
+:}
+
+terminal LBPAR, RBPAR, LPAR, RPAR, LSQPAR, RSQPAR, DOT, DOT3, COMMA, SEMI, COLON, ASSIGN, DPLUS, DMINUS, PLUS, MINUS, TILDE, NOT, STAR, DIV, DIVEQ, MOD, AND, OR, LANG, RANG, HAT, QUESTION, LEQ, GEQ, EQ, NEQ, TYPEEQ, TYPENEQ, TWOLANG, TWORANG, THREERANG, LOGAND, LOGOR, PLUSEQ, MINUSEQ, STAREQ, MODEQ, TWOLANGEQ, TWORANGEQ, THREERANGEQ, ANDEQ, OREQ, HATEQ, ARROW, TWOSTAREQ;
+terminal DO, IN, IF, NEW, TRY, FOR, VAR, ELSE, THIS, CASE, VOID, WITH, BREAK, THROW, YIELD, CATCH, TARGET;
+terminal CONST, CLASS, SUPER, WHILE, RETURN, EXPORT, DELETE, IMPORT, TYPEOF, SWITCH, EXTENDS, DEFAULT, LET, OF;
+terminal FINALLY, DEBUGGER, FUNCTION, CONTINUE, INSTANCEOF, IDENTIFIERNAME, GET, SET, STATIC;
+terminal DECIMALLITERAL, OCTALLITERAL, HEXLITERAL, BYNARYLITERAL, SIGNEDINTEGER;
+terminal COMMENT, STRING_LITERAL, REGEXLITERAL, TEMPLATE, ERROR, ERROR_B, NULL, BOOLEANLITERAL;
+nonterminal IdentifierReference, BindingIdentifier, LabelIdentifier, PrimaryExpression;
+nonterminal Literal, ArrayLiteral, ObjectLiteral, FunctionExpression, ClassExpression, GeneratorExpression;
+nonterminal TemplateLiteral, CPExpAAParList, Expression, NumericLiteral, Elision, ElisionP, ElementList, AssignmentExpression, SpreadElement, ElementListP, PropertyDefinitionList, PropertyDefinition, PropertyDefinitionListP,
+PropertyName, LiteralPropertyName, ComputedPropertyName, CoverInizializedName, Initializer, MethodDefinition,
+MemberExpression, MemberExpressionP, SuperProperty, MetaProperty, Arguments, NewTarget, NewExpression,
+CallExpression, CallExpressionP, SuperCall, ArgumentList, ArgumentListP, LeftHandSideExpression, UpdateExpression, UnaryExpression, ExponentiationExpression, MultiplicativeExpression, MultiplicativeExpressionP, MultiplicativeOperator, AdditiveExpression, AdditiveExpressionP, ShiftExpression, ShiftExpressionP, RelationalExpression, RelationalExpressionP, EqualityExpression, EqualityExpressionP, BitwiseAndExpression, BitwiseAndExpressionP, BitwiseXOrExpression, BitwiseXOrExpressionP,  BitwiseOrExpression, BitwiseOrExpressionP, LogicalAndExpression, LogicalAndExpressionP, LogicalOrExpression, LogicalOrExpressionP, ConditionalExpression, YieldExpression, AssignmentOperator, AssignmentPattern, ObjectAssignmentPattern, ArrayAssignmentPattern, AssignmentPropertyList, AssignmentRestElement, AssignmentElementList, AssignmentProperty, AssignmentPropertyListP, AssignmentElisionElement, AssignmentElementListP, AssignmentElement, DestructuringAssignmentTarget, ExpressionP, Statement, BlockStatement, VariableStatement, EmptyStatement, ExpressionStatement
+, IfStatement, BreakableStatement, ContinueStatement, BreakStatement, ReturnStatement, WithStatement, LabeledStatement, ThrowStatement, TryStatement, DebuggerStatement, Declaration, HoistableDeclaration, ClassDeclaration, LexicalDeclaration, 
+FunctionDeclaration, GeneratorDeclaration, IterationStatement, SwitchStatement, Block, StatementList, StatementListItem, StatementListP, LetOrConst, BindingList, LexicalBinding, BindingListP, BindingPattern, VariableDeclarationList, VariableDeclaration, VariableDeclarationListP, ObjectBindingPattern, ArrayBindingPattern, BindingPropertyList, BindingRestElement, BindingElementList, BindingProperty, BindingPropertyListP, BindingElisionElement, BindingElementListP,
+BindingElement, SingleNameBinding, ForBinding, ForDeclaration, CaseBlock, CaseClauses, DefaultCase, CaseClause, CaseClausesP, LabeledItem, Catch, Finally, CatchParameter, FormalParameters, FunctionBody, StrictFormalParameters, FormalParameterList, FunctionRestParameter, FormalList, FormalParameter, FormalListP, FunctionStatementList, ArrowFunction, ArrowParameters,  ConciseBody, ArrowFormalParameters, GeneratorMethod, PropertySetParameterList, GeneratorBody, ClassTail, ClassHeritage, ClassBody, ClassElementList, ClassElement, ClassElementListP, Script, ScriptBody;
+
+start with Script;
+    
+Script
+    ::= ScriptBody
+    ;
+    
+ScriptBody
+    ::= StatementList
+    ;
+    
+
+IdentifierReference
+	::= IDENTIFIERNAME
+	| YIELD
+	;
+
+BindingIdentifier
+	::= IDENTIFIERNAME
+	| YIELD
+	;
+	
+LabelIdentifier
+	::= IDENTIFIERNAME
+	| YIELD
+	;
+
+PrimaryExpression
+	::= THIS
+	| Literal
+	| ArrayLiteral
+	| ObjectLiteral
+	| FunctionExpression
+	| ClassExpression
+	| GeneratorExpression
+	| REGEXLITERAL
+	| TemplateLiteral
+	| CPExpAAParList
+	;
+
+    /*CoverParenthesizedExpressionAndArrowParameterList*/
+CPExpAAParList
+	::= LPAR Expression RPAR
+	| LPAR RPAR
+	| LPAR DOT3 BindingIdentifier RPAR
+	| LPAR Expression COMMA DOT3 BindingIdentifier RPAR
+	;
+    
+NumericLiteral
+    ::= DECIMALLITERAL
+    | OCTALLITERAL
+    | HEXLITERAL
+    | BYNARYLITERAL
+    | SIGNEDINTEGER
+    ;
+    
+Literal
+    ::= NULL
+    | BOOLEANLITERAL
+    | NumericLiteral
+    | STRING_LITERAL
+    ;
+    
+Elision
+    ::= COMMA
+    | Elision COMMA
+    ;
+    
+ArrayLiteral
+    ::= LSQPAR ElisionP RSQPAR
+    | LSQPAR ElementList RSQPAR
+    | LSQPAR ElementList ElisionP RSQPAR
+    ;
+    
+ElementList
+    ::= Elision AssignmentExpression
+    | Elision SpreadElement
+    | ElementList COMMA Elision AssignmentExpression
+    | ElementList COMMA ElisionP SpreadElement
+    ;
+    
+SpreadElement
+    ::= DOT3 AssignmentExpression
+    ;
+
+ObjectLiteral
+    ::= LBPAR RBPAR
+    | LBPAR PropertyDefinitionList RBPAR
+    | LBPAR PropertyDefinitionList COMMA RBPAR
+    ;
+
+PropertyDefinitionList
+    ::= PropertyDefinition
+    | PropertyDefinitionList COMMA PropertyDefinition
+    ;
+
+PropertyDefinition
+    ::= IdentifierReference
+    | CoverInizializedName
+    | PropertyName COLON AssignmentExpression
+    | MethodDefinition
+    ;
+    
+PropertyName
+    ::= LiteralPropertyName
+    | ComputedPropertyName
+    ;
+    
+LiteralPropertyName
+    ::= IDENTIFIERNAME
+    | STRING_LITERAL
+    | NumericLiteral
+    ;
+
+ComputedPropertyName
+    ::= LSQPAR AssignmentExpression RSQPAR
+    ;
+
+CoverInizializedName
+    ::= IdentifierReference Initializer
+    ;
+    
+Initializer
+    ::= ASSIGN AssignmentExpression
+    ;
+
+MemberExpression
+    ::= PrimaryExpression
+    | MemberExpression LSQPAR Expression RSQPAR
+    | MemberExpression DOT IDENTIFIERNAME
+    | SuperProperty
+    | MetaProperty
+    | NEW MemberExpression Arguments
+    ;
+
+SuperProperty
+    ::= SUPER LSQPAR Expression RSQPAR
+    | SUPER DOT IDENTIFIERNAME
+    ;
+
+MetaProperty
+    ::= NewTarget
+    ;
+    
+NewTarget
+    ::= NEW DOT TARGET
+    ;
+
+NewExpression
+    ::= MemberExpression
+    | NEW NewExpression
+    ;
+
+CallExpression
+    ::= MemberExpression Arguments
+    | SuperCall
+    | CallExpression Arguments
+    | CallExpression LSQPAR Expression RSQPAR
+    | CallExpression DOT IDENTIFIERNAME
+    ;
+    
+SuperCall
+    ::= SUPER Arguments
+    ;
+
+Arguments
+    ::= LPAR RPAR
+    | LPAR ArgumentList RPAR
+    ;
+
+ArgumentList
+    ::= AssignmentExpression
+    | DOT3 AssignmentExpression
+    | ArgumentList COMMA AssignmentExpression
+    | ArgumentList COMMA DOT3 AssignmentExpression
+    ;
+    
+LeftHandSideExpression
+    ::= NewExpression
+    | CallExpression
+    ;
+
+UpdateExpression
+    ::= LeftHandSideExpression
+    | LeftHandSideExpression DPLUS
+    | LeftHandSideExpression DMINUS
+    | DPLUS UnaryExpression
+    | DMINUS UnaryExpression
+    ;
+    
+UnaryExpression
+    ::= UpdateExpression
+    | DELETE UnaryExpression
+    | VOID UnaryExpression
+    | TYPEOF UnaryExpression
+    | PLUS UnaryExpression
+    | MINUS UnaryExpression
+    | TILDE UnaryExpression
+    | NOT UnaryExpression
+    ;
+    
+ExponentiationExpression
+    ::= UnaryExpression
+    | UpdateExpression STAR STAR ExponentiationExpression
+    ;
+    
+MultiplicativeExpression
+    ::= ExponentiationExpression
+    | MultiplicativeExpression MultiplicativeOperator ExponentiationExpression
+    ;
+    
+MultiplicativeOperator 
+    ::= STAR
+    | DIV
+    | MOD
+    ;
+    
+AdditiveExpression
+    ::= MultiplicativeExpression
+    | AdditiveExpression PLUS MultiplicativeExpression
+    | AdditiveExpression MINUS MultiplicativeExpression
+    ;
+    
+ShiftExpression
+    ::= AdditiveExpression
+    | ShiftExpression TWOLANG AdditiveExpression
+    | ShiftExpression TWORANG AdditiveExpression
+    | ShiftExpression THREERANG AdditiveExpression
+    ;
+    
+RelationalExpression
+    ::= ShiftExpression
+    | RelationalExpression LANG ShiftExpression
+    | RelationalExpression RANG ShiftExpression
+    | RelationalExpression LEQ ShiftExpression
+    | RelationalExpression GEQ ShiftExpression
+    | RelationalExpression INSTANCEOF ShiftExpression
+    | RelationalExpression IN ShiftExpression
+    ;
+    
+EqualityExpression
+    ::= RelationalExpression
+    | EqualityExpression EQ RelationalExpression
+    | EqualityExpression NEQ RelationalExpression
+    | EqualityExpression TYPEEQ RelationalExpression
+    | EqualityExpression TYPENEQ RelationalExpression
+    ;
+    
+BitwiseAndExpression
+    ::= EqualityExpression
+    | BitwiseAndExpression AND EqualityExpression
+    ;
+    
+    
+BitwiseXOrExpression
+    ::= BitwiseAndExpression
+    | BitwiseXOrExpression HAT BitwiseAndExpression
+    ;
+    
+BitwiseOrExpression
+    ::= BitwiseXOrExpression
+    | BitwiseOrExpression OR BitwiseXOrExpression
+    ;
+
+LogicalAndExpression
+    ::= BitwiseOrExpression
+    | LogicalAndExpression LOGAND BitwiseOrExpression
+    ;
+
+LogicalOrExpression
+    ::= LogicalAndExpression
+    | LogicalOrExpression LOGOR LogicalAndExpression
+    ;
+    
+ConditionalExpression
+    ::= LogicalOrExpression
+    | LogicalOrExpression QUESTION AssignmentExpression COLON AssignmentExpression
+    ;
+    
+AssignmentExpression
+    ::= ConditionalExpression
+    | YieldExpression
+    | LeftHandSideExpression ASSIGN AssignmentExpression
+    | LeftHandSideExpression AssignmentOperator AssignmentExpression
+    ;
+    
+AssignmentPattern
+    ::= ObjectAssignmentPattern
+    | ArrayAssignmentPattern
+    ;
+    
+ObjectAssignmentPattern
+    ::= LBPAR RBPAR
+    | LBPAR AssignmentPropertyList RBPAR
+    | LBPAR AssignmentPropertyList COMMA RBPAR
+    ;
+    
+ArrayAssignmentPattern
+    ::= LSQPAR Elision AssignmentRestElement RSQPAR
+    | LSQPAR AssignmentElementList RSQPAR
+    | LSQPAR AssignmentElementList COMMA Elision AssignmentRestElement RSQPAR
+    ;
+
+AssignmentPropertyList
+    ::= AssignmentProperty
+    | AssignmentPropertyList COMMA AssignmentProperty
+    ;
+    
+AssignmentElementList
+    ::= AssignmentElisionElement
+    | AssignmentElementList COMMA AssignmentElisionElement
+    ;
+ 
+AssignmentElisionElement
+    ::= Elision AssignmentElement
+    ;
+
+AssignmentProperty
+    ::= IdentifierReference Initializer
+    | PropertyName COLON AssignmentElement
+    ;
+    
+AssignmentElement
+    ::= DestructuringAssignmentTarget Initializer
+    ;
+    
+AssignmentRestElement
+    ::= DOT3 DestructuringAssignmentTarget
+    ;
+    
+DestructuringAssignmentTarget
+    ::= LeftHandSideExpression
+    ;
+    
+AssignmentOperator
+    ::= STAREQ
+    | DIVEQ
+    | MODEQ
+    | PLUSEQ
+    | MINUSEQ
+    | TWOLANGEQ
+    | TWORANGEQ
+    | THREERANGEQ
+    | ANDEQ
+    | OREQ
+    | HATEQ
+    | TWOSTAREQ
+    ;
+
+Expression
+    ::= AssignmentExpression
+    | Expression COMMA AssignmentExpression
+    ;
+    
+Statement
+    ::= BlockStatement
+    | VariableStatement
+    | EmptyStatement
+    | ExpressionStatement
+    | IfStatement
+    | BreakableStatement
+    | ContinueStatement
+    | BreakStatement
+    | ReturnStatement
+    | WithStatement
+    | LabeledStatement
+    | ThrowStatement
+    | TryStatement
+    | DebuggerStatement
+    ;
+    
+Declaration
+    ::= HoistableDeclaration
+    | ClassDeclaration
+    | LexicalDeclaration
+    ;
+    
+HoistableDeclaration
+    ::= FunctionDeclaration
+    | GeneratorDeclaration
+    ;
+    
+BreakableStatement
+    ::= IterationStatement
+    | SwitchStatement
+    ;
+    
+BlockStatement
+    ::= Block
+    ;
+    
+Block
+    ::= LBPAR StatementList RBPAR
+    ;
+    
+StatementList
+    ::= StatementListItem 
+    | StatementList StatementListItem;
+    
+StatementListItem
+    ::= Statement
+    | Declaration
+    ;
+
+LexicalDeclaration
+    ::= LetOrConst BindingList
+    ;
+    
+LetOrConst
+    ::= LET
+    | CONST
+    ;
+    
+BindingList
+    ::= LexicalBinding
+    | BindingList COMMA LexicalBinding
+    ;
+    
+LexicalBinding
+    ::= BindingIdentifier Initializer
+    | BindingPattern Initializer
+    ;
+    
+VariableStatement
+    ::= VAR VariableDeclarationList SEMI
+    ;
+    
+VariableDeclarationList
+    ::= VariableDeclaration
+    | VariableDeclarationList COMMA VariableDeclaration
+    ;
+    
+VariableDeclaration
+    ::= BindingIdentifier Initializer
+    | BindingPattern Initializer
+    ;
+    
+BindingPattern
+    ::= ObjectBindingPattern
+    | ArrayBindingPattern
+    ;
+
+ObjectBindingPattern
+    ::= LBPAR RBPAR
+    | LBPAR BindingPropertyList RBPAR
+    | LBPAR BindingPropertyList COMMA RBPAR
+    ;
+    
+ArrayBindingPattern
+    ::= LSQPAR Elision BindingRestElement RSQPAR
+    | LSQPAR BindingElementList RSQPAR
+    | LSQPAR BindingElementList COMMA Elision BindingRestElement RSQPAR
+    ;
+    
+BindingPropertyList
+    ::= BindingProperty
+    | BindingPropertyList COMMA BindingProperty
+    ;
+    
+BindingElementList
+    ::= BindingElisionElement
+    | BindingElementList COMMA BindingElisionElement
+    ;
+
+BindingElisionElement
+    ::= Elision BindingElement
+    ;
+    
+BindingProperty
+    ::= SingleNameBinding
+    | PropertyName COLON BindingElement
+    ;
+    
+BindingElement
+    ::= SingleNameBinding
+    | BindingPattern Initializer
+    ;
+    
+SingleNameBinding
+    ::= BindingIdentifier Initializer
+    ;
+    
+BindingRestElement
+    ::= DOT3 BindingIdentifier
+    | DOT3 BindingPattern
+    ;
+    
+EmptyStatement
+    ::= SEMI
+    ;
+    
+ExpressionStatement
+    ::= Expression SEMI
+    ;
+    
+IfStatement
+    ::= IF LPAR Expression RPAR Statement ELSE Statement
+    | IF LPAR Expression RPAR Statement
+    ;
+    
+IterationStatement
+    ::= DO Statement WHILE LPAR Expression RPAR SEMI
+    | WHILE LPAR Expression RPAR Statement
+    | FOR LPAR Expression SEMI Expression SEMI Expression RPAR Statement
+    | FOR LPAR VAR VariableDeclarationList SEMI Expression SEMI Expression RPAR Statement
+    | FOR LPAR LexicalDeclaration Expression SEMI Expression RPAR Statement
+    | FOR LPAR LeftHandSideExpression IN Expression RPAR Statement
+    | FOR LPAR VAR ForBinding IN Expression RPAR Statement
+    | FOR LPAR ForDeclaration IN Expression RPAR Statement
+    | FOR LPAR LeftHandSideExpression OF AssignmentExpression RPAR Statement
+    | FOR LPAR VAR ForBinding OF AssignmentExpression RPAR Statement
+    | FOR LPAR ForDeclaration OF AssignmentExpression RPAR Statement
+    ;
+    
+ForDeclaration
+    ::= LetOrConst ForBinding
+    ;
+    
+ForBinding
+    ::= BindingIdentifier
+    | BindingPattern
+    ;
+    
+ContinueStatement
+    ::= CONTINUE SEMI
+    | CONTINUE LabelIdentifier SEMI
+    ;
+    
+BreakStatement
+    ::= BREAK SEMI
+    | BREAK LabelIdentifier SEMI
+    ;
+    
+ReturnStatement
+    ::= RETURN SEMI
+    | RETURN Expression SEMI
+    ;
+    
+WithStatement
+    ::= WITH LPAR Expression RPAR Statement
+    ;
+    
+SwitchStatement
+    ::= SWITCH LPAR Expression RPAR CaseBlock
+    ;
+    
+CaseBlock
+    ::= LBPAR CaseClauses RBPAR
+    | LBPAR CaseClauses DefaultCase CaseClauses RBPAR
+    ;
+    
+CaseClauses
+    ::= CaseClause
+    | CaseClauses CaseClause
+    ;
+    
+CaseClause
+    ::= CASE Expression COLON StatementList
+    ;
+    
+DefaultCase
+    ::= DEFAULT COLON StatementList
+    ;
+    
+LabeledStatement
+    ::= LabelIdentifier COLON LabeledItem
+    ;
+   
+LabeledItem
+    ::= Statement
+    | FunctionDeclaration
+    ;
+    
+ThrowStatement
+    ::= THROW Expression
+    ;
+    
+TryStatement
+    ::= TRY Block Catch
+    | TRY Block Finally
+    | TRY Block Catch Finally
+    ;
+    
+Catch
+    ::= CATCH LPAR CatchParameter RPAR Block
+    ;
+    
+Finally
+    ::= FINALLY Block
+    ;
+    
+CatchParameter
+    ::= BindingIdentifier
+    | BindingPattern
+    ;
+    
+DebuggerStatement
+    ::= DEBUGGER
+    ;
+    
+FunctionDeclaration
+    ::= FUNCTION BindingIdentifier LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR
+    | FUNCTION LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR
+    ;
+    
+FunctionExpression
+    ::= FUNCTION BindingIdentifier LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR
+    ;
+    
+StrictFormalParameters
+    ::= FormalParameters
+    ;
+    
+FormalParameters
+    ::= FormalParameterList
+    |
+    ;
+    
+FormalParameterList
+    ::= FunctionRestParameter
+    | FormalList
+    | FormalList COMMA FunctionRestParameter
+    ;
+    
+FormalList
+    ::= FormalParameter
+    | FormalList COMMA FormalParameter
+    ;
+    
+FunctionRestParameter
+    ::= BindingRestElement
+    ;
+    
+FormalParameter
+    ::= BindingElement
+    ;
+    
+FunctionBody
+    ::= FunctionStatementList
+    ;
+    
+FunctionStatementList
+    ::= StatementList
+    ;
+
+ArrowFunction
+    ::= ArrowParameters ARROW ConciseBody
+    ;
+ 
+ArrowParameters
+    ::= BindingIdentifier
+    | CPExpAAParList
+    ;
+    
+ConciseBody
+    ::= AssignmentExpression
+    | LBPAR FunctionBody RBPAR
+    ;
+    
+ArrowFormalParameters
+    ::= LPAR StrictFormalParameters RPAR
+    ;
+    
+MethodDefinition
+    ::= PropertyName LPAR StrictFormalParameters RPAR LBPAR FunctionBody RBPAR
+    | GeneratorMethod
+    | GET PropertyName LPAR RPAR LBPAR FunctionBody RBPAR
+    | SET PropertyName LPAR PropertySetParameterList RPAR LBPAR FunctionBody RBPAR
+    ;
+    
+PropertySetParameterList
+    ::= FormalParameter
+    ;
+    
+GeneratorMethod
+    ::= STAR PropertyName LPAR StrictFormalParameters RPAR LBPAR GeneratorBody RBPAR
+    ;
+    
+GeneratorDeclaration
+    ::= FUNCTION STAR BindingIdentifier LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR
+    | FUNCTION STAR LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR
+    ;
+    
+GeneratorExpression
+    ::= FUNCTION STAR BindingIdentifier LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR
+    ;
+    
+GeneratorBody
+    ::= FunctionBody
+    ;
+
+    
+YieldExpression
+    ::= YIELD
+    | YIELD AssignmentExpression
+    | YIELD STAR AssignmentExpression
+    ;
+    
+ClassDeclaration
+    ::= CLASS BindingIdentifier ClassTail
+    | CLASS ClassTail
+    ;
+    
+ClassExpression
+    ::= CLASS BindingIdentifier ClassTail
+    ;
+   
+ClassTail
+    ::= ClassHeritage LBPAR ClassBody RBPAR
+    ;
+    
+ClassHeritage
+    ::= EXTENDS LeftHandSideExpression
+    ;
+    
+ClassBody
+    ::= ClassElementList
+    ;
+    
+ClassElementList
+    ::= ClassElement
+    | ClassElementList ClassElement
+    ;
+
+    
+ClassElement
+    ::= MethodDefinition
+    | STATIC MethodDefinition 
+    | SEMI
+    ;
