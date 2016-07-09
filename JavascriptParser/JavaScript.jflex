@@ -395,9 +395,9 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
     
     {Or}                        {return symbol(sym.OR);}
     
-    {LAng}                      {return symbol(sym.LANG);}
+    {LAng}                      {return symbol(sym.LT);}
     
-    {RAng}                      {return symbol(sym.RANG);}
+    {RAng}                      {return symbol(sym.GT);}
     
     {Hat}                       {return symbol(sym.HAT);}
     

@@ -419,7 +419,7 @@ Warning : *** Shift/Reduce conflict found in state #56
 [10]COMMA [11]SEMI [12]COLON [13]ASSIGN [14]DPLUS 
 [15]DMINUS [16]PLUS [17]MINUS [18]TILDE [19]NOT 
 [20]STAR [21]DIV [22]DIVEQ [23]MOD [24]AND 
-[25]OR [26]LANG [27]RANG [28]HAT [29]QUESTION 
+[25]OR [26]LT [27]GT [28]HAT [29]QUESTION 
 [30]LEQ [31]GEQ [32]EQ [33]NEQ [34]TYPEEQ 
 [35]TYPENEQ [36]TWOLANG [37]TWORANG [38]THREERANG [39]LOGAND 
 [40]LOGOR [41]PLUSEQ [42]MINUSEQ [43]STAREQ [44]MODEQ 
@@ -588,8 +588,8 @@ Warning : *** Shift/Reduce conflict found in state #56
 [117] ShiftExpression ::= ShiftExpression TWORANG AdditiveExpression 
 [118] ShiftExpression ::= ShiftExpression THREERANG AdditiveExpression 
 [119] RelationalExpression ::= ShiftExpression 
-[120] RelationalExpression ::= RelationalExpression LANG ShiftExpression 
-[121] RelationalExpression ::= RelationalExpression RANG ShiftExpression 
+[120] RelationalExpression ::= RelationalExpression LT ShiftExpression 
+[121] RelationalExpression ::= RelationalExpression GT ShiftExpression 
 [122] RelationalExpression ::= RelationalExpression LEQ ShiftExpression 
 [123] RelationalExpression ::= RelationalExpression GEQ ShiftExpression 
 [124] RelationalExpression ::= RelationalExpression INSTANCEOF ShiftExpression 

@@ -1098,11 +1098,11 @@ class JavascriptLexer implements java_cup.runtime.Scanner {
             }
           case 138: break;
           case 23: 
-            { return symbol(sym.LANG);
+            { return symbol(sym.LT);
             }
           case 139: break;
           case 24: 
-            { return symbol(sym.RANG);
+            { return symbol(sym.GT);
             }
           case 140: break;
           case 25: 

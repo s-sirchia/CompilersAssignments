@@ -24,7 +24,7 @@ parser code {:
 
 :}
 
-terminal LBPAR, RBPAR, LPAR, RPAR, LSQPAR, RSQPAR, DOT, DOT3, COMMA, SEMI, COLON, ASSIGN, DPLUS, DMINUS, PLUS, MINUS, TILDE, NOT, STAR, DIV, DIVEQ, MOD, AND, OR, LANG, RANG, HAT, QUESTION, LEQ, GEQ, EQ, NEQ, TYPEEQ, TYPENEQ, TWOLANG, TWORANG, THREERANG, LOGAND, LOGOR, PLUSEQ, MINUSEQ, STAREQ, MODEQ, TWOLANGEQ, TWORANGEQ, THREERANGEQ, ANDEQ, OREQ, HATEQ, ARROW, TWOSTAREQ, DSTAR;
+terminal LBPAR, RBPAR, LPAR, RPAR, LSQPAR, RSQPAR, DOT, DOT3, COMMA, SEMI, COLON, ASSIGN, DPLUS, DMINUS, PLUS, MINUS, TILDE, NOT, STAR, DIV, DIVEQ, MOD, AND, OR, LT, GT, HAT, QUESTION, LEQ, GEQ, EQ, NEQ, TYPEEQ, TYPENEQ, TWOLANG, TWORANG, THREERANG, LOGAND, LOGOR, PLUSEQ, MINUSEQ, STAREQ, MODEQ, TWOLANGEQ, TWORANGEQ, THREERANGEQ, ANDEQ, OREQ, HATEQ, ARROW, TWOSTAREQ, DSTAR;
 terminal DO, IN, IF, NEW, TRY, FOR, VAR, ELSE, THIS, CASE, VOID, WITH, BREAK, THROW, YIELD, CATCH, TARGET;
 terminal CONST, CLASS, SUPER, WHILE, RETURN, EXPORT, DELETE, IMPORT, TYPEOF, SWITCH, EXTENDS, DEFAULT, LET, OF;
 terminal FINALLY, DEBUGGER, FUNCTION, CONTINUE, INSTANCEOF, IDENTIFIERNAME, GET, SET, STATIC;
@@ -95,7 +95,10 @@ PrimaryExpression
     {:
         RESULT = l;
     :}
-	| ArrayLiteral
+	| ArrayLiteral:al
+    {:
+        RESULT = al;
+    :}
 	| ObjectLiteral
 	| FunctionExpression
 	| ClassExpression
@@ -117,60 +120,142 @@ CPExpAAParList
     
 Literal
     ::= NULL
-    | BOOLEANLITERAL
+    {:
+        RESULT = new Literal("null", curr_lineno(), new Node("null"));
+    :}
+    | BOOLEANLITERAL:bl
+    {:
+        RESULT = new Literal(bl, curr_lineno(), new Node("boolean"));
+    :}
     | NumericLiteral:nl
     {:
-        RESULT = new Literal(nl, curr_lineno(), new Node("int"));
+        RESULT = nl;
     :}
-    | STRING_LITERAL
+    | STRING_LITERAL:sl
+    {:
+        RESULT = new Literal(sl, curr_lineno(), new Node("String"));
+    :}
     ;
     
 NumericLiteral
     ::= DECIMALLITERAL:num
     {:
-        System.out.println("line: "+curr_lineno()+" "+""+num);
-        RESULT = num;
+        RESULT = new Literal(num, curr_lineno(), new Node("Decimal int"));
     :}
     | OCTALLITERAL:num
     {:
-        System.out.println("line: "+curr_lineno()+" "+""+num);
+        RESULT = new Literal(num, curr_lineno(), new Node("Octal int"));
     :}
     | HEXLITERAL:num
     {:
-        System.out.println("line: "+curr_lineno()+" "+""+num);
+        RESULT = new Literal(num, curr_lineno(), new Node("Hex int"));
     :}
     | BYNARYLITERAL:num
     {:
-        System.out.println("line: "+curr_lineno()+" "+""+num);
+        RESULT = new Literal(num, curr_lineno(), new Node("Binary int"));
     :}
     | SIGNEDINTEGER:num
     {:
-        System.out.println("line: "+curr_lineno()+" "+""+num);
+        RESULT = new Literal(num, curr_lineno(), new Node("Signed int"));
     :}
     ;
     
 ArrayLiteral
     ::= LSQPAR Elision RSQPAR
     | LSQPAR RSQPAR
-    | LSQPAR ElementList RSQPAR
-    | LSQPAR ElementList COMMA Elision RSQPAR
-    | LSQPAR ElementList COMMA RSQPAR
+    {:
+        ArrayNode an = new ArrayNode(curr_lineno());
+        RESULT = an;
+    :}
+    | LSQPAR ElementList:el RSQPAR
+    {:
+        ArrayNode an = new ArrayNode(curr_lineno());
+        ArrayList<Node> elems = (ArrayList<Node>)el;
+        Iterator it = elems.iterator();
+            while(it.hasNext()){
+            	an.addChild(((Node)it.next()));
+            }
+        RESULT = an;
+    :}
+    | LSQPAR ElementList:el COMMA Elision:e RSQPAR
+    {:
+        ArrayList<Node> elems = (ArrayList<Node>)el;
+        elems.add(new Node(""));
+        int rep = (int)e;
+        while(rep!=0){
+            elems.add(new Node(""));
+            rep--;
+        }
+        ArrayNode an = new ArrayNode(curr_lineno());
+        Iterator it = elems.iterator();
+            while(it.hasNext()){
+            	an.addChild(((Node)it.next()));
+            }
+        RESULT = an;
+    :}
+    | LSQPAR ElementList:el COMMA RSQPAR
+    {:
+        ArrayNode an = new ArrayNode(curr_lineno());
+        ArrayList<Node> elems = (ArrayList<Node>)el;
+        Iterator it = elems.iterator();
+            while(it.hasNext()){
+            	an.addChild(((Node)it.next()));
+            }
+        an.addChild(new Node(""));
+        RESULT = an;
+    :}
     ;
     
 ElementList
-    ::= Elision AssignmentExpression
-    | AssignmentExpression
+    ::= Elision:e AssignmentExpression:ae
+    {:
+        ArrayList<Node> elems = new ArrayList<Node>();
+        int rep = (int)e;
+        while(rep!=0){
+            elems.add(new Node(""));
+            rep--;
+        }
+        elems.add((Node)ae);
+        RESULT = elems;
+    :}
+    | AssignmentExpression:ae
+    {:
+        ArrayList<Node> elems = new ArrayList<Node>();
+        elems.add((Node)ae);
+        RESULT = elems;
+    :}
     | Elision SpreadElement
     | SpreadElement
-    | ElementList COMMA Elision AssignmentExpression
-    | ElementList COMMA AssignmentExpression
+    | ElementList:el COMMA Elision:e AssignmentExpression:ae
+    {:
+        ArrayList<Node> elems = (ArrayList<Node>)el;
+        int rep = (int)e;
+        while(rep!=0){
+            elems.add(new Node(""));
+            rep--;
+        }
+        elems.add((Node)ae);
+        RESULT = elems;
+    :}
+    | ElementList:el COMMA AssignmentExpression:ae
+    {:
+        ArrayList<Node> elems = (ArrayList<Node>)el;
+        elems.add((Node)ae);
+        RESULT = elems;
+    :}
     | ElementList COMMA Elision SpreadElement
     | ElementList COMMA SpreadElement
     ;
 
 Elision
     ::= COMMA
-    | Elision COMMA
+    {:
+        RESULT = 1;
+    :}
+    | Elision:e COMMA{:
+        int count = (int)e;
+        RESULT = count+1;
+    :}
     ;
     
 SpreadElement
@@ -227,7 +312,16 @@ MemberExpression
         RESULT = pe;
     :}
     | MemberExpression LSQPAR Expression RSQPAR
-    | MemberExpression DOT IDENTIFIERNAME
+    | MemberExpression:me DOT IDENTIFIERNAME:fn
+    {:
+        Label obj = new Label("Callee", curr_lineno());
+        obj.addChild((Node)me);
+        Label name = new Label("Name", curr_lineno());
+        name.addChild(new Identifier(""+fn, curr_lineno()));
+        Function f = new Function(name, curr_lineno());
+        Call c = new Call(obj, f, curr_lineno());
+        RESULT = c;
+    :}
     | SuperProperty
     | MetaProperty
     | NEW MemberExpression Arguments
@@ -255,9 +349,31 @@ NewExpression
     ;
 
 CallExpression
-    ::= MemberExpression Arguments
+    ::= MemberExpression:m Arguments:arg
+    {:
+        Call m1;
+        if(m instanceof Identifier){
+            Label obj = new Label("Callee", curr_lineno());
+            Label name = new Label("Name", curr_lineno());
+            name.addChild((Node)m);
+            Function f = new Function(name, curr_lineno());
+            m1 = new Call(obj, f, curr_lineno());
+        }
+        else{
+            m1 = (Call) m;
+        }
+        if(arg instanceof Arguments)
+            m1.addArguments((Arguments)arg);
+        RESULT = m1;
+    :}
     | SuperCall
-    | CallExpression Arguments
+    | CallExpression:c Arguments:arg
+    {:
+        Call c1 = (Call) c;
+        if(arg instanceof Arguments)
+            c1.addArguments((Arguments)arg);
+        RESULT = c1;
+    :}
     | CallExpression LSQPAR Expression RSQPAR
     | CallExpression DOT IDENTIFIERNAME
     ;
@@ -268,13 +384,26 @@ SuperCall
 
 Arguments
     ::= LPAR RPAR
-    | LPAR ArgumentList RPAR
+    | LPAR ArgumentList:al RPAR
+    {:
+        RESULT = al;
+    :}
     ;
     
 ArgumentList
-    ::= AssignmentExpression
+    ::= AssignmentExpression:ae
+    {:
+        Arguments a = new Arguments(curr_lineno());
+        a.addChild((Node)ae);
+        RESULT = a;
+    :}
     | DOT3 AssignmentExpression
-    | ArgumentList COMMA AssignmentExpression
+    | ArgumentList:al COMMA AssignmentExpression:ae
+    {:
+        Arguments a = (Arguments) al;
+        a.addChild((Node)ae);
+        RESULT = a;
+    :}
     | ArgumentList COMMA DOT3 AssignmentExpression
     ;
     
@@ -283,7 +412,10 @@ LeftHandSideExpression
     {:
         RESULT = ne;
     :}
-    | CallExpression
+    | CallExpression:c
+    {:
+        RESULT = c;
+    :}
     ;
 
 UpdateExpression
@@ -406,12 +538,36 @@ RelationalExpression
     {:
         RESULT = se;
     :}
-    | RelationalExpression LANG ShiftExpression
-    | RelationalExpression RANG ShiftExpression
-    | RelationalExpression LEQ ShiftExpression
-    | RelationalExpression GEQ ShiftExpression
-    | RelationalExpression INSTANCEOF ShiftExpression
-    | RelationalExpression IN ShiftExpression
+    | RelationalExpression:re LT ShiftExpression:se
+    {:
+        Operation b = new Operation("LESS THAN", (Node)re, (Node)se, curr_lineno());
+        RESULT = b;
+    :}
+    | RelationalExpression:re GT ShiftExpression:se
+    {:
+        Operation b = new Operation("GREATER THAN", (Node)re, (Node)se, curr_lineno());
+        RESULT = b;
+    :}
+    | RelationalExpression:re LEQ ShiftExpression:se
+    {:
+        Operation b = new Operation("LESS THAN OR EQUAL", (Node)re, (Node)se, curr_lineno());
+        RESULT = b;
+    :}
+    | RelationalExpression:re GEQ ShiftExpression:se
+    {:
+        Operation b = new Operation("GREATER THAN OR EQUAL", (Node)re, (Node)se, curr_lineno());
+        RESULT = b;
+    :}
+    | RelationalExpression:re INSTANCEOF ShiftExpression:se
+    {:
+        Operation b = new Operation("INSTANCEOF", (Node)re, (Node)se, curr_lineno());
+        RESULT = b;
+    :}
+    | RelationalExpression:re IN ShiftExpression:se
+    {:
+        Operation b = new Operation("IN", (Node)re, (Node)se, curr_lineno());
+        RESULT = b;
+    :}
     ;
     
 EqualityExpression
@@ -419,10 +575,26 @@ EqualityExpression
     {:
         RESULT = re;
     :}
-    | EqualityExpression EQ RelationalExpression
-    | EqualityExpression NEQ RelationalExpression
-    | EqualityExpression TYPEEQ RelationalExpression
-    | EqualityExpression TYPENEQ RelationalExpression
+    | EqualityExpression:ee EQ RelationalExpression:re
+    {:
+        Operation b = new Operation("EQUAL", (Node)ee, (Node)re, curr_lineno());
+        RESULT = b;
+    :}
+    | EqualityExpression:ee NEQ RelationalExpression:re
+    {:
+        Operation b = new Operation("NOT EQUAL", (Node)ee, (Node)re, curr_lineno());
+        RESULT = b;
+    :}
+    | EqualityExpression:ee TYPEEQ RelationalExpression:re
+    {:
+        Operation b = new Operation("TYPE EQUAL", (Node)ee, (Node)re, curr_lineno());
+        RESULT = b;
+    :}
+    | EqualityExpression:ee TYPENEQ RelationalExpression:re
+    {:
+        Operation b = new Operation("TYPE NOT EQUAL", (Node)ee, (Node)re, curr_lineno());
+        RESULT = b;
+    :}
     ;
     
 BitwiseAndExpression
@@ -430,7 +602,11 @@ BitwiseAndExpression
     {:
         RESULT = ee;
     :}
-    | BitwiseAndExpression AND EqualityExpression
+    | BitwiseAndExpression:be AND EqualityExpression:ee
+    {:
+        Operation b = new Operation("BITWISE AND", (Node)be, (Node)ee, curr_lineno());
+        RESULT = b;
+    :}
     ;
     
     
@@ -439,7 +615,11 @@ BitwiseXOrExpression
     {:
         RESULT = ba;
     :}
-    | BitwiseXOrExpression HAT BitwiseAndExpression
+    | BitwiseXOrExpression:be HAT BitwiseAndExpression:ee
+    {:
+        Operation b = new Operation("BITWISE XOR", (Node)be, (Node)ee, curr_lineno());
+        RESULT = b;
+    :}
     ;
     
 BitwiseOrExpression
@@ -447,7 +627,11 @@ BitwiseOrExpression
     {:
         RESULT = bx;
     :}
-    | BitwiseOrExpression OR BitwiseXOrExpression
+    | BitwiseOrExpression:be OR BitwiseXOrExpression:ee
+    {:
+        Operation b = new Operation("BITWISE OR", (Node)be, (Node)ee, curr_lineno());
+        RESULT = b;
+    :}
     ;
 
 LogicalAndExpression
@@ -455,7 +639,11 @@ LogicalAndExpression
     {:
         RESULT = bo;
     :}
-    | LogicalAndExpression LOGAND BitwiseOrExpression
+    | LogicalAndExpression:be LOGAND BitwiseOrExpression:ee
+    {:
+        Operation b = new Operation("LOGICAL AND", (Node)be, (Node)ee, curr_lineno());
+        RESULT = b;
+    :}
     ;
 
 LogicalOrExpression
@@ -463,7 +651,11 @@ LogicalOrExpression
     {:
         RESULT = la;
     :}
-    | LogicalOrExpression LOGOR LogicalAndExpression
+    | LogicalOrExpression:be LOGOR LogicalAndExpression:ee
+    {:
+        Operation b = new Operation("LOGICAL OR", (Node)be, (Node)ee, curr_lineno());
+        RESULT = b;
+    :}
     ;
     
 ConditionalExpression
@@ -471,7 +663,17 @@ ConditionalExpression
     {:
         RESULT = lo;
     :}
-    | LogicalOrExpression QUESTION AssignmentExpression COLON AssignmentExpression
+    | LogicalOrExpression:lo QUESTION AssignmentExpression:ae1 COLON AssignmentExpression:ae2
+    {:
+        Label cl = new Label("Condition", curr_lineno());
+        cl.addChild((Node)lo);
+        Label tl = new Label("Then Body", curr_lineno());
+        tl.addChild((Node)ae1);
+        Label el = new Label("Else Body", curr_lineno());
+        el.addChild((Node)ae2);
+        IfNode ifn = new IfNode(cl, tl, el, curr_lineno());
+        RESULT = ifn;
+    :}
     ;
     
 AssignmentExpression
@@ -631,7 +833,10 @@ Statement
     {:
         RESULT = bs;
     :}
-    | VariableStatement
+    | VariableStatement:vs
+    {:
+        RESULT = vs;
+    :}
     | EmptyStatement
     | ExpressionStatement:es
     {:
@@ -641,10 +846,24 @@ Statement
     {:
         RESULT = is;
     :}
-    | BreakableStatement
+    | BreakableStatement:bs
+    {:
+        RESULT = bs;
+    :}
     | ContinueStatement
+    {:
+        Label c = new Label("CONTINUE",curr_lineno());
+        RESULT = c;
+    :}
     | BreakStatement
-    | ReturnStatement
+    {:
+        Label b = new Label("BREAK",curr_lineno());
+        RESULT = b;
+    :}
+    | ReturnStatement:r
+    {:
+        RESULT = r;
+    :}
     | WithStatement
     | LabeledStatement
     | ThrowStatement
@@ -664,8 +883,14 @@ HoistableDeclaration
     ;
     
 BreakableStatement
-    ::= IterationStatement
-    | SwitchStatement
+    ::= IterationStatement:is
+    {:
+        RESULT = is;
+    :}
+    | SwitchStatement:ss
+    {:
+        RESULT = ss;
+    :}
     ;
     
 BlockStatement
@@ -744,20 +969,36 @@ LexicalBinding
     ;
     
 VariableStatement
-    ::= VAR VariableDeclarationList SEMI
+    ::= VAR VariableDeclarationList:vl SEMI
      {:
-        System.out.println("line: "+curr_lineno()+" "+"line: "+curr_lineno()+" "+"VariableStatement -> VAR VariableDeclarationList SEMI");
+        RESULT = vl;
     :}
     ;
     
 VariableDeclarationList
-    ::= VariableDeclaration
-    | VariableDeclarationList COMMA VariableDeclaration
+    ::= VariableDeclaration:vd
+    {:
+        DeclarationList list = new DeclarationList();
+        list.addChild((Node)vd);
+        RESULT = list;
+    :}
+    | VariableDeclarationList:vl COMMA VariableDeclaration:vd
+    {:
+        ((DeclarationList)vl).addChild((Node)vd);
+        RESULT = vl;
+    :}
     ;
     
 VariableDeclaration
-    ::= BindingIdentifier Initializer
-    | BindingIdentifier
+    ::= BindingIdentifier:bi Initializer:i
+    {:
+        Assign as = new Assign(null, (Node)bi, (Node)i, curr_lineno());
+        RESULT = as;
+    :}
+    | BindingIdentifier:bi
+    {:
+        RESULT = bi;
+    :}
     | BindingPattern Initializer
     ;
     
@@ -834,36 +1075,201 @@ ExpressionStatement
 IfStatement
     ::= IF LPAR Expression:e RPAR Statement:s1 ELSE Statement:s2
     {:
-        IfNode ifn = new IfNode((Node)e, (Node)s1, (Node)s2, curr_lineno());
+        Label cl = new Label("Condition", curr_lineno());
+        cl.addChild((Node)e);
+        Label tl = new Label("Then Body", curr_lineno());
+        tl.addChild((Node)s1);
+        Label el = new Label("Else Body", curr_lineno());
+        el.addChild((Node)s2);
+        IfNode ifn = new IfNode(cl, tl, el, curr_lineno());
         RESULT = ifn;
     :}
     | IF LPAR Expression:e RPAR Statement:s
     {:
-        IfNode ifn = new IfNode((Node)e, (Node)s, curr_lineno());
+        Label cl = new Label("Condition", curr_lineno());
+        cl.addChild((Node)e);
+        Label tl = new Label("Then Body", curr_lineno());
+        tl.addChild((Node)s);
+        IfNode ifn = new IfNode(cl, tl, curr_lineno());
         RESULT = ifn;
     :}
     ;
     
 IterationStatement
-    ::= DO Statement WHILE LPAR Expression RPAR SEMI
-    | WHILE LPAR Expression RPAR Statement
-    | FOR LPAR Expression SEMI Expression SEMI Expression RPAR Statement
-    | FOR LPAR Expression SEMI SEMI RPAR Statement
-    | FOR LPAR SEMI Expression SEMI RPAR Statement
-    | FOR LPAR SEMI SEMI Expression RPAR Statement
-    | FOR LPAR Expression SEMI Expression SEMI RPAR Statement
-    | FOR LPAR Expression SEMI SEMI Expression RPAR Statement
-    | FOR LPAR SEMI Expression SEMI Expression RPAR Statement
-    | FOR LPAR SEMI SEMI RPAR Statement
-    | FOR LPAR VAR VariableDeclarationList SEMI Expression SEMI Expression RPAR Statement
-    | FOR LPAR VAR VariableDeclarationList SEMI Expression SEMI RPAR Statement
-    | FOR LPAR VAR VariableDeclarationList SEMI SEMI Expression RPAR Statement
-    | FOR LPAR VAR VariableDeclarationList SEMI SEMI RPAR Statement
+    ::= DO Statement:s WHILE LPAR Expression:e RPAR SEMI
+    {:
+        Label cl = new Label("Condition", curr_lineno());
+        cl.addChild((Node)e);
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        WhileOp w = new WhileOp("DO WHILE",bl, cl, curr_lineno());
+        RESULT = w;
+    :}
+    | WHILE LPAR Expression:e RPAR Statement:s
+    {:
+        Label cl = new Label("Condition", curr_lineno());
+        cl.addChild((Node)e);
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        WhileOp w = new WhileOp("WHILE",cl, bl, curr_lineno());
+        RESULT = w;
+    :}
+    | FOR LPAR Expression:e1 SEMI Expression:e2 SEMI Expression:e3 RPAR Statement:s
+    {:
+        Label il = new Label("Initialization", curr_lineno());
+        il.addChild((Node)e1);
+        Label cl = new Label("Condition", curr_lineno());
+        cl.addChild((Node)e2);
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ul.addChild((Node)e3);
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
+    | FOR LPAR Expression:e1 SEMI SEMI RPAR Statement:s
+    {:
+        Label il = new Label("Initialization", curr_lineno());
+        il.addChild((Node)e1);
+        Label cl = new Label("Condition", curr_lineno());
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
+    | FOR LPAR SEMI Expression:e2 SEMI RPAR Statement:s
+    {:
+        Label il = new Label("Initialization", curr_lineno());
+        Label cl = new Label("Condition", curr_lineno());
+        cl.addChild((Node)e2);
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
+    | FOR LPAR SEMI SEMI Expression:e3 RPAR Statement:s
+    {:
+        Label il = new Label("Initialization", curr_lineno());
+        Label cl = new Label("Condition", curr_lineno());
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ul.addChild((Node)e3);
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
+    | FOR LPAR Expression:e1 SEMI Expression:e2 SEMI RPAR Statement:s
+    {:
+        Label il = new Label("Initialization", curr_lineno());
+        il.addChild((Node)e1);
+        Label cl = new Label("Condition", curr_lineno());
+        cl.addChild((Node)e2);
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
+    | FOR LPAR Expression:e1 SEMI SEMI Expression:e3 RPAR Statement:s
+    {:
+        Label il = new Label("Initialization", curr_lineno());
+        il.addChild((Node)e1);
+        Label cl = new Label("Condition", curr_lineno());
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ul.addChild((Node)e3);
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
+    | FOR LPAR SEMI Expression:e2 SEMI Expression:e3 RPAR Statement:s
+    {:
+        Label il = new Label("Initialization", curr_lineno());
+        Label cl = new Label("Condition", curr_lineno());
+        cl.addChild((Node)e2);
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ul.addChild((Node)e3);
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
+    | FOR LPAR SEMI SEMI RPAR Statement:s
+    {:
+        Label il = new Label("Initialization", curr_lineno());
+        Label cl = new Label("Condition", curr_lineno());
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
+    | FOR LPAR VAR VariableDeclarationList:e1 SEMI Expression:e2 SEMI Expression:e3 RPAR Statement:s
+    {:
+        Label il = new Label("Initialization", curr_lineno());
+        il.addChild((Node)e1);
+        Label cl = new Label("Condition", curr_lineno());
+        cl.addChild((Node)e2);
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ul.addChild((Node)e3);
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
+    | FOR LPAR VAR VariableDeclarationList:e1 SEMI Expression:e2 SEMI RPAR Statement:s
+    {:
+        Label il = new Label("Initialization", curr_lineno());
+        il.addChild((Node)e1);
+        Label cl = new Label("Condition", curr_lineno());
+        cl.addChild((Node)e2);
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
+    | FOR LPAR VAR VariableDeclarationList:e1 SEMI SEMI Expression:e3 RPAR Statement:s
+    {:
+        Label il = new Label("Initialization", curr_lineno());
+        il.addChild((Node)e1);
+        Label cl = new Label("Condition", curr_lineno());
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ul.addChild((Node)e3);
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
+    | FOR LPAR VAR VariableDeclarationList:e1 SEMI SEMI RPAR Statement:s
+    {:
+        Label il = new Label("Initialization", curr_lineno());
+        il.addChild((Node)e1);
+        Label cl = new Label("Condition", curr_lineno());
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
     | FOR LPAR LexicalDeclaration Expression SEMI Expression RPAR Statement
     | FOR LPAR LexicalDeclaration Expression SEMI RPAR Statement
     | FOR LPAR LexicalDeclaration SEMI Expression RPAR Statement
     | FOR LPAR LexicalDeclaration SEMI RPAR Statement
-    | FOR LPAR LeftHandSideExpression IN Expression RPAR Statement
+    | FOR LPAR LeftHandSideExpression:lh IN Expression:e RPAR Statement:s
+    {:
+        Operation b = new Operation("IN", (Node)lh, (Node)e, curr_lineno());
+        Label il = new Label("Initialization", curr_lineno());
+        Label cl = new Label("Condition", curr_lineno());
+        cl.addChild(b);
+        Label bl = new Label("Body", curr_lineno());
+        bl.addChild((Node)s);
+        Label ul = new Label("Update", curr_lineno());
+        ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
+        RESULT = w;
+    :}
     | FOR LPAR VAR ForBinding IN Expression RPAR Statement
     | FOR LPAR ForDeclaration IN Expression RPAR Statement
     | FOR LPAR LeftHandSideExpression OF AssignmentExpression RPAR Statement
@@ -892,7 +1298,15 @@ BreakStatement
     
 ReturnStatement
     ::= RETURN SEMI
-    | RETURN Expression SEMI
+    {:
+        Return r = new Return(curr_lineno());
+        RESULT = r;
+    :}
+    | RETURN Expression:e SEMI
+    {:
+         Return r = new Return((Node)e,curr_lineno());
+        RESULT = r;
+    :}
     ;
     
 WithStatement
@@ -900,31 +1314,88 @@ WithStatement
     ;
     
 SwitchStatement
-    ::= SWITCH LPAR Expression RPAR CaseBlock
+    ::= SWITCH LPAR Expression:e RPAR CaseBlock:cb
+    {:
+        Label l = new Label("Expression", curr_lineno());
+        l.addChild((Node)e);
+        Switch sw = new Switch(l, curr_lineno());
+        if (cb instanceof ArrayList){
+            cb = (ArrayList<Node>)cb;
+            Iterator it = ((ArrayList) cb).iterator();
+            while(it.hasNext()){
+            	sw.addChild(((Node)it.next()));
+            }
+        }
+        else{
+            if(cb != null)
+                sw.addChild((Node)cb);
+        }
+        RESULT = sw;
+    :}
     ;
     
 CaseBlock
-    ::= LBPAR CaseClauses RBPAR
+    ::= LBPAR CaseClauses:cc RBPAR
+    {:
+        RESULT = cc;
+    :}
     | LBPAR RBPAR
-    | LBPAR CaseClauses DefaultCase CaseClauses RBPAR
-    | LBPAR CaseClauses DefaultCase RBPAR
-    | LBPAR DefaultCase CaseClauses RBPAR
-    | LBPAR DefaultCase RBPAR
+    | LBPAR CaseClauses:cc DefaultCase:d CaseClauses:cc2 RBPAR
+    {:
+        ((ArrayList<Node>)cc).add((Node)d);
+        ((ArrayList<Node>)cc).addAll((ArrayList<Node>)cc2);
+        RESULT = cc;
+    :}
+    | LBPAR CaseClauses:cc DefaultCase:d RBPAR
+    {:
+        ((ArrayList<Node>)cc).add((Node)d);
+        RESULT = cc;
+    :}
+    | LBPAR DefaultCase:d CaseClauses:cc RBPAR
+    {:
+        ((ArrayList<Node>)cc).add((Node)d);
+        RESULT = cc;
+    :}
+    | LBPAR DefaultCase:d RBPAR
+    {:
+        RESULT = d;
+    :}
     ;
     
 CaseClauses
-    ::= CaseClause
-    | CaseClauses CaseClause
+    ::= CaseClause:cc
+    {:
+        ArrayList<Node> list = new ArrayList<Node>();
+        list.add((Node)cc);
+        RESULT = list;
+    :}
+    | CaseClauses:cl CaseClause:cc
+    {:
+        ((ArrayList<Node>)cl).add((Node)cc);
+        RESULT = cl;
+    :}
     ;
     
 CaseClause
-    ::= CASE Expression COLON StatementList
-    | CASE Expression COLON
+    ::= CASE Expression:e COLON StatementList:sl
+    {:
+        RESULT = new Clause("CASE",  (Node)e, (Node)sl, curr_lineno());
+    :}
+    | CASE Expression:e COLON
+    {:
+        RESULT = new Clause("CASE", (Node)e, curr_lineno());
+    :}
     ;
     
 DefaultCase
-    ::= DEFAULT COLON StatementList
+    ::= DEFAULT COLON StatementList:sl
+    {:
+        RESULT = new Clause("DEFAULT", (Node)sl, curr_lineno());
+    :}
     | DEFAULT COLON
+    {:
+        RESULT = new Clause("DEFAULT", curr_lineno());
+    :}
     ;
     
 LabeledStatement

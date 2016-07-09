@@ -7,10 +7,10 @@
 public class sym {
   /* terminals */
   public static final int ANDEQ = 48;
+  public static final int GT = 27;
   public static final int TYPEOF = 79;
   public static final int ARROW = 51;
   public static final int BYNARYLITERAL = 97;
-  public static final int RANG = 27;
   public static final int CONST = 71;
   public static final int REGEXLITERAL = 101;
   public static final int TARGET = 70;
@@ -24,6 +24,7 @@ public class sym {
   public static final int THROW = 67;
   public static final int THREERANG = 38;
   public static final int IDENTIFIERNAME = 90;
+  public static final int LT = 26;
   public static final int LOGOR = 40;
   public static final int YIELD = 68;
   public static final int NOT = 19;
@@ -104,7 +105,6 @@ public class sym {
   public static final int CASE = 63;
   public static final int NEW = 57;
   public static final int LBPAR = 2;
-  public static final int LANG = 26;
   public static final int NEQ = 33;
   public static final int AND = 24;
   public static final int STATIC = 93;
@@ -140,8 +140,8 @@ public class sym {
   "MOD",
   "AND",
   "OR",
-  "LANG",
-  "RANG",
+  "LT",
+  "GT",
   "HAT",
   "QUESTION",
   "LEQ",
