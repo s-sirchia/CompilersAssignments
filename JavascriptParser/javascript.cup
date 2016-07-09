@@ -2,32 +2,24 @@ import java_cup.runtime.*;
 
 action code {:
     int curr_lineno() {
-	return ((CoolTokenLexer)parser.getScanner()).curr_lineno();
+	return ((JavascriptLexer)parser.getScanner()).curr_lineno();
     }
-
-    AbstractSymbol curr_filename() {
-	return ((CoolTokenLexer)parser.getScanner()).curr_filename();
+    
+    int curr_colno() {
+	return ((JavascriptLexer)parser.getScanner()).curr_colno();
     }
+    
 :} 
 
 parser code {:
     int omerrs = 0;
 
-    public void syntax_error(Symbol cur_token) {
+    public void syntax_error(Symbol cur_token){
         int lineno = action_obj.curr_lineno();
-	String filename = action_obj.curr_filename().getString();
-        System.err.print("\"" + filename + "\", line " + lineno + 
-		         ": parse error at or near ");
-        Utilities.printToken(cur_token);
-	omerrs++;
-	if (omerrs>50) {
-	   System.err.println("More than 50 errors");
-	   System.exit(1);
-	}
+	System.err.println("Syntax error at "+ cur_token + " at line " + (lineno + 1));
+	
     }
 
-    public void unrecovered_syntax_error(Symbol cur_token) {
-    }
 :}
 
 terminal LBPAR, RBPAR, LPAR, RPAR, LSQPAR, RSQPAR, DOT, DOT3, COMMA, SEMI, COLON, ASSIGN, DPLUS, DMINUS, PLUS, MINUS, TILDE, NOT, STAR, DIV, DIVEQ, MOD, AND, OR, LANG, RANG, HAT, QUESTION, LEQ, GEQ, EQ, NEQ, TYPEEQ, TYPENEQ, TWOLANG, TWORANG, THREERANG, LOGAND, LOGOR, PLUSEQ, MINUSEQ, STAREQ, MODEQ, TWOLANGEQ, TWORANGEQ, THREERANGEQ, ANDEQ, OREQ, HATEQ, ARROW, TWOSTAREQ;
@@ -38,43 +30,69 @@ terminal DECIMALLITERAL, OCTALLITERAL, HEXLITERAL, BYNARYLITERAL, SIGNEDINTEGER;
 terminal COMMENT, STRING_LITERAL, REGEXLITERAL, TEMPLATE, ERROR, ERROR_B, NULL, BOOLEANLITERAL;
 nonterminal IdentifierReference, BindingIdentifier, LabelIdentifier, PrimaryExpression;
 nonterminal Literal, ArrayLiteral, ObjectLiteral, FunctionExpression, ClassExpression, GeneratorExpression;
-nonterminal TemplateLiteral, CPExpAAParList, Expression, NumericLiteral, Elision, ElisionP, ElementList, AssignmentExpression, SpreadElement, ElementListP, PropertyDefinitionList, PropertyDefinition, PropertyDefinitionListP,
+nonterminal TemplateLiteral, CPExpAAParList, Expression, NumericLiteral, Elision, ElementList, AssignmentExpression, SpreadElement, PropertyDefinitionList, PropertyDefinition,
 PropertyName, LiteralPropertyName, ComputedPropertyName, CoverInizializedName, Initializer, MethodDefinition,
-MemberExpression, MemberExpressionP, SuperProperty, MetaProperty, Arguments, NewTarget, NewExpression,
-CallExpression, CallExpressionP, SuperCall, ArgumentList, ArgumentListP, LeftHandSideExpression, UpdateExpression, UnaryExpression, ExponentiationExpression, MultiplicativeExpression, MultiplicativeExpressionP, MultiplicativeOperator, AdditiveExpression, AdditiveExpressionP, ShiftExpression, ShiftExpressionP, RelationalExpression, RelationalExpressionP, EqualityExpression, EqualityExpressionP, BitwiseAndExpression, BitwiseAndExpressionP, BitwiseXOrExpression, BitwiseXOrExpressionP,  BitwiseOrExpression, BitwiseOrExpressionP, LogicalAndExpression, LogicalAndExpressionP, LogicalOrExpression, LogicalOrExpressionP, ConditionalExpression, YieldExpression, AssignmentOperator, AssignmentPattern, ObjectAssignmentPattern, ArrayAssignmentPattern, AssignmentPropertyList, AssignmentRestElement, AssignmentElementList, AssignmentProperty, AssignmentPropertyListP, AssignmentElisionElement, AssignmentElementListP, AssignmentElement, DestructuringAssignmentTarget, ExpressionP, Statement, BlockStatement, VariableStatement, EmptyStatement, ExpressionStatement
-, IfStatement, BreakableStatement, ContinueStatement, BreakStatement, ReturnStatement, WithStatement, LabeledStatement, ThrowStatement, TryStatement, DebuggerStatement, Declaration, HoistableDeclaration, ClassDeclaration, LexicalDeclaration, 
-FunctionDeclaration, GeneratorDeclaration, IterationStatement, SwitchStatement, Block, StatementList, StatementListItem, StatementListP, LetOrConst, BindingList, LexicalBinding, BindingListP, BindingPattern, VariableDeclarationList, VariableDeclaration, VariableDeclarationListP, ObjectBindingPattern, ArrayBindingPattern, BindingPropertyList, BindingRestElement, BindingElementList, BindingProperty, BindingPropertyListP, BindingElisionElement, BindingElementListP,
-BindingElement, SingleNameBinding, ForBinding, ForDeclaration, CaseBlock, CaseClauses, DefaultCase, CaseClause, CaseClausesP, LabeledItem, Catch, Finally, CatchParameter, FormalParameters, FunctionBody, StrictFormalParameters, FormalParameterList, FunctionRestParameter, FormalList, FormalParameter, FormalListP, FunctionStatementList, ArrowFunction, ArrowParameters,  ConciseBody, ArrowFormalParameters, GeneratorMethod, PropertySetParameterList, GeneratorBody, ClassTail, ClassHeritage, ClassBody, ClassElementList, ClassElement, ClassElementListP, Script, ScriptBody;
+MemberExpression, SuperProperty, MetaProperty, Arguments, NewTarget, NewExpression,
+CallExpression, SuperCall, ArgumentList, LeftHandSideExpression, UpdateExpression, UnaryExpression, ExponentiationExpression, MultiplicativeExpression, MultiplicativeOperator, AdditiveExpression, ShiftExpression, RelationalExpression,  EqualityExpression, BitwiseAndExpression, BitwiseXOrExpression,  BitwiseOrExpression, LogicalAndExpression, LogicalOrExpression, ConditionalExpression, YieldExpression, AssignmentOperator, AssignmentPattern, ObjectAssignmentPattern, ArrayAssignmentPattern, AssignmentPropertyList, AssignmentRestElement, AssignmentElementList, AssignmentProperty, AssignmentElisionElement, AssignmentElement, DestructuringAssignmentTarget, Statement, BlockStatement, VariableStatement, EmptyStatement, ExpressionStatement, IfStatement, BreakableStatement, ContinueStatement, BreakStatement, ReturnStatement, WithStatement, LabeledStatement, ThrowStatement, TryStatement, DebuggerStatement, Declaration, HoistableDeclaration, ClassDeclaration, LexicalDeclaration, 
+FunctionDeclaration, GeneratorDeclaration, IterationStatement, SwitchStatement, Block, StatementList, StatementListItem,  LetOrConst, BindingList, LexicalBinding, BindingPattern, VariableDeclarationList, VariableDeclaration, ObjectBindingPattern, ArrayBindingPattern, BindingPropertyList, BindingRestElement, BindingElementList, BindingProperty, BindingElisionElement, Identifier,
+BindingElement, SingleNameBinding, ForBinding, ForDeclaration, CaseBlock, CaseClauses, DefaultCase, CaseClause, LabeledItem, Catch, Finally, CatchParameter, FormalParameters, FunctionBody, StrictFormalParameters, FormalParameterList, FunctionRestParameter, FormalList, FormalParameter, FunctionStatementList, ArrowFunction, ArrowParameters,  ConciseBody, ArrowFormalParameters, GeneratorMethod, PropertySetParameterList, GeneratorBody, ClassTail, ClassHeritage, ClassBody, ClassElementList, ClassElement, Script, ScriptBody, YieldExpressionP;
 
 start with Script;
     
 Script
-    ::= ScriptBody
+    ::= ScriptBody:sb
+    {:
+        JSTree.tree.getRoot().addChild((Node)sb);
+    :}
     ;
     
 ScriptBody
-    ::= StatementList
+    ::= StatementList:sl
+    {:
+        RESULT = sl;
+    :}
     ;
     
 
 IdentifierReference
-	::= IDENTIFIERNAME
-	| YIELD
+	::= Identifier:id
+    {:
+        RESULT = id;
+    :}
 	;
-
+    
 BindingIdentifier
-	::= IDENTIFIERNAME
-	| YIELD
+	::= Identifier:id
+    {:
+        RESULT = id;
+    :}
 	;
-	
+    
+Identifier
+    ::= IDENTIFIERNAME:in
+    {:
+        System.out.println("line: "+curr_lineno()+" "+""+in);
+        RESULT = new Identifier(in, curr_lineno());
+    :}
+    ;
+
 LabelIdentifier
-	::= IDENTIFIERNAME
-	| YIELD
+	::= Identifier:id
+    {:
+        RESULT = id;
+    :}
 	;
 
 PrimaryExpression
 	::= THIS
-	| Literal
+    | IdentifierReference:ir
+    {:
+        RESULT = ir;
+    :}
+	| Literal:l
+    {:
+        RESULT = l;
+    :}
 	| ArrayLiteral
 	| ObjectLiteral
 	| FunctionExpression
@@ -90,40 +108,67 @@ CPExpAAParList
 	::= LPAR Expression RPAR
 	| LPAR RPAR
 	| LPAR DOT3 BindingIdentifier RPAR
+    | LPAR DOT3 BindingPattern RPAR
 	| LPAR Expression COMMA DOT3 BindingIdentifier RPAR
+    | LPAR Expression COMMA DOT3 BindingPattern RPAR
 	;
-    
-NumericLiteral
-    ::= DECIMALLITERAL
-    | OCTALLITERAL
-    | HEXLITERAL
-    | BYNARYLITERAL
-    | SIGNEDINTEGER
-    ;
     
 Literal
     ::= NULL
     | BOOLEANLITERAL
-    | NumericLiteral
+    | NumericLiteral:nl
+    {:
+        RESULT = new Literal(nl, curr_lineno(), new Node("int"));
+    :}
     | STRING_LITERAL
     ;
     
-Elision
-    ::= COMMA
-    | Elision COMMA
+NumericLiteral
+    ::= DECIMALLITERAL:num
+    {:
+        System.out.println("line: "+curr_lineno()+" "+""+num);
+        RESULT = num;
+    :}
+    | OCTALLITERAL:num
+    {:
+        System.out.println("line: "+curr_lineno()+" "+""+num);
+    :}
+    | HEXLITERAL:num
+    {:
+        System.out.println("line: "+curr_lineno()+" "+""+num);
+    :}
+    | BYNARYLITERAL:num
+    {:
+        System.out.println("line: "+curr_lineno()+" "+""+num);
+    :}
+    | SIGNEDINTEGER:num
+    {:
+        System.out.println("line: "+curr_lineno()+" "+""+num);
+    :}
     ;
     
 ArrayLiteral
-    ::= LSQPAR ElisionP RSQPAR
+    ::= LSQPAR Elision RSQPAR
+    | LSQPAR RSQPAR
     | LSQPAR ElementList RSQPAR
-    | LSQPAR ElementList ElisionP RSQPAR
+    | LSQPAR ElementList COMMA Elision RSQPAR
+    | LSQPAR ElementList COMMA RSQPAR
     ;
     
 ElementList
     ::= Elision AssignmentExpression
+    | AssignmentExpression
     | Elision SpreadElement
+    | SpreadElement
     | ElementList COMMA Elision AssignmentExpression
-    | ElementList COMMA ElisionP SpreadElement
+    | ElementList COMMA AssignmentExpression
+    | ElementList COMMA Elision SpreadElement
+    | ElementList COMMA SpreadElement
+    ;
+
+Elision
+    ::= COMMA
+    | Elision COMMA
     ;
     
 SpreadElement
@@ -168,11 +213,17 @@ CoverInizializedName
     ;
     
 Initializer
-    ::= ASSIGN AssignmentExpression
+    ::= ASSIGN AssignmentExpression:ae
+    {:
+        RESULT = ae;
+    :}
     ;
 
 MemberExpression
-    ::= PrimaryExpression
+    ::= PrimaryExpression:pe
+    {:
+        RESULT = pe;
+    :}
     | MemberExpression LSQPAR Expression RSQPAR
     | MemberExpression DOT IDENTIFIERNAME
     | SuperProperty
@@ -194,7 +245,10 @@ NewTarget
     ;
 
 NewExpression
-    ::= MemberExpression
+    ::= MemberExpression:me
+    {:
+        RESULT = me;
+    :}
     | NEW NewExpression
     ;
 
@@ -214,7 +268,7 @@ Arguments
     ::= LPAR RPAR
     | LPAR ArgumentList RPAR
     ;
-
+    
 ArgumentList
     ::= AssignmentExpression
     | DOT3 AssignmentExpression
@@ -223,12 +277,18 @@ ArgumentList
     ;
     
 LeftHandSideExpression
-    ::= NewExpression
+    ::= NewExpression:ne
+    {:
+        RESULT = ne;
+    :}
     | CallExpression
     ;
 
 UpdateExpression
-    ::= LeftHandSideExpression
+    ::= LeftHandSideExpression:lh
+    {:
+        RESULT = lh;
+    :}
     | LeftHandSideExpression DPLUS
     | LeftHandSideExpression DMINUS
     | DPLUS UnaryExpression
@@ -236,7 +296,10 @@ UpdateExpression
     ;
     
 UnaryExpression
-    ::= UpdateExpression
+    ::= UpdateExpression:ue
+    {:
+        RESULT = ue;
+    :}
     | DELETE UnaryExpression
     | VOID UnaryExpression
     | TYPEOF UnaryExpression
@@ -247,12 +310,18 @@ UnaryExpression
     ;
     
 ExponentiationExpression
-    ::= UnaryExpression
+    ::= UnaryExpression:ue
+    {:
+        RESULT = ue;
+    :}
     | UpdateExpression STAR STAR ExponentiationExpression
     ;
     
 MultiplicativeExpression
-    ::= ExponentiationExpression
+    ::= ExponentiationExpression:ee
+    {:
+        RESULT = ee;
+    :}
     | MultiplicativeExpression MultiplicativeOperator ExponentiationExpression
     ;
     
@@ -263,20 +332,29 @@ MultiplicativeOperator
     ;
     
 AdditiveExpression
-    ::= MultiplicativeExpression
+    ::= MultiplicativeExpression:me
+    {:
+        RESULT = me;
+    :}
     | AdditiveExpression PLUS MultiplicativeExpression
     | AdditiveExpression MINUS MultiplicativeExpression
     ;
     
 ShiftExpression
-    ::= AdditiveExpression
+    ::= AdditiveExpression:ae
+    {:
+        RESULT = ae;
+    :}
     | ShiftExpression TWOLANG AdditiveExpression
     | ShiftExpression TWORANG AdditiveExpression
     | ShiftExpression THREERANG AdditiveExpression
     ;
     
 RelationalExpression
-    ::= ShiftExpression
+    ::= ShiftExpression:se
+    {:
+        RESULT = se;
+    :}
     | RelationalExpression LANG ShiftExpression
     | RelationalExpression RANG ShiftExpression
     | RelationalExpression LEQ ShiftExpression
@@ -286,7 +364,10 @@ RelationalExpression
     ;
     
 EqualityExpression
-    ::= RelationalExpression
+    ::= RelationalExpression:re
+    {:
+        RESULT = re;
+    :}
     | EqualityExpression EQ RelationalExpression
     | EqualityExpression NEQ RelationalExpression
     | EqualityExpression TYPEEQ RelationalExpression
@@ -294,43 +375,76 @@ EqualityExpression
     ;
     
 BitwiseAndExpression
-    ::= EqualityExpression
+    ::= EqualityExpression:ee
+    {:
+        RESULT = ee;
+    :}
     | BitwiseAndExpression AND EqualityExpression
     ;
     
     
 BitwiseXOrExpression
-    ::= BitwiseAndExpression
+    ::= BitwiseAndExpression:ba
+    {:
+        RESULT = ba;
+    :}
     | BitwiseXOrExpression HAT BitwiseAndExpression
     ;
     
 BitwiseOrExpression
-    ::= BitwiseXOrExpression
+    ::= BitwiseXOrExpression:bx
+    {:
+        RESULT = bx;
+    :}
     | BitwiseOrExpression OR BitwiseXOrExpression
     ;
 
 LogicalAndExpression
-    ::= BitwiseOrExpression
+    ::= BitwiseOrExpression:bo
+    {:
+        RESULT = bo;
+    :}
     | LogicalAndExpression LOGAND BitwiseOrExpression
     ;
 
 LogicalOrExpression
-    ::= LogicalAndExpression
+    ::= LogicalAndExpression:la
+    {:
+        RESULT = la;
+    :}
     | LogicalOrExpression LOGOR LogicalAndExpression
     ;
     
 ConditionalExpression
-    ::= LogicalOrExpression
+    ::= LogicalOrExpression:lo
+    {:
+        RESULT = lo;
+    :}
     | LogicalOrExpression QUESTION AssignmentExpression COLON AssignmentExpression
     ;
     
 AssignmentExpression
-    ::= ConditionalExpression
+    ::= ConditionalExpression:ce
+    {:
+        RESULT = ce;
+    :}
     | YieldExpression
     | LeftHandSideExpression ASSIGN AssignmentExpression
+    {:
+        System.out.println("line: "+curr_lineno()+" AssignmentExpression -> LeftHandSideExpression ASSIGN AssignmentExpression");
+    :}
     | LeftHandSideExpression AssignmentOperator AssignmentExpression
+    {:
+        System.out.println("line: "+curr_lineno()+" AssignmentExpression -> LeftHandSideExpression AssignmentOperator AssignmentExpression");
+    :}
+    | IdentifierReference:ir Initializer:i
+    {:
+        Assign a = new Assign(null, (Node)ir, (Node)i, curr_lineno());
+        RESULT = a;
+    :}
     ;
-    
+
+/*    
 AssignmentPattern
     ::= ObjectAssignmentPattern
     | ArrayAssignmentPattern
@@ -344,8 +458,14 @@ ObjectAssignmentPattern
     
 ArrayAssignmentPattern
     ::= LSQPAR Elision AssignmentRestElement RSQPAR
+    | LSQPAR Elision RSQPAR
+    | LSQPAR AssignmentRestElement RSQPAR
+    | LSQPAR RSQPAR
     | LSQPAR AssignmentElementList RSQPAR
     | LSQPAR AssignmentElementList COMMA Elision AssignmentRestElement RSQPAR
+    | LSQPAR AssignmentElementList COMMA Elision RSQPAR
+    | LSQPAR AssignmentElementList COMMA AssignmentRestElement RSQPAR
+    | LSQPAR AssignmentElementList COMMA RSQPAR
     ;
 
 AssignmentPropertyList
@@ -360,15 +480,18 @@ AssignmentElementList
  
 AssignmentElisionElement
     ::= Elision AssignmentElement
+    | AssignmentElement
     ;
 
 AssignmentProperty
     ::= IdentifierReference Initializer
+    | IdentifierReference
     | PropertyName COLON AssignmentElement
     ;
     
 AssignmentElement
     ::= DestructuringAssignmentTarget Initializer
+    | DestructuringAssignmentTarget
     ;
     
 AssignmentRestElement
@@ -378,7 +501,8 @@ AssignmentRestElement
 DestructuringAssignmentTarget
     ::= LeftHandSideExpression
     ;
-    
+*/
+   
 AssignmentOperator
     ::= STAREQ
     | DIVEQ
@@ -395,7 +519,10 @@ AssignmentOperator
     ;
 
 Expression
-    ::= AssignmentExpression
+    ::= AssignmentExpression:ae
+    {:
+        RESULT = ae;
+    :}
     | Expression COMMA AssignmentExpression
     ;
     
@@ -403,7 +530,10 @@ Statement
     ::= BlockStatement
     | VariableStatement
     | EmptyStatement
-    | ExpressionStatement
+    | ExpressionStatement:es
+    {:
+        RESULT = es;
+    :}
     | IfStatement
     | BreakableStatement
     | ContinueStatement
@@ -434,6 +564,9 @@ BreakableStatement
     
 BlockStatement
     ::= Block
+    {:
+        System.out.println("line: "+curr_lineno()+" "+"line: "+curr_lineno()+" "+"BlockStatement -> Block");
+    :}
     ;
     
 Block
@@ -441,11 +574,19 @@ Block
     ;
     
 StatementList
-    ::= StatementListItem 
+    ::= StatementListItem:sli
+    {:
+        StatementList list = new StatementList();
+        list.addChild((Node)sli);
+        RESULT = list;
+    :}
     | StatementList StatementListItem;
     
 StatementListItem
-    ::= Statement
+    ::= Statement:s
+    {:
+        RESULT = s;
+    :}
     | Declaration
     ;
 
@@ -465,11 +606,15 @@ BindingList
     
 LexicalBinding
     ::= BindingIdentifier Initializer
+    | BindingIdentifier
     | BindingPattern Initializer
     ;
     
 VariableStatement
     ::= VAR VariableDeclarationList SEMI
+     {:
+        System.out.println("line: "+curr_lineno()+" "+"line: "+curr_lineno()+" "+"VariableStatement -> VAR VariableDeclarationList SEMI");
+    :}
     ;
     
 VariableDeclarationList
@@ -479,6 +624,7 @@ VariableDeclarationList
     
 VariableDeclaration
     ::= BindingIdentifier Initializer
+    | BindingIdentifier
     | BindingPattern Initializer
     ;
     
@@ -495,8 +641,14 @@ ObjectBindingPattern
     
 ArrayBindingPattern
     ::= LSQPAR Elision BindingRestElement RSQPAR
+    | LSQPAR Elision RSQPAR
+    | LSQPAR BindingRestElement RSQPAR
+    | LSQPAR RSQPAR
     | LSQPAR BindingElementList RSQPAR
     | LSQPAR BindingElementList COMMA Elision BindingRestElement RSQPAR
+    | LSQPAR BindingElementList COMMA Elision RSQPAR
+    | LSQPAR BindingElementList COMMA BindingRestElement RSQPAR
+    | LSQPAR BindingElementList COMMA RSQPAR
     ;
     
 BindingPropertyList
@@ -511,6 +663,7 @@ BindingElementList
 
 BindingElisionElement
     ::= Elision BindingElement
+    | BindingElement
     ;
     
 BindingProperty
@@ -521,10 +674,12 @@ BindingProperty
 BindingElement
     ::= SingleNameBinding
     | BindingPattern Initializer
+    | BindingPattern
     ;
     
 SingleNameBinding
     ::= BindingIdentifier Initializer
+    | BindingIdentifier
     ;
     
 BindingRestElement
@@ -537,7 +692,10 @@ EmptyStatement
     ;
     
 ExpressionStatement
-    ::= Expression SEMI
+    ::= Expression:e SEMI
+    {:
+        RESULT = e;
+    :}
     ;
     
 IfStatement
@@ -549,8 +707,21 @@ IterationStatement
     ::= DO Statement WHILE LPAR Expression RPAR SEMI
     | WHILE LPAR Expression RPAR Statement
     | FOR LPAR Expression SEMI Expression SEMI Expression RPAR Statement
+    | FOR LPAR Expression SEMI SEMI RPAR Statement
+    | FOR LPAR SEMI Expression SEMI RPAR Statement
+    | FOR LPAR SEMI SEMI Expression RPAR Statement
+    | FOR LPAR Expression SEMI Expression SEMI RPAR Statement
+    | FOR LPAR Expression SEMI SEMI Expression RPAR Statement
+    | FOR LPAR SEMI Expression SEMI Expression RPAR Statement
+    | FOR LPAR SEMI SEMI RPAR Statement
     | FOR LPAR VAR VariableDeclarationList SEMI Expression SEMI Expression RPAR Statement
+    | FOR LPAR VAR VariableDeclarationList SEMI Expression SEMI RPAR Statement
+    | FOR LPAR VAR VariableDeclarationList SEMI SEMI Expression RPAR Statement
+    | FOR LPAR VAR VariableDeclarationList SEMI SEMI RPAR Statement
     | FOR LPAR LexicalDeclaration Expression SEMI Expression RPAR Statement
+    | FOR LPAR LexicalDeclaration Expression SEMI RPAR Statement
+    | FOR LPAR LexicalDeclaration SEMI Expression RPAR Statement
+    | FOR LPAR LexicalDeclaration SEMI RPAR Statement
     | FOR LPAR LeftHandSideExpression IN Expression RPAR Statement
     | FOR LPAR VAR ForBinding IN Expression RPAR Statement
     | FOR LPAR ForDeclaration IN Expression RPAR Statement
@@ -593,7 +764,11 @@ SwitchStatement
     
 CaseBlock
     ::= LBPAR CaseClauses RBPAR
+    | LBPAR RBPAR
     | LBPAR CaseClauses DefaultCase CaseClauses RBPAR
+    | LBPAR CaseClauses DefaultCase RBPAR
+    | LBPAR DefaultCase CaseClauses RBPAR
+    | LBPAR DefaultCase RBPAR
     ;
     
 CaseClauses
@@ -603,10 +778,12 @@ CaseClauses
     
 CaseClause
     ::= CASE Expression COLON StatementList
+    | CASE Expression COLON
     ;
     
 DefaultCase
     ::= DEFAULT COLON StatementList
+    | DEFAULT COLON
     ;
     
 LabeledStatement
@@ -652,6 +829,7 @@ FunctionDeclaration
     
 FunctionExpression
     ::= FUNCTION BindingIdentifier LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR
+    | FUNCTION LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR
     ;
     
 StrictFormalParameters
@@ -659,8 +837,8 @@ StrictFormalParameters
     ;
     
 FormalParameters
-    ::= FormalParameterList
-    |
+    ::= 
+    | FormalParameterList
     ;
     
 FormalParameterList
@@ -688,17 +866,20 @@ FunctionBody
     
 FunctionStatementList
     ::= StatementList
+    |
     ;
 
+/*
 ArrowFunction
     ::= ArrowParameters ARROW ConciseBody
     ;
+
  
 ArrowParameters
     ::= BindingIdentifier
     | CPExpAAParList
     ;
-    
+ 
 ConciseBody
     ::= AssignmentExpression
     | LBPAR FunctionBody RBPAR
@@ -707,7 +888,8 @@ ConciseBody
 ArrowFormalParameters
     ::= LPAR StrictFormalParameters RPAR
     ;
-    
+*/
+
 MethodDefinition
     ::= PropertyName LPAR StrictFormalParameters RPAR LBPAR FunctionBody RBPAR
     | GeneratorMethod
@@ -730,6 +912,7 @@ GeneratorDeclaration
     
 GeneratorExpression
     ::= FUNCTION STAR BindingIdentifier LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR
+    | FUNCTION STAR LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR
     ;
     
 GeneratorBody
@@ -738,9 +921,13 @@ GeneratorBody
 
     
 YieldExpression
-    ::= YIELD
-    | YIELD AssignmentExpression
-    | YIELD STAR AssignmentExpression
+    ::= YIELD YieldExpressionP 
+    ;
+    
+YieldExpressionP
+    ::= AssignmentExpression
+    | STAR AssignmentExpression
+    |
     ;
     
 ClassDeclaration
@@ -750,10 +937,14 @@ ClassDeclaration
     
 ClassExpression
     ::= CLASS BindingIdentifier ClassTail
+    | CLASS ClassTail
     ;
    
 ClassTail
     ::= ClassHeritage LBPAR ClassBody RBPAR
+    | ClassHeritage LBPAR RBPAR
+    | LBPAR ClassBody RBPAR
+    | LBPAR RBPAR
     ;
     
 ClassHeritage

@@ -1,0 +1,829 @@
+Warning : Terminal "ARROW" was declared but never used
+Warning : Terminal "EXPORT" was declared but never used
+Warning : Terminal "ERROR" was declared but never used
+Warning : Terminal "COMMENT" was declared but never used
+Warning : Terminal "IMPORT" was declared but never used
+Warning : Terminal "ERROR_B" was declared but never used
+Warning : Terminal "TEMPLATE" was declared but never used
+Warning : Non terminal "ArrowParameters" was declared but never used
+Warning : Non terminal "ArrowFunction" was declared but never used
+Warning : Non terminal "DestructuringAssignmentTarget" was declared but never used
+Warning : Non terminal "AssignmentRestElement" was declared but never used
+Warning : Non terminal "AssignmentElisionElement" was declared but never used
+Warning : Non terminal "ConciseBody" was declared but never used
+Warning : Non terminal "AssignmentElement" was declared but never used
+Warning : Non terminal "AssignmentPattern" was declared but never used
+Warning : Non terminal "ObjectAssignmentPattern" was declared but never used
+Warning : Non terminal "AssignmentPropertyList" was declared but never used
+Warning : Non terminal "ArrowFormalParameters" was declared but never used
+Warning : Non terminal "ArrayAssignmentPattern" was declared but never used
+Warning : Non terminal "AssignmentElementList" was declared but never used
+Warning : Non terminal "AssignmentProperty" was declared but never used
+Warning : *** Shift/Reduce conflict found in state #104
+  between UnaryExpression ::= UpdateExpression (*) 
+  and     ExponentiationExpression ::= UpdateExpression (*) STAR STAR ExponentiationExpression 
+  under symbol STAR
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #322
+  between ShiftExpression ::= ShiftExpression TWOLANG AdditiveExpression (*) 
+  and     AdditiveExpression ::= AdditiveExpression (*) PLUS MultiplicativeExpression 
+  under symbol PLUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #322
+  between ShiftExpression ::= ShiftExpression TWOLANG AdditiveExpression (*) 
+  and     AdditiveExpression ::= AdditiveExpression (*) MINUS MultiplicativeExpression 
+  under symbol MINUS
+  Resolved in favor of shifting.
+
+Warning : *** Reduce/Reduce conflict found in state #336
+  between PropertyDefinition ::= IdentifierReference (*) 
+  and     PrimaryExpression ::= IdentifierReference (*) 
+  under symbols: {COMMA}
+  Resolved in favor of the second production.
+
+Warning : *** Shift/Reduce conflict found in state #336
+  between PrimaryExpression ::= IdentifierReference (*) 
+  and     Initializer ::= (*) ASSIGN AssignmentExpression 
+  under symbol ASSIGN
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #59
+  between LeftHandSideExpression ::= CallExpression (*) 
+  and     Arguments ::= (*) LPAR ArgumentList RPAR 
+  and     Arguments ::= (*) LPAR RPAR 
+  under symbol LPAR
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #59
+  between LeftHandSideExpression ::= CallExpression (*) 
+  and     CallExpression ::= CallExpression (*) LSQPAR Expression RSQPAR 
+  under symbol LSQPAR
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #311
+  between ShiftExpression ::= ShiftExpression TWORANG AdditiveExpression (*) 
+  and     AdditiveExpression ::= AdditiveExpression (*) PLUS MultiplicativeExpression 
+  under symbol PLUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #311
+  between ShiftExpression ::= ShiftExpression TWORANG AdditiveExpression (*) 
+  and     AdditiveExpression ::= AdditiveExpression (*) MINUS MultiplicativeExpression 
+  under symbol MINUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #321
+  between ShiftExpression ::= ShiftExpression THREERANG AdditiveExpression (*) 
+  and     AdditiveExpression ::= AdditiveExpression (*) PLUS MultiplicativeExpression 
+  under symbol PLUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #321
+  between ShiftExpression ::= ShiftExpression THREERANG AdditiveExpression (*) 
+  and     AdditiveExpression ::= AdditiveExpression (*) MINUS MultiplicativeExpression 
+  under symbol MINUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #291
+  between UpdateExpression ::= LeftHandSideExpression (*) 
+  and     UpdateExpression ::= LeftHandSideExpression (*) DPLUS 
+  under symbol DPLUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #291
+  between UpdateExpression ::= LeftHandSideExpression (*) 
+  and     UpdateExpression ::= LeftHandSideExpression (*) DMINUS 
+  under symbol DMINUS
+  Resolved in favor of shifting.
+
+Warning : *** Reduce/Reduce conflict found in state #338
+  between LiteralPropertyName ::= NumericLiteral (*) 
+  and     Literal ::= NumericLiteral (*) 
+  under symbols: {LPAR}
+  Resolved in favor of the second production.
+
+Warning : *** Reduce/Reduce conflict found in state #335
+  between Literal ::= STRING_LITERAL (*) 
+  and     LiteralPropertyName ::= STRING_LITERAL (*) 
+  under symbols: {LPAR}
+  Resolved in favor of the first production.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     ObjectLiteral ::= (*) LBPAR RBPAR 
+  and     ObjectLiteral ::= (*) LBPAR PropertyDefinitionList RBPAR 
+  and     ObjectLiteral ::= (*) LBPAR PropertyDefinitionList COMMA RBPAR 
+  under symbol LBPAR
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     CPExpAAParList ::= (*) LPAR Expression RPAR 
+  and     CPExpAAParList ::= (*) LPAR RPAR 
+  and     CPExpAAParList ::= (*) LPAR DOT3 BindingIdentifier RPAR 
+  and     CPExpAAParList ::= (*) LPAR DOT3 BindingPattern RPAR 
+  and     CPExpAAParList ::= (*) LPAR Expression COMMA DOT3 BindingIdentifier RPAR 
+  and     CPExpAAParList ::= (*) LPAR Expression COMMA DOT3 BindingPattern RPAR 
+  under symbol LPAR
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     ArrayLiteral ::= (*) LSQPAR ElementList RSQPAR 
+  and     ArrayLiteral ::= (*) LSQPAR ElementList COMMA Elision RSQPAR 
+  and     ArrayLiteral ::= (*) LSQPAR ElementList COMMA RSQPAR 
+  and     ArrayLiteral ::= (*) LSQPAR Elision RSQPAR 
+  and     ArrayLiteral ::= (*) LSQPAR RSQPAR 
+  under symbol LSQPAR
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     UpdateExpression ::= (*) DPLUS UnaryExpression 
+  under symbol DPLUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     UpdateExpression ::= (*) DMINUS UnaryExpression 
+  under symbol DMINUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     UnaryExpression ::= (*) PLUS UnaryExpression 
+  under symbol PLUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     UnaryExpression ::= (*) MINUS UnaryExpression 
+  under symbol MINUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     UnaryExpression ::= (*) TILDE UnaryExpression 
+  under symbol TILDE
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     UnaryExpression ::= (*) NOT UnaryExpression 
+  under symbol NOT
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     MemberExpression ::= (*) NEW MemberExpression Arguments 
+  and     NewTarget ::= (*) NEW DOT TARGET 
+  and     NewExpression ::= (*) NEW NewExpression 
+  under symbol NEW
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     PrimaryExpression ::= (*) THIS 
+  under symbol THIS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     UnaryExpression ::= (*) VOID UnaryExpression 
+  under symbol VOID
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     YieldExpression ::= (*) YIELD YieldExpressionP 
+  under symbol YIELD
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     ClassExpression ::= (*) CLASS ClassTail 
+  and     ClassExpression ::= (*) CLASS BindingIdentifier ClassTail 
+  under symbol CLASS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     SuperProperty ::= (*) SUPER LSQPAR Expression RSQPAR 
+  and     SuperProperty ::= (*) SUPER DOT IDENTIFIERNAME 
+  and     SuperCall ::= (*) SUPER Arguments 
+  under symbol SUPER
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     UnaryExpression ::= (*) DELETE UnaryExpression 
+  under symbol DELETE
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     UnaryExpression ::= (*) TYPEOF UnaryExpression 
+  under symbol TYPEOF
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     FunctionExpression ::= (*) FUNCTION BindingIdentifier LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR 
+  and     FunctionExpression ::= (*) FUNCTION LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR 
+  and     GeneratorExpression ::= (*) FUNCTION STAR BindingIdentifier LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR 
+  and     GeneratorExpression ::= (*) FUNCTION STAR LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR 
+  under symbol FUNCTION
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     Identifier ::= (*) IDENTIFIERNAME 
+  under symbol IDENTIFIERNAME
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     NumericLiteral ::= (*) DECIMALLITERAL 
+  under symbol DECIMALLITERAL
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     NumericLiteral ::= (*) OCTALLITERAL 
+  under symbol OCTALLITERAL
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     NumericLiteral ::= (*) HEXLITERAL 
+  under symbol HEXLITERAL
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     NumericLiteral ::= (*) BYNARYLITERAL 
+  under symbol BYNARYLITERAL
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     NumericLiteral ::= (*) SIGNEDINTEGER 
+  under symbol SIGNEDINTEGER
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     Literal ::= (*) STRING_LITERAL 
+  under symbol STRING_LITERAL
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     PrimaryExpression ::= (*) REGEXLITERAL 
+  under symbol REGEXLITERAL
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     Literal ::= (*) NULL 
+  under symbol NULL
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #24
+  between YieldExpressionP ::= (*) 
+  and     Literal ::= (*) BOOLEANLITERAL 
+  under symbol BOOLEANLITERAL
+  Resolved in favor of shifting.
+
+Warning : *** Reduce/Reduce conflict found in state #358
+  between AssignmentExpression ::= IdentifierReference Initializer (*) 
+  and     CoverInizializedName ::= IdentifierReference Initializer (*) 
+  under symbols: {COMMA}
+  Resolved in favor of the second production.
+
+Warning : *** Shift/Reduce conflict found in state #1
+  between NewExpression ::= MemberExpression (*) 
+  and     Arguments ::= (*) LPAR ArgumentList RPAR 
+  and     Arguments ::= (*) LPAR RPAR 
+  under symbol LPAR
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #1
+  between NewExpression ::= MemberExpression (*) 
+  and     MemberExpression ::= MemberExpression (*) LSQPAR Expression RSQPAR 
+  under symbol LSQPAR
+  Resolved in favor of shifting.
+
+Warning : *** Reduce/Reduce conflict found in state #650
+  between ClassExpression ::= CLASS BindingIdentifier ClassTail (*) 
+  and     ClassDeclaration ::= CLASS BindingIdentifier ClassTail (*) 
+  under symbols: {LPAR, LSQPAR, SEMI, DPLUS, DMINUS, PLUS, MINUS}
+  Resolved in favor of the second production.
+
+Warning : *** Reduce/Reduce conflict found in state #432
+  between GeneratorDeclaration ::= FUNCTION STAR BindingIdentifier LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR (*) 
+  and     GeneratorExpression ::= FUNCTION STAR BindingIdentifier LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR (*) 
+  under symbols: {LPAR, LSQPAR, SEMI, DPLUS, DMINUS, PLUS, MINUS}
+  Resolved in favor of the first production.
+
+Warning : *** Shift/Reduce conflict found in state #17
+  between ShiftExpression ::= AdditiveExpression (*) 
+  and     AdditiveExpression ::= AdditiveExpression (*) PLUS MultiplicativeExpression 
+  under symbol PLUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #17
+  between ShiftExpression ::= AdditiveExpression (*) 
+  and     AdditiveExpression ::= AdditiveExpression (*) MINUS MultiplicativeExpression 
+  under symbol MINUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #485
+  between UpdateExpression ::= LeftHandSideExpression (*) 
+  and     IterationStatement ::= FOR LPAR LeftHandSideExpression (*) IN Expression RPAR Statement 
+  under symbol IN
+  Resolved in favor of shifting.
+
+Warning : *** Reduce/Reduce conflict found in state #424
+  between FunctionDeclaration ::= FUNCTION LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR (*) 
+  and     FunctionExpression ::= FUNCTION LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR (*) 
+  under symbols: {LPAR, LSQPAR, SEMI, DPLUS, DMINUS, PLUS, MINUS}
+  Resolved in favor of the first production.
+
+Warning : *** Shift/Reduce conflict found in state #363
+  between NewExpression ::= MemberExpression (*) 
+  and     Arguments ::= (*) LPAR ArgumentList RPAR 
+  and     Arguments ::= (*) LPAR RPAR 
+  under symbol LPAR
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #363
+  between NewExpression ::= MemberExpression (*) 
+  and     MemberExpression ::= MemberExpression (*) LSQPAR Expression RSQPAR 
+  under symbol LSQPAR
+  Resolved in favor of shifting.
+
+Warning : *** Reduce/Reduce conflict found in state #437
+  between GeneratorDeclaration ::= FUNCTION STAR LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR (*) 
+  and     GeneratorExpression ::= FUNCTION STAR LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR (*) 
+  under symbols: {LPAR, LSQPAR, SEMI, DPLUS, DMINUS, PLUS, MINUS}
+  Resolved in favor of the first production.
+
+Warning : *** Shift/Reduce conflict found in state #402
+  between IfStatement ::= IF LPAR Expression RPAR Statement (*) 
+  and     IfStatement ::= IF LPAR Expression RPAR Statement (*) ELSE Statement 
+  under symbol ELSE
+  Resolved in favor of shifting.
+
+Warning : *** Reduce/Reduce conflict found in state #648
+  between ClassDeclaration ::= CLASS ClassTail (*) 
+  and     ClassExpression ::= CLASS ClassTail (*) 
+  under symbols: {LPAR, LSQPAR, SEMI, DPLUS, DMINUS, PLUS, MINUS}
+  Resolved in favor of the first production.
+
+Warning : *** Reduce/Reduce conflict found in state #419
+  between FunctionExpression ::= FUNCTION BindingIdentifier LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR (*) 
+  and     FunctionDeclaration ::= FUNCTION BindingIdentifier LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR (*) 
+  under symbols: {LPAR, LSQPAR, SEMI, DPLUS, DMINUS, PLUS, MINUS}
+  Resolved in favor of the second production.
+
+Warning : *** Reduce/Reduce conflict found in state #133
+  between LiteralPropertyName ::= IDENTIFIERNAME (*) 
+  and     Identifier ::= IDENTIFIERNAME (*) 
+  under symbols: {LPAR, COLON}
+  Resolved in favor of the second production.
+
+Warning : *** Shift/Reduce conflict found in state #74
+  between PrimaryExpression ::= IdentifierReference (*) 
+  and     Initializer ::= (*) ASSIGN AssignmentExpression 
+  under symbol ASSIGN
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #340
+  between ElementList ::= AssignmentExpression (*) 
+  and     ComputedPropertyName ::= LSQPAR AssignmentExpression (*) RSQPAR 
+  under symbol RSQPAR
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #56
+  between UpdateExpression ::= LeftHandSideExpression (*) 
+  and     UpdateExpression ::= LeftHandSideExpression (*) DPLUS 
+  under symbol DPLUS
+  Resolved in favor of shifting.
+
+Warning : *** Shift/Reduce conflict found in state #56
+  between UpdateExpression ::= LeftHandSideExpression (*) 
+  and     UpdateExpression ::= LeftHandSideExpression (*) DMINUS 
+  under symbol DMINUS
+  Resolved in favor of shifting.
+
+===== Terminals =====
+[0]EOF [1]error [2]LBPAR [3]RBPAR [4]LPAR 
+[5]RPAR [6]LSQPAR [7]RSQPAR [8]DOT [9]DOT3 
+[10]COMMA [11]SEMI [12]COLON [13]ASSIGN [14]DPLUS 
+[15]DMINUS [16]PLUS [17]MINUS [18]TILDE [19]NOT 
+[20]STAR [21]DIV [22]DIVEQ [23]MOD [24]AND 
+[25]OR [26]LANG [27]RANG [28]HAT [29]QUESTION 
+[30]LEQ [31]GEQ [32]EQ [33]NEQ [34]TYPEEQ 
+[35]TYPENEQ [36]TWOLANG [37]TWORANG [38]THREERANG [39]LOGAND 
+[40]LOGOR [41]PLUSEQ [42]MINUSEQ [43]STAREQ [44]MODEQ 
+[45]TWOLANGEQ [46]TWORANGEQ [47]THREERANGEQ [48]ANDEQ [49]OREQ 
+[50]HATEQ [51]ARROW [52]TWOSTAREQ [53]DO [54]IN 
+[55]IF [56]NEW [57]TRY [58]FOR [59]VAR 
+[60]ELSE [61]THIS [62]CASE [63]VOID [64]WITH 
+[65]BREAK [66]THROW [67]YIELD [68]CATCH [69]TARGET 
+[70]CONST [71]CLASS [72]SUPER [73]WHILE [74]RETURN 
+[75]EXPORT [76]DELETE [77]IMPORT [78]TYPEOF [79]SWITCH 
+[80]EXTENDS [81]DEFAULT [82]LET [83]OF [84]FINALLY 
+[85]DEBUGGER [86]FUNCTION [87]CONTINUE [88]INSTANCEOF [89]IDENTIFIERNAME 
+[90]GET [91]SET [92]STATIC [93]DECIMALLITERAL [94]OCTALLITERAL 
+[95]HEXLITERAL [96]BYNARYLITERAL [97]SIGNEDINTEGER [98]COMMENT [99]STRING_LITERAL 
+[100]REGEXLITERAL [101]TEMPLATE [102]ERROR [103]ERROR_B [104]NULL 
+[105]BOOLEANLITERAL 
+
+===== Non terminals =====
+[0]IdentifierReference [1]BindingIdentifier [2]LabelIdentifier [3]PrimaryExpression [4]Literal 
+[5]ArrayLiteral [6]ObjectLiteral [7]FunctionExpression [8]ClassExpression [9]GeneratorExpression 
+[10]TemplateLiteral [11]CPExpAAParList [12]Expression [13]NumericLiteral [14]Elision 
+[15]ElementList [16]AssignmentExpression [17]SpreadElement [18]PropertyDefinitionList [19]PropertyDefinition 
+[20]PropertyName [21]LiteralPropertyName [22]ComputedPropertyName [23]CoverInizializedName [24]Initializer 
+[25]MethodDefinition [26]MemberExpression [27]SuperProperty [28]MetaProperty [29]Arguments 
+[30]NewTarget [31]NewExpression [32]CallExpression [33]SuperCall [34]ArgumentList 
+[35]LeftHandSideExpression [36]UpdateExpression [37]UnaryExpression [38]ExponentiationExpression [39]MultiplicativeExpression 
+[40]MultiplicativeOperator [41]AdditiveExpression [42]ShiftExpression [43]RelationalExpression [44]EqualityExpression 
+[45]BitwiseAndExpression [46]BitwiseXOrExpression [47]BitwiseOrExpression [48]LogicalAndExpression [49]LogicalOrExpression 
+[50]ConditionalExpression [51]YieldExpression [52]AssignmentOperator [53]AssignmentPattern [54]ObjectAssignmentPattern 
+[55]ArrayAssignmentPattern [56]AssignmentPropertyList [57]AssignmentRestElement [58]AssignmentElementList [59]AssignmentProperty 
+[60]AssignmentElisionElement [61]AssignmentElement [62]DestructuringAssignmentTarget [63]Statement [64]BlockStatement 
+[65]VariableStatement [66]EmptyStatement [67]ExpressionStatement [68]IfStatement [69]BreakableStatement 
+[70]ContinueStatement [71]BreakStatement [72]ReturnStatement [73]WithStatement [74]LabeledStatement 
+[75]ThrowStatement [76]TryStatement [77]DebuggerStatement [78]Declaration [79]HoistableDeclaration 
+[80]ClassDeclaration [81]LexicalDeclaration [82]FunctionDeclaration [83]GeneratorDeclaration [84]IterationStatement 
+[85]SwitchStatement [86]Block [87]StatementList [88]StatementListItem [89]LetOrConst 
+[90]BindingList [91]LexicalBinding [92]BindingPattern [93]VariableDeclarationList [94]VariableDeclaration 
+[95]ObjectBindingPattern [96]ArrayBindingPattern [97]BindingPropertyList [98]BindingRestElement [99]BindingElementList 
+[100]BindingProperty [101]BindingElisionElement [102]Identifier [103]BindingElement [104]SingleNameBinding 
+[105]ForBinding [106]ForDeclaration [107]CaseBlock [108]CaseClauses [109]DefaultCase 
+[110]CaseClause [111]LabeledItem [112]Catch [113]Finally [114]CatchParameter 
+[115]FormalParameters [116]FunctionBody [117]StrictFormalParameters [118]FormalParameterList [119]FunctionRestParameter 
+[120]FormalList [121]FormalParameter [122]FunctionStatementList [123]ArrowFunction [124]ArrowParameters 
+[125]ConciseBody [126]ArrowFormalParameters [127]GeneratorMethod [128]PropertySetParameterList [129]GeneratorBody 
+[130]ClassTail [131]ClassHeritage [132]ClassBody [133]ClassElementList [134]ClassElement 
+[135]Script [136]ScriptBody [137]YieldExpressionP 
+
+===== Productions =====
+[0] $START ::= Script EOF 
+[1] Script ::= ScriptBody 
+[2] ScriptBody ::= StatementList 
+[3] IdentifierReference ::= Identifier 
+[4] BindingIdentifier ::= Identifier 
+[5] Identifier ::= IDENTIFIERNAME 
+[6] LabelIdentifier ::= Identifier 
+[7] PrimaryExpression ::= THIS 
+[8] PrimaryExpression ::= IdentifierReference 
+[9] PrimaryExpression ::= Literal 
+[10] PrimaryExpression ::= ArrayLiteral 
+[11] PrimaryExpression ::= ObjectLiteral 
+[12] PrimaryExpression ::= FunctionExpression 
+[13] PrimaryExpression ::= ClassExpression 
+[14] PrimaryExpression ::= GeneratorExpression 
+[15] PrimaryExpression ::= REGEXLITERAL 
+[16] PrimaryExpression ::= TemplateLiteral 
+[17] PrimaryExpression ::= CPExpAAParList 
+[18] CPExpAAParList ::= LPAR Expression RPAR 
+[19] CPExpAAParList ::= LPAR RPAR 
+[20] CPExpAAParList ::= LPAR DOT3 BindingIdentifier RPAR 
+[21] CPExpAAParList ::= LPAR DOT3 BindingPattern RPAR 
+[22] CPExpAAParList ::= LPAR Expression COMMA DOT3 BindingIdentifier RPAR 
+[23] CPExpAAParList ::= LPAR Expression COMMA DOT3 BindingPattern RPAR 
+[24] Literal ::= NULL 
+[25] Literal ::= BOOLEANLITERAL 
+[26] Literal ::= NumericLiteral 
+[27] Literal ::= STRING_LITERAL 
+[28] NumericLiteral ::= DECIMALLITERAL 
+[29] NumericLiteral ::= OCTALLITERAL 
+[30] NumericLiteral ::= HEXLITERAL 
+[31] NumericLiteral ::= BYNARYLITERAL 
+[32] NumericLiteral ::= SIGNEDINTEGER 
+[33] ArrayLiteral ::= LSQPAR Elision RSQPAR 
+[34] ArrayLiteral ::= LSQPAR RSQPAR 
+[35] ArrayLiteral ::= LSQPAR ElementList RSQPAR 
+[36] ArrayLiteral ::= LSQPAR ElementList COMMA Elision RSQPAR 
+[37] ArrayLiteral ::= LSQPAR ElementList COMMA RSQPAR 
+[38] ElementList ::= Elision AssignmentExpression 
+[39] ElementList ::= AssignmentExpression 
+[40] ElementList ::= Elision SpreadElement 
+[41] ElementList ::= SpreadElement 
+[42] ElementList ::= ElementList COMMA Elision AssignmentExpression 
+[43] ElementList ::= ElementList COMMA AssignmentExpression 
+[44] ElementList ::= ElementList COMMA Elision SpreadElement 
+[45] ElementList ::= ElementList COMMA SpreadElement 
+[46] Elision ::= COMMA 
+[47] Elision ::= Elision COMMA 
+[48] SpreadElement ::= DOT3 AssignmentExpression 
+[49] ObjectLiteral ::= LBPAR RBPAR 
+[50] ObjectLiteral ::= LBPAR PropertyDefinitionList RBPAR 
+[51] ObjectLiteral ::= LBPAR PropertyDefinitionList COMMA RBPAR 
+[52] PropertyDefinitionList ::= PropertyDefinition 
+[53] PropertyDefinitionList ::= PropertyDefinitionList COMMA PropertyDefinition 
+[54] PropertyDefinition ::= IdentifierReference 
+[55] PropertyDefinition ::= CoverInizializedName 
+[56] PropertyDefinition ::= PropertyName COLON AssignmentExpression 
+[57] PropertyDefinition ::= MethodDefinition 
+[58] PropertyName ::= LiteralPropertyName 
+[59] PropertyName ::= ComputedPropertyName 
+[60] LiteralPropertyName ::= IDENTIFIERNAME 
+[61] LiteralPropertyName ::= STRING_LITERAL 
+[62] LiteralPropertyName ::= NumericLiteral 
+[63] ComputedPropertyName ::= LSQPAR AssignmentExpression RSQPAR 
+[64] CoverInizializedName ::= IdentifierReference Initializer 
+[65] Initializer ::= ASSIGN AssignmentExpression 
+[66] MemberExpression ::= PrimaryExpression 
+[67] MemberExpression ::= MemberExpression LSQPAR Expression RSQPAR 
+[68] MemberExpression ::= MemberExpression DOT IDENTIFIERNAME 
+[69] MemberExpression ::= SuperProperty 
+[70] MemberExpression ::= MetaProperty 
+[71] MemberExpression ::= NEW MemberExpression Arguments 
+[72] SuperProperty ::= SUPER LSQPAR Expression RSQPAR 
+[73] SuperProperty ::= SUPER DOT IDENTIFIERNAME 
+[74] MetaProperty ::= NewTarget 
+[75] NewTarget ::= NEW DOT TARGET 
+[76] NewExpression ::= MemberExpression 
+[77] NewExpression ::= NEW NewExpression 
+[78] CallExpression ::= MemberExpression Arguments 
+[79] CallExpression ::= SuperCall 
+[80] CallExpression ::= CallExpression Arguments 
+[81] CallExpression ::= CallExpression LSQPAR Expression RSQPAR 
+[82] CallExpression ::= CallExpression DOT IDENTIFIERNAME 
+[83] SuperCall ::= SUPER Arguments 
+[84] Arguments ::= LPAR RPAR 
+[85] Arguments ::= LPAR ArgumentList RPAR 
+[86] ArgumentList ::= AssignmentExpression 
+[87] ArgumentList ::= DOT3 AssignmentExpression 
+[88] ArgumentList ::= ArgumentList COMMA AssignmentExpression 
+[89] ArgumentList ::= ArgumentList COMMA DOT3 AssignmentExpression 
+[90] LeftHandSideExpression ::= NewExpression 
+[91] LeftHandSideExpression ::= CallExpression 
+[92] UpdateExpression ::= LeftHandSideExpression 
+[93] UpdateExpression ::= LeftHandSideExpression DPLUS 
+[94] UpdateExpression ::= LeftHandSideExpression DMINUS 
+[95] UpdateExpression ::= DPLUS UnaryExpression 
+[96] UpdateExpression ::= DMINUS UnaryExpression 
+[97] UnaryExpression ::= UpdateExpression 
+[98] UnaryExpression ::= DELETE UnaryExpression 
+[99] UnaryExpression ::= VOID UnaryExpression 
+[100] UnaryExpression ::= TYPEOF UnaryExpression 
+[101] UnaryExpression ::= PLUS UnaryExpression 
+[102] UnaryExpression ::= MINUS UnaryExpression 
+[103] UnaryExpression ::= TILDE UnaryExpression 
+[104] UnaryExpression ::= NOT UnaryExpression 
+[105] ExponentiationExpression ::= UnaryExpression 
+[106] ExponentiationExpression ::= UpdateExpression STAR STAR ExponentiationExpression 
+[107] MultiplicativeExpression ::= ExponentiationExpression 
+[108] MultiplicativeExpression ::= MultiplicativeExpression MultiplicativeOperator ExponentiationExpression 
+[109] MultiplicativeOperator ::= STAR 
+[110] MultiplicativeOperator ::= DIV 
+[111] MultiplicativeOperator ::= MOD 
+[112] AdditiveExpression ::= MultiplicativeExpression 
+[113] AdditiveExpression ::= AdditiveExpression PLUS MultiplicativeExpression 
+[114] AdditiveExpression ::= AdditiveExpression MINUS MultiplicativeExpression 
+[115] ShiftExpression ::= AdditiveExpression 
+[116] ShiftExpression ::= ShiftExpression TWOLANG AdditiveExpression 
+[117] ShiftExpression ::= ShiftExpression TWORANG AdditiveExpression 
+[118] ShiftExpression ::= ShiftExpression THREERANG AdditiveExpression 
+[119] RelationalExpression ::= ShiftExpression 
+[120] RelationalExpression ::= RelationalExpression LANG ShiftExpression 
+[121] RelationalExpression ::= RelationalExpression RANG ShiftExpression 
+[122] RelationalExpression ::= RelationalExpression LEQ ShiftExpression 
+[123] RelationalExpression ::= RelationalExpression GEQ ShiftExpression 
+[124] RelationalExpression ::= RelationalExpression INSTANCEOF ShiftExpression 
+[125] RelationalExpression ::= RelationalExpression IN ShiftExpression 
+[126] EqualityExpression ::= RelationalExpression 
+[127] EqualityExpression ::= EqualityExpression EQ RelationalExpression 
+[128] EqualityExpression ::= EqualityExpression NEQ RelationalExpression 
+[129] EqualityExpression ::= EqualityExpression TYPEEQ RelationalExpression 
+[130] EqualityExpression ::= EqualityExpression TYPENEQ RelationalExpression 
+[131] BitwiseAndExpression ::= EqualityExpression 
+[132] BitwiseAndExpression ::= BitwiseAndExpression AND EqualityExpression 
+[133] BitwiseXOrExpression ::= BitwiseAndExpression 
+[134] BitwiseXOrExpression ::= BitwiseXOrExpression HAT BitwiseAndExpression 
+[135] BitwiseOrExpression ::= BitwiseXOrExpression 
+[136] BitwiseOrExpression ::= BitwiseOrExpression OR BitwiseXOrExpression 
+[137] LogicalAndExpression ::= BitwiseOrExpression 
+[138] LogicalAndExpression ::= LogicalAndExpression LOGAND BitwiseOrExpression 
+[139] LogicalOrExpression ::= LogicalAndExpression 
+[140] LogicalOrExpression ::= LogicalOrExpression LOGOR LogicalAndExpression 
+[141] ConditionalExpression ::= LogicalOrExpression 
+[142] ConditionalExpression ::= LogicalOrExpression QUESTION AssignmentExpression COLON AssignmentExpression 
+[143] AssignmentExpression ::= ConditionalExpression 
+[144] AssignmentExpression ::= YieldExpression 
+[145] AssignmentExpression ::= LeftHandSideExpression ASSIGN AssignmentExpression 
+[146] AssignmentExpression ::= LeftHandSideExpression AssignmentOperator AssignmentExpression 
+[147] AssignmentExpression ::= IdentifierReference Initializer 
+[148] AssignmentOperator ::= STAREQ 
+[149] AssignmentOperator ::= DIVEQ 
+[150] AssignmentOperator ::= MODEQ 
+[151] AssignmentOperator ::= PLUSEQ 
+[152] AssignmentOperator ::= MINUSEQ 
+[153] AssignmentOperator ::= TWOLANGEQ 
+[154] AssignmentOperator ::= TWORANGEQ 
+[155] AssignmentOperator ::= THREERANGEQ 
+[156] AssignmentOperator ::= ANDEQ 
+[157] AssignmentOperator ::= OREQ 
+[158] AssignmentOperator ::= HATEQ 
+[159] AssignmentOperator ::= TWOSTAREQ 
+[160] Expression ::= AssignmentExpression 
+[161] Expression ::= Expression COMMA AssignmentExpression 
+[162] Statement ::= BlockStatement 
+[163] Statement ::= VariableStatement 
+[164] Statement ::= EmptyStatement 
+[165] Statement ::= ExpressionStatement 
+[166] Statement ::= IfStatement 
+[167] Statement ::= BreakableStatement 
+[168] Statement ::= ContinueStatement 
+[169] Statement ::= BreakStatement 
+[170] Statement ::= ReturnStatement 
+[171] Statement ::= WithStatement 
+[172] Statement ::= LabeledStatement 
+[173] Statement ::= ThrowStatement 
+[174] Statement ::= TryStatement 
+[175] Statement ::= DebuggerStatement 
+[176] Declaration ::= HoistableDeclaration 
+[177] Declaration ::= ClassDeclaration 
+[178] Declaration ::= LexicalDeclaration 
+[179] HoistableDeclaration ::= FunctionDeclaration 
+[180] HoistableDeclaration ::= GeneratorDeclaration 
+[181] BreakableStatement ::= IterationStatement 
+[182] BreakableStatement ::= SwitchStatement 
+[183] BlockStatement ::= Block 
+[184] Block ::= LBPAR StatementList RBPAR 
+[185] StatementList ::= StatementListItem 
+[186] StatementList ::= StatementList StatementListItem 
+[187] StatementListItem ::= Statement 
+[188] StatementListItem ::= Declaration 
+[189] LexicalDeclaration ::= LetOrConst BindingList 
+[190] LetOrConst ::= LET 
+[191] LetOrConst ::= CONST 
+[192] BindingList ::= LexicalBinding 
+[193] BindingList ::= BindingList COMMA LexicalBinding 
+[194] LexicalBinding ::= BindingIdentifier Initializer 
+[195] LexicalBinding ::= BindingIdentifier 
+[196] LexicalBinding ::= BindingPattern Initializer 
+[197] VariableStatement ::= VAR VariableDeclarationList SEMI 
+[198] VariableDeclarationList ::= VariableDeclaration 
+[199] VariableDeclarationList ::= VariableDeclarationList COMMA VariableDeclaration 
+[200] VariableDeclaration ::= BindingIdentifier Initializer 
+[201] VariableDeclaration ::= BindingIdentifier 
+[202] VariableDeclaration ::= BindingPattern Initializer 
+[203] BindingPattern ::= ObjectBindingPattern 
+[204] BindingPattern ::= ArrayBindingPattern 
+[205] ObjectBindingPattern ::= LBPAR RBPAR 
+[206] ObjectBindingPattern ::= LBPAR BindingPropertyList RBPAR 
+[207] ObjectBindingPattern ::= LBPAR BindingPropertyList COMMA RBPAR 
+[208] ArrayBindingPattern ::= LSQPAR Elision BindingRestElement RSQPAR 
+[209] ArrayBindingPattern ::= LSQPAR Elision RSQPAR 
+[210] ArrayBindingPattern ::= LSQPAR BindingRestElement RSQPAR 
+[211] ArrayBindingPattern ::= LSQPAR RSQPAR 
+[212] ArrayBindingPattern ::= LSQPAR BindingElementList RSQPAR 
+[213] ArrayBindingPattern ::= LSQPAR BindingElementList COMMA Elision BindingRestElement RSQPAR 
+[214] ArrayBindingPattern ::= LSQPAR BindingElementList COMMA Elision RSQPAR 
+[215] ArrayBindingPattern ::= LSQPAR BindingElementList COMMA BindingRestElement RSQPAR 
+[216] ArrayBindingPattern ::= LSQPAR BindingElementList COMMA RSQPAR 
+[217] BindingPropertyList ::= BindingProperty 
+[218] BindingPropertyList ::= BindingPropertyList COMMA BindingProperty 
+[219] BindingElementList ::= BindingElisionElement 
+[220] BindingElementList ::= BindingElementList COMMA BindingElisionElement 
+[221] BindingElisionElement ::= Elision BindingElement 
+[222] BindingElisionElement ::= BindingElement 
+[223] BindingProperty ::= SingleNameBinding 
+[224] BindingProperty ::= PropertyName COLON BindingElement 
+[225] BindingElement ::= SingleNameBinding 
+[226] BindingElement ::= BindingPattern Initializer 
+[227] BindingElement ::= BindingPattern 
+[228] SingleNameBinding ::= BindingIdentifier Initializer 
+[229] SingleNameBinding ::= BindingIdentifier 
+[230] BindingRestElement ::= DOT3 BindingIdentifier 
+[231] BindingRestElement ::= DOT3 BindingPattern 
+[232] EmptyStatement ::= SEMI 
+[233] ExpressionStatement ::= Expression SEMI 
+[234] IfStatement ::= IF LPAR Expression RPAR Statement ELSE Statement 
+[235] IfStatement ::= IF LPAR Expression RPAR Statement 
+[236] IterationStatement ::= DO Statement WHILE LPAR Expression RPAR SEMI 
+[237] IterationStatement ::= WHILE LPAR Expression RPAR Statement 
+[238] IterationStatement ::= FOR LPAR Expression SEMI Expression SEMI Expression RPAR Statement 
+[239] IterationStatement ::= FOR LPAR Expression SEMI SEMI RPAR Statement 
+[240] IterationStatement ::= FOR LPAR SEMI Expression SEMI RPAR Statement 
+[241] IterationStatement ::= FOR LPAR SEMI SEMI Expression RPAR Statement 
+[242] IterationStatement ::= FOR LPAR Expression SEMI Expression SEMI RPAR Statement 
+[243] IterationStatement ::= FOR LPAR Expression SEMI SEMI Expression RPAR Statement 
+[244] IterationStatement ::= FOR LPAR SEMI Expression SEMI Expression RPAR Statement 
+[245] IterationStatement ::= FOR LPAR SEMI SEMI RPAR Statement 
+[246] IterationStatement ::= FOR LPAR VAR VariableDeclarationList SEMI Expression SEMI Expression RPAR Statement 
+[247] IterationStatement ::= FOR LPAR VAR VariableDeclarationList SEMI Expression SEMI RPAR Statement 
+[248] IterationStatement ::= FOR LPAR VAR VariableDeclarationList SEMI SEMI Expression RPAR Statement 
+[249] IterationStatement ::= FOR LPAR VAR VariableDeclarationList SEMI SEMI RPAR Statement 
+[250] IterationStatement ::= FOR LPAR LexicalDeclaration Expression SEMI Expression RPAR Statement 
+[251] IterationStatement ::= FOR LPAR LexicalDeclaration Expression SEMI RPAR Statement 
+[252] IterationStatement ::= FOR LPAR LexicalDeclaration SEMI Expression RPAR Statement 
+[253] IterationStatement ::= FOR LPAR LexicalDeclaration SEMI RPAR Statement 
+[254] IterationStatement ::= FOR LPAR LeftHandSideExpression IN Expression RPAR Statement 
+[255] IterationStatement ::= FOR LPAR VAR ForBinding IN Expression RPAR Statement 
+[256] IterationStatement ::= FOR LPAR ForDeclaration IN Expression RPAR Statement 
+[257] IterationStatement ::= FOR LPAR LeftHandSideExpression OF AssignmentExpression RPAR Statement 
+[258] IterationStatement ::= FOR LPAR VAR ForBinding OF AssignmentExpression RPAR Statement 
+[259] IterationStatement ::= FOR LPAR ForDeclaration OF AssignmentExpression RPAR Statement 
+[260] ForDeclaration ::= LetOrConst ForBinding 
+[261] ForBinding ::= BindingIdentifier 
+[262] ForBinding ::= BindingPattern 
+[263] ContinueStatement ::= CONTINUE SEMI 
+[264] ContinueStatement ::= CONTINUE LabelIdentifier SEMI 
+[265] BreakStatement ::= BREAK SEMI 
+[266] BreakStatement ::= BREAK LabelIdentifier SEMI 
+[267] ReturnStatement ::= RETURN SEMI 
+[268] ReturnStatement ::= RETURN Expression SEMI 
+[269] WithStatement ::= WITH LPAR Expression RPAR Statement 
+[270] SwitchStatement ::= SWITCH LPAR Expression RPAR CaseBlock 
+[271] CaseBlock ::= LBPAR CaseClauses RBPAR 
+[272] CaseBlock ::= LBPAR RBPAR 
+[273] CaseBlock ::= LBPAR CaseClauses DefaultCase CaseClauses RBPAR 
+[274] CaseBlock ::= LBPAR CaseClauses DefaultCase RBPAR 
+[275] CaseBlock ::= LBPAR DefaultCase CaseClauses RBPAR 
+[276] CaseBlock ::= LBPAR DefaultCase RBPAR 
+[277] CaseClauses ::= CaseClause 
+[278] CaseClauses ::= CaseClauses CaseClause 
+[279] CaseClause ::= CASE Expression COLON StatementList 
+[280] CaseClause ::= CASE Expression COLON 
+[281] DefaultCase ::= DEFAULT COLON StatementList 
+[282] DefaultCase ::= DEFAULT COLON 
+[283] LabeledStatement ::= LabelIdentifier COLON LabeledItem 
+[284] LabeledItem ::= Statement 
+[285] LabeledItem ::= FunctionDeclaration 
+[286] ThrowStatement ::= THROW Expression 
+[287] TryStatement ::= TRY Block Catch 
+[288] TryStatement ::= TRY Block Finally 
+[289] TryStatement ::= TRY Block Catch Finally 
+[290] Catch ::= CATCH LPAR CatchParameter RPAR Block 
+[291] Finally ::= FINALLY Block 
+[292] CatchParameter ::= BindingIdentifier 
+[293] CatchParameter ::= BindingPattern 
+[294] DebuggerStatement ::= DEBUGGER 
+[295] FunctionDeclaration ::= FUNCTION BindingIdentifier LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR 
+[296] FunctionDeclaration ::= FUNCTION LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR 
+[297] FunctionExpression ::= FUNCTION BindingIdentifier LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR 
+[298] FunctionExpression ::= FUNCTION LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR 
+[299] StrictFormalParameters ::= FormalParameters 
+[300] FormalParameters ::= 
+[301] FormalParameters ::= FormalParameterList 
+[302] FormalParameterList ::= FunctionRestParameter 
+[303] FormalParameterList ::= FormalList 
+[304] FormalParameterList ::= FormalList COMMA FunctionRestParameter 
+[305] FormalList ::= FormalParameter 
+[306] FormalList ::= FormalList COMMA FormalParameter 
+[307] FunctionRestParameter ::= BindingRestElement 
+[308] FormalParameter ::= BindingElement 
+[309] FunctionBody ::= FunctionStatementList 
+[310] FunctionStatementList ::= StatementList 
+[311] FunctionStatementList ::= 
+[312] MethodDefinition ::= PropertyName LPAR StrictFormalParameters RPAR LBPAR FunctionBody RBPAR 
+[313] MethodDefinition ::= GeneratorMethod 
+[314] MethodDefinition ::= GET PropertyName LPAR RPAR LBPAR FunctionBody RBPAR 
+[315] MethodDefinition ::= SET PropertyName LPAR PropertySetParameterList RPAR LBPAR FunctionBody RBPAR 
+[316] PropertySetParameterList ::= FormalParameter 
+[317] GeneratorMethod ::= STAR PropertyName LPAR StrictFormalParameters RPAR LBPAR GeneratorBody RBPAR 
+[318] GeneratorDeclaration ::= FUNCTION STAR BindingIdentifier LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR 
+[319] GeneratorDeclaration ::= FUNCTION STAR LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR 
+[320] GeneratorExpression ::= FUNCTION STAR BindingIdentifier LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR 
+[321] GeneratorExpression ::= FUNCTION STAR LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR 
+[322] GeneratorBody ::= FunctionBody 
+[323] YieldExpression ::= YIELD YieldExpressionP 
+[324] YieldExpressionP ::= AssignmentExpression 
+[325] YieldExpressionP ::= STAR AssignmentExpression 
+[326] YieldExpressionP ::= 
+[327] ClassDeclaration ::= CLASS BindingIdentifier ClassTail 
+[328] ClassDeclaration ::= CLASS ClassTail 
+[329] ClassExpression ::= CLASS BindingIdentifier ClassTail 
+[330] ClassExpression ::= CLASS ClassTail 
+[331] ClassTail ::= ClassHeritage LBPAR ClassBody RBPAR 
+[332] ClassTail ::= ClassHeritage LBPAR RBPAR 
+[333] ClassTail ::= LBPAR ClassBody RBPAR 
+[334] ClassTail ::= LBPAR RBPAR 
+[335] ClassHeritage ::= EXTENDS LeftHandSideExpression 
+[336] ClassBody ::= ClassElementList 
+[337] ClassElementList ::= ClassElement 
+[338] ClassElementList ::= ClassElementList ClassElement 
+[339] ClassElement ::= MethodDefinition 
+[340] ClassElement ::= STATIC MethodDefinition 
+[341] ClassElement ::= SEMI 
+
+------- CUP v0.11b 20150930 (SVN rev 66) Parser Generation Summary -------
+  0 errors and 84 warnings
+  106 terminals, 138 non-terminals, and 342 productions declared, 
+  producing 664 unique parse states.
+  21 terminals declared but not used.
+  0 non-terminals declared but not used.
+  0 productions never reduced.
+  63 conflicts detected (100 expected).
+  Code written to "parser.java", and "sym.java".
+---------------------------------------------------- (CUP v0.11b 20150930 (SVN rev 66))
