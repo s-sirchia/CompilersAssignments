@@ -19,12 +19,6 @@ Warning : Non terminal "ArrowFormalParameters" was declared but never used
 Warning : Non terminal "ArrayAssignmentPattern" was declared but never used
 Warning : Non terminal "AssignmentElementList" was declared but never used
 Warning : Non terminal "AssignmentProperty" was declared but never used
-Warning : *** Shift/Reduce conflict found in state #104
-  between UnaryExpression ::= UpdateExpression (*) 
-  and     ExponentiationExpression ::= UpdateExpression (*) STAR STAR ExponentiationExpression 
-  under symbol STAR
-  Resolved in favor of shifting.
-
 Warning : *** Shift/Reduce conflict found in state #322
   between ShiftExpression ::= ShiftExpression TWOLANG AdditiveExpression (*) 
   and     AdditiveExpression ::= AdditiveExpression (*) PLUS MultiplicativeExpression 
@@ -37,13 +31,13 @@ Warning : *** Shift/Reduce conflict found in state #322
   under symbol MINUS
   Resolved in favor of shifting.
 
-Warning : *** Reduce/Reduce conflict found in state #336
+Warning : *** Reduce/Reduce conflict found in state #335
   between PropertyDefinition ::= IdentifierReference (*) 
   and     PrimaryExpression ::= IdentifierReference (*) 
   under symbols: {COMMA}
   Resolved in favor of the second production.
 
-Warning : *** Shift/Reduce conflict found in state #336
+Warning : *** Shift/Reduce conflict found in state #335
   between PrimaryExpression ::= IdentifierReference (*) 
   and     Initializer ::= (*) ASSIGN AssignmentExpression 
   under symbol ASSIGN
@@ -98,13 +92,13 @@ Warning : *** Shift/Reduce conflict found in state #291
   under symbol DMINUS
   Resolved in favor of shifting.
 
-Warning : *** Reduce/Reduce conflict found in state #338
+Warning : *** Reduce/Reduce conflict found in state #337
   between LiteralPropertyName ::= NumericLiteral (*) 
   and     Literal ::= NumericLiteral (*) 
   under symbols: {LPAR}
   Resolved in favor of the second production.
 
-Warning : *** Reduce/Reduce conflict found in state #335
+Warning : *** Reduce/Reduce conflict found in state #334
   between Literal ::= STRING_LITERAL (*) 
   and     LiteralPropertyName ::= STRING_LITERAL (*) 
   under symbols: {LPAR}
@@ -297,7 +291,7 @@ Warning : *** Shift/Reduce conflict found in state #24
   under symbol BOOLEANLITERAL
   Resolved in favor of shifting.
 
-Warning : *** Reduce/Reduce conflict found in state #358
+Warning : *** Reduce/Reduce conflict found in state #357
   between AssignmentExpression ::= IdentifierReference Initializer (*) 
   and     CoverInizializedName ::= IdentifierReference Initializer (*) 
   under symbols: {COMMA}
@@ -316,13 +310,13 @@ Warning : *** Shift/Reduce conflict found in state #1
   under symbol LSQPAR
   Resolved in favor of shifting.
 
-Warning : *** Reduce/Reduce conflict found in state #650
+Warning : *** Reduce/Reduce conflict found in state #649
   between ClassExpression ::= CLASS BindingIdentifier ClassTail (*) 
   and     ClassDeclaration ::= CLASS BindingIdentifier ClassTail (*) 
   under symbols: {LPAR, LSQPAR, SEMI, DPLUS, DMINUS, PLUS, MINUS}
   Resolved in favor of the second production.
 
-Warning : *** Reduce/Reduce conflict found in state #432
+Warning : *** Reduce/Reduce conflict found in state #431
   between GeneratorDeclaration ::= FUNCTION STAR BindingIdentifier LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR (*) 
   and     GeneratorExpression ::= FUNCTION STAR BindingIdentifier LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR (*) 
   under symbols: {LPAR, LSQPAR, SEMI, DPLUS, DMINUS, PLUS, MINUS}
@@ -340,50 +334,50 @@ Warning : *** Shift/Reduce conflict found in state #17
   under symbol MINUS
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #485
+Warning : *** Shift/Reduce conflict found in state #484
   between UpdateExpression ::= LeftHandSideExpression (*) 
   and     IterationStatement ::= FOR LPAR LeftHandSideExpression (*) IN Expression RPAR Statement 
   under symbol IN
   Resolved in favor of shifting.
 
-Warning : *** Reduce/Reduce conflict found in state #424
+Warning : *** Reduce/Reduce conflict found in state #423
   between FunctionDeclaration ::= FUNCTION LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR (*) 
   and     FunctionExpression ::= FUNCTION LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR (*) 
   under symbols: {LPAR, LSQPAR, SEMI, DPLUS, DMINUS, PLUS, MINUS}
   Resolved in favor of the first production.
 
-Warning : *** Shift/Reduce conflict found in state #363
+Warning : *** Shift/Reduce conflict found in state #362
   between NewExpression ::= MemberExpression (*) 
   and     Arguments ::= (*) LPAR ArgumentList RPAR 
   and     Arguments ::= (*) LPAR RPAR 
   under symbol LPAR
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #363
+Warning : *** Shift/Reduce conflict found in state #362
   between NewExpression ::= MemberExpression (*) 
   and     MemberExpression ::= MemberExpression (*) LSQPAR Expression RSQPAR 
   under symbol LSQPAR
   Resolved in favor of shifting.
 
-Warning : *** Reduce/Reduce conflict found in state #437
+Warning : *** Reduce/Reduce conflict found in state #436
   between GeneratorDeclaration ::= FUNCTION STAR LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR (*) 
   and     GeneratorExpression ::= FUNCTION STAR LPAR FormalParameters RPAR LBPAR GeneratorBody RBPAR (*) 
   under symbols: {LPAR, LSQPAR, SEMI, DPLUS, DMINUS, PLUS, MINUS}
   Resolved in favor of the first production.
 
-Warning : *** Shift/Reduce conflict found in state #402
+Warning : *** Shift/Reduce conflict found in state #401
   between IfStatement ::= IF LPAR Expression RPAR Statement (*) 
   and     IfStatement ::= IF LPAR Expression RPAR Statement (*) ELSE Statement 
   under symbol ELSE
   Resolved in favor of shifting.
 
-Warning : *** Reduce/Reduce conflict found in state #648
+Warning : *** Reduce/Reduce conflict found in state #647
   between ClassDeclaration ::= CLASS ClassTail (*) 
   and     ClassExpression ::= CLASS ClassTail (*) 
   under symbols: {LPAR, LSQPAR, SEMI, DPLUS, DMINUS, PLUS, MINUS}
   Resolved in favor of the first production.
 
-Warning : *** Reduce/Reduce conflict found in state #419
+Warning : *** Reduce/Reduce conflict found in state #418
   between FunctionExpression ::= FUNCTION BindingIdentifier LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR (*) 
   and     FunctionDeclaration ::= FUNCTION BindingIdentifier LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR (*) 
   under symbols: {LPAR, LSQPAR, SEMI, DPLUS, DMINUS, PLUS, MINUS}
@@ -401,7 +395,7 @@ Warning : *** Shift/Reduce conflict found in state #74
   under symbol ASSIGN
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #340
+Warning : *** Shift/Reduce conflict found in state #339
   between ElementList ::= AssignmentExpression (*) 
   and     ComputedPropertyName ::= LSQPAR AssignmentExpression (*) RSQPAR 
   under symbol RSQPAR
@@ -430,18 +424,18 @@ Warning : *** Shift/Reduce conflict found in state #56
 [35]TYPENEQ [36]TWOLANG [37]TWORANG [38]THREERANG [39]LOGAND 
 [40]LOGOR [41]PLUSEQ [42]MINUSEQ [43]STAREQ [44]MODEQ 
 [45]TWOLANGEQ [46]TWORANGEQ [47]THREERANGEQ [48]ANDEQ [49]OREQ 
-[50]HATEQ [51]ARROW [52]TWOSTAREQ [53]DO [54]IN 
-[55]IF [56]NEW [57]TRY [58]FOR [59]VAR 
-[60]ELSE [61]THIS [62]CASE [63]VOID [64]WITH 
-[65]BREAK [66]THROW [67]YIELD [68]CATCH [69]TARGET 
-[70]CONST [71]CLASS [72]SUPER [73]WHILE [74]RETURN 
-[75]EXPORT [76]DELETE [77]IMPORT [78]TYPEOF [79]SWITCH 
-[80]EXTENDS [81]DEFAULT [82]LET [83]OF [84]FINALLY 
-[85]DEBUGGER [86]FUNCTION [87]CONTINUE [88]INSTANCEOF [89]IDENTIFIERNAME 
-[90]GET [91]SET [92]STATIC [93]DECIMALLITERAL [94]OCTALLITERAL 
-[95]HEXLITERAL [96]BYNARYLITERAL [97]SIGNEDINTEGER [98]COMMENT [99]STRING_LITERAL 
-[100]REGEXLITERAL [101]TEMPLATE [102]ERROR [103]ERROR_B [104]NULL 
-[105]BOOLEANLITERAL 
+[50]HATEQ [51]ARROW [52]TWOSTAREQ [53]DSTAR [54]DO 
+[55]IN [56]IF [57]NEW [58]TRY [59]FOR 
+[60]VAR [61]ELSE [62]THIS [63]CASE [64]VOID 
+[65]WITH [66]BREAK [67]THROW [68]YIELD [69]CATCH 
+[70]TARGET [71]CONST [72]CLASS [73]SUPER [74]WHILE 
+[75]RETURN [76]EXPORT [77]DELETE [78]IMPORT [79]TYPEOF 
+[80]SWITCH [81]EXTENDS [82]DEFAULT [83]LET [84]OF 
+[85]FINALLY [86]DEBUGGER [87]FUNCTION [88]CONTINUE [89]INSTANCEOF 
+[90]IDENTIFIERNAME [91]GET [92]SET [93]STATIC [94]DECIMALLITERAL 
+[95]OCTALLITERAL [96]HEXLITERAL [97]BYNARYLITERAL [98]SIGNEDINTEGER [99]COMMENT 
+[100]STRING_LITERAL [101]REGEXLITERAL [102]TEMPLATE [103]ERROR [104]ERROR_B 
+[105]NULL [106]BOOLEANLITERAL 
 
 ===== Non terminals =====
 [0]IdentifierReference [1]BindingIdentifier [2]LabelIdentifier [3]PrimaryExpression [4]Literal 
@@ -580,7 +574,7 @@ Warning : *** Shift/Reduce conflict found in state #56
 [103] UnaryExpression ::= TILDE UnaryExpression 
 [104] UnaryExpression ::= NOT UnaryExpression 
 [105] ExponentiationExpression ::= UnaryExpression 
-[106] ExponentiationExpression ::= UpdateExpression STAR STAR ExponentiationExpression 
+[106] ExponentiationExpression ::= UpdateExpression DSTAR ExponentiationExpression 
 [107] MultiplicativeExpression ::= ExponentiationExpression 
 [108] MultiplicativeExpression ::= MultiplicativeExpression MultiplicativeOperator ExponentiationExpression 
 [109] MultiplicativeOperator ::= STAR 
@@ -818,12 +812,12 @@ Warning : *** Shift/Reduce conflict found in state #56
 [341] ClassElement ::= SEMI 
 
 ------- CUP v0.11b 20150930 (SVN rev 66) Parser Generation Summary -------
-  0 errors and 84 warnings
-  106 terminals, 138 non-terminals, and 342 productions declared, 
-  producing 664 unique parse states.
+  0 errors and 83 warnings
+  107 terminals, 138 non-terminals, and 342 productions declared, 
+  producing 663 unique parse states.
   21 terminals declared but not used.
   0 non-terminals declared but not used.
   0 productions never reduced.
-  63 conflicts detected (100 expected).
+  62 conflicts detected (100 expected).
   Code written to "parser.java", and "sym.java".
 ---------------------------------------------------- (CUP v0.11b 20150930 (SVN rev 66))

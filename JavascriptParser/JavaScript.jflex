@@ -139,6 +139,8 @@ Not = "!"
 
 Star = "*"
 
+DStar = "**"
+
 And = "&"
 
 Or = "|"
@@ -382,6 +384,8 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
     {Not}                       {return symbol(sym.NOT);}
     
     {Star}                      {return symbol(sym.STAR);}
+    
+    {DStar}                      {return symbol(sym.DSTAR);}
     
     {Mod}                       {return symbol(sym.MOD);}
     

@@ -1,4 +1,6 @@
 import java_cup.runtime.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 action code {:
     int curr_lineno() {
@@ -22,7 +24,7 @@ parser code {:
 
 :}
 
-terminal LBPAR, RBPAR, LPAR, RPAR, LSQPAR, RSQPAR, DOT, DOT3, COMMA, SEMI, COLON, ASSIGN, DPLUS, DMINUS, PLUS, MINUS, TILDE, NOT, STAR, DIV, DIVEQ, MOD, AND, OR, LANG, RANG, HAT, QUESTION, LEQ, GEQ, EQ, NEQ, TYPEEQ, TYPENEQ, TWOLANG, TWORANG, THREERANG, LOGAND, LOGOR, PLUSEQ, MINUSEQ, STAREQ, MODEQ, TWOLANGEQ, TWORANGEQ, THREERANGEQ, ANDEQ, OREQ, HATEQ, ARROW, TWOSTAREQ;
+terminal LBPAR, RBPAR, LPAR, RPAR, LSQPAR, RSQPAR, DOT, DOT3, COMMA, SEMI, COLON, ASSIGN, DPLUS, DMINUS, PLUS, MINUS, TILDE, NOT, STAR, DIV, DIVEQ, MOD, AND, OR, LANG, RANG, HAT, QUESTION, LEQ, GEQ, EQ, NEQ, TYPEEQ, TYPENEQ, TWOLANG, TWORANG, THREERANG, LOGAND, LOGOR, PLUSEQ, MINUSEQ, STAREQ, MODEQ, TWOLANGEQ, TWORANGEQ, THREERANGEQ, ANDEQ, OREQ, HATEQ, ARROW, TWOSTAREQ, DSTAR;
 terminal DO, IN, IF, NEW, TRY, FOR, VAR, ELSE, THIS, CASE, VOID, WITH, BREAK, THROW, YIELD, CATCH, TARGET;
 terminal CONST, CLASS, SUPER, WHILE, RETURN, EXPORT, DELETE, IMPORT, TYPEOF, SWITCH, EXTENDS, DEFAULT, LET, OF;
 terminal FINALLY, DEBUGGER, FUNCTION, CONTINUE, INSTANCEOF, IDENTIFIERNAME, GET, SET, STATIC;
@@ -289,10 +291,34 @@ UpdateExpression
     {:
         RESULT = lh;
     :}
-    | LeftHandSideExpression DPLUS
-    | LeftHandSideExpression DMINUS
-    | DPLUS UnaryExpression
-    | DMINUS UnaryExpression
+    | LeftHandSideExpression:lh DPLUS
+    {:
+        Node me = new Literal("1", curr_lineno(), new Node("int"));
+        Operation op = new Operation("PLUS", (Node)lh, (Node)me, curr_lineno());
+        Assign as = new LateAssign(null, (Node)lh, (Node)op, curr_lineno());
+        RESULT = as;
+    :}
+    | LeftHandSideExpression:lh DMINUS
+    {:
+        Node me = new Literal("1", curr_lineno(), new Node("int"));
+        Operation op = new Operation("MINUS", (Node)lh, (Node)me, curr_lineno());
+        Assign as = new LateAssign(null, (Node)lh, (Node)op, curr_lineno());
+        RESULT = as;
+    :}
+    | DPLUS UnaryExpression:ue
+    {:
+        Node me = new Literal("1", curr_lineno(), new Node("int"));
+        Operation op = new Operation("PLUS", (Node)ue, (Node)me, curr_lineno());
+        Assign as = new Assign(null, (Node)ue, (Node)op, curr_lineno());
+        RESULT = as;
+    :}
+    | DMINUS UnaryExpression:ue
+    {:
+        Node me = new Literal("1", curr_lineno(), new Node("int"));
+        Operation op = new Operation("MINUS", (Node)ue, (Node)me, curr_lineno());
+        Assign as = new Assign(null, (Node)ue, (Node)op, curr_lineno());
+        RESULT = as;
+    :}
     ;
     
 UnaryExpression
@@ -314,7 +340,11 @@ ExponentiationExpression
     {:
         RESULT = ue;
     :}
-    | UpdateExpression STAR STAR ExponentiationExpression
+    | UpdateExpression:ue DSTAR ExponentiationExpression:ee
+    {:
+        Operation op = new Operation("EXP", (Node)ue, (Node)ee, curr_lineno());
+        RESULT = op;
+    :}
     ;
     
 MultiplicativeExpression
@@ -322,13 +352,26 @@ MultiplicativeExpression
     {:
         RESULT = ee;
     :}
-    | MultiplicativeExpression MultiplicativeOperator ExponentiationExpression
+    | MultiplicativeExpression:me MultiplicativeOperator:mo ExponentiationExpression:ee
+    {:
+        Operation op = new Operation((String)mo, (Node)me, (Node)ee, curr_lineno());
+        RESULT = op;
+    :}
     ;
     
 MultiplicativeOperator 
     ::= STAR
+    {:
+        RESULT = "MULT";
+    :}
     | DIV
+    {:
+        RESULT = "DIV";
+    :}
     | MOD
+    {:
+        RESULT = "MOD";
+    :}
     ;
     
 AdditiveExpression
@@ -336,8 +379,16 @@ AdditiveExpression
     {:
         RESULT = me;
     :}
-    | AdditiveExpression PLUS MultiplicativeExpression
-    | AdditiveExpression MINUS MultiplicativeExpression
+    | AdditiveExpression:ae PLUS MultiplicativeExpression:me
+    {:
+        Operation op = new Operation("PLUS", (Node)ae, (Node)me, curr_lineno());
+        RESULT = op;
+    :}
+    | AdditiveExpression:ae MINUS MultiplicativeExpression:me
+    {:
+        Operation op = new Operation("MINUS", (Node)ae, (Node)me, curr_lineno());
+        RESULT = op;
+    :}
     ;
     
 ShiftExpression
@@ -433,14 +484,27 @@ AssignmentExpression
     {:
         System.out.println("line: "+curr_lineno()+" AssignmentExpression -> LeftHandSideExpression ASSIGN AssignmentExpression");
     :}
-    | LeftHandSideExpression AssignmentOperator AssignmentExpression
+    | LeftHandSideExpression:lh AssignmentOperator:ao AssignmentExpression:ae
     {:
-        System.out.println("line: "+curr_lineno()+" AssignmentExpression -> LeftHandSideExpression AssignmentOperator AssignmentExpression");
+        Operation op = new Operation((String)ao, (Node)lh, (Node)ae, curr_lineno());
+        Assign as = new Assign(null, (Node)lh, op, curr_lineno());
+        RESULT = as;
     :}
     | IdentifierReference:ir Initializer:i
     {:
-        Assign a = new Assign(null, (Node)ir, (Node)i, curr_lineno());
-        RESULT = a;
+        Node el = (Node)i;
+        if(el instanceof LateAssign){
+            Node child = (Node) el.getChilds().get(0);
+            Assign a = new Assign(null, (Node)ir, child, curr_lineno());
+            ArrayList<Node> list = new ArrayList<Node>();
+            list.add(a);
+            list.add(el);
+            RESULT = list;
+        }
+        else{
+            Assign a = new Assign(null, (Node)ir, el, curr_lineno());
+            RESULT = a;
+        }
     :}
     ;
 
@@ -505,17 +569,53 @@ DestructuringAssignmentTarget
    
 AssignmentOperator
     ::= STAREQ
+    {:
+        RESULT = "MULT";
+    :}
     | DIVEQ
+    {:
+        RESULT = "DIV";
+    :}
     | MODEQ
+    {:
+        RESULT = "MOD";
+    :}
     | PLUSEQ
+    {:
+        RESULT = "PLUS";
+    :}
     | MINUSEQ
+    {:
+        RESULT = "MINUS";
+    :}
     | TWOLANGEQ
+    {:
+        RESULT = "LEFT_SHIFT";
+    :}
     | TWORANGEQ
+    {:
+        RESULT = "RIGHT_SHIFT";
+    :}
     | THREERANGEQ
+    {:
+        RESULT = "UNS_RIGHT_SHIFT";
+    :}
     | ANDEQ
+    {:
+        RESULT = "AND";
+    :}
     | OREQ
+    {:
+        RESULT = "OR";
+    :}
     | HATEQ
+    {:
+        RESULT = "XOR";
+    :}
     | TWOSTAREQ
+    {:
+        RESULT = "EXP";
+    :}
     ;
 
 Expression
@@ -527,14 +627,20 @@ Expression
     ;
     
 Statement
-    ::= BlockStatement
+    ::= BlockStatement:bs
+    {:
+        RESULT = bs;
+    :}
     | VariableStatement
     | EmptyStatement
     | ExpressionStatement:es
     {:
         RESULT = es;
     :}
-    | IfStatement
+    | IfStatement:is
+    {:
+        RESULT = is;
+    :}
     | BreakableStatement
     | ContinueStatement
     | BreakStatement
@@ -563,24 +669,51 @@ BreakableStatement
     ;
     
 BlockStatement
-    ::= Block
+    ::= Block:b
     {:
-        System.out.println("line: "+curr_lineno()+" "+"line: "+curr_lineno()+" "+"BlockStatement -> Block");
+        RESULT = b;
     :}
     ;
     
 Block
-    ::= LBPAR StatementList RBPAR
+    ::= LBPAR StatementList:sl RBPAR
+    {:
+        RESULT = sl;
+    :}
     ;
     
 StatementList
     ::= StatementListItem:sli
     {:
         StatementList list = new StatementList();
-        list.addChild((Node)sli);
+        if (sli instanceof ArrayList){
+            sli = (ArrayList<Node>)sli;
+            Iterator it = ((ArrayList) sli).iterator();
+            while(it.hasNext()){
+            	list.addChild(((Node)it.next()));
+            }
+        }
+        else{
+            list.addChild((Node)sli);
+        }
+        
         RESULT = list;
     :}
-    | StatementList StatementListItem;
+    | StatementList:sl StatementListItem:sli
+    {:
+        if (sli instanceof ArrayList){
+            sli = (ArrayList<Node>)sli;
+            Iterator it = ((ArrayList) sli).iterator();
+            while(it.hasNext()){
+            	((Node)sl).addChild(((Node)it.next()));
+            }
+        }
+        else{
+            ((Node)sl).addChild((Node)sli);
+        }
+        RESULT = sl;
+    :}
+    ;
     
 StatementListItem
     ::= Statement:s
@@ -699,8 +832,16 @@ ExpressionStatement
     ;
     
 IfStatement
-    ::= IF LPAR Expression RPAR Statement ELSE Statement
-    | IF LPAR Expression RPAR Statement
+    ::= IF LPAR Expression:e RPAR Statement:s1 ELSE Statement:s2
+    {:
+        IfNode ifn = new IfNode((Node)e, (Node)s1, (Node)s2, curr_lineno());
+        RESULT = ifn;
+    :}
+    | IF LPAR Expression:e RPAR Statement:s
+    {:
+        IfNode ifn = new IfNode((Node)e, (Node)s, curr_lineno());
+        RESULT = ifn;
+    :}
     ;
     
 IterationStatement
