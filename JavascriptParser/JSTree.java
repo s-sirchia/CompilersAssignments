@@ -235,3 +235,24 @@ class FunctionDeclaration<String> extends JSNode{
 		this.addChild(body);
 	}
 }
+
+class TryStat<String> extends JSNode{
+	public TryStat(int line){
+		super("TRY", line);
+	}
+}
+
+class ThrowNode<String> extends JSNode{
+	public ThrowNode(Node<String> exception, int line){
+		super("THROW", line);
+		this.addChild(exception);
+	}
+}
+
+class Constructor<String> extends JSNode{
+	public Constructor(Node<String> obj, Node<String> arg, int line) {
+		super("NEW", line);
+		this.addChild(obj);
+		this.addChild(arg);
+	}
+}

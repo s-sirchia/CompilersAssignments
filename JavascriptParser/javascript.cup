@@ -35,9 +35,9 @@ nonterminal Literal, ArrayLiteral, ObjectLiteral, FunctionExpression, ClassExpre
 nonterminal TemplateLiteral, CPExpAAParList, Expression, NumericLiteral, Elision, ElementList, AssignmentExpression, SpreadElement, PropertyDefinitionList, PropertyDefinition,
 PropertyName, LiteralPropertyName, ComputedPropertyName, CoverInizializedName, Initializer, MethodDefinition,
 MemberExpression, SuperProperty, MetaProperty, Arguments, NewTarget, NewExpression,
-CallExpression, SuperCall, ArgumentList, LeftHandSideExpression, UpdateExpression, UnaryExpression, ExponentiationExpression, MultiplicativeExpression, MultiplicativeOperator, AdditiveExpression, ShiftExpression, RelationalExpression,  EqualityExpression, BitwiseAndExpression, BitwiseXOrExpression,  BitwiseOrExpression, LogicalAndExpression, LogicalOrExpression, ConditionalExpression, YieldExpression, AssignmentOperator, AssignmentPattern, ObjectAssignmentPattern, ArrayAssignmentPattern, AssignmentPropertyList, AssignmentRestElement, AssignmentElementList, AssignmentProperty, AssignmentElisionElement, AssignmentElement, DestructuringAssignmentTarget, Statement, BlockStatement, VariableStatement, EmptyStatement, ExpressionStatement, IfStatement, BreakableStatement, ContinueStatement, BreakStatement, ReturnStatement, WithStatement, LabeledStatement, ThrowStatement, TryStatement, DebuggerStatement, Declaration, HoistableDeclaration, ClassDeclaration, LexicalDeclaration, 
+CallExpression, SuperCall, ArgumentList, LeftHandSideExpression, UpdateExpression, UnaryExpression, ExponentiationExpression, MultiplicativeExpression, MultiplicativeOperator, AdditiveExpression, ShiftExpression, RelationalExpression,  EqualityExpression, BitwiseAndExpression, BitwiseXOrExpression,  BitwiseOrExpression, LogicalAndExpression, LogicalOrExpression, ConditionalExpression, YieldExpression, AssignmentOperator, Statement, BlockStatement, VariableStatement, EmptyStatement, ExpressionStatement, IfStatement, BreakableStatement, ContinueStatement, BreakStatement, ReturnStatement, WithStatement, LabeledStatement, ThrowStatement, TryStatement, DebuggerStatement, Declaration, HoistableDeclaration, ClassDeclaration, LexicalDeclaration, 
 FunctionDeclaration, GeneratorDeclaration, IterationStatement, SwitchStatement, Block, StatementList, StatementListItem,  LetOrConst, BindingList, LexicalBinding, BindingPattern, VariableDeclarationList, VariableDeclaration, ObjectBindingPattern, ArrayBindingPattern, BindingPropertyList, BindingRestElement, BindingElementList, BindingProperty, BindingElisionElement, Identifier,
-BindingElement, SingleNameBinding, ForBinding, ForDeclaration, CaseBlock, CaseClauses, DefaultCase, CaseClause, LabeledItem, Catch, Finally, CatchParameter, FormalParameters, FunctionBody, StrictFormalParameters, FormalParameterList, FunctionRestParameter, FormalList, FormalParameter, FunctionStatementList, ArrowFunction, ArrowParameters,  ConciseBody, ArrowFormalParameters, GeneratorMethod, PropertySetParameterList, GeneratorBody, ClassTail, ClassHeritage, ClassBody, ClassElementList, ClassElement, Script, ScriptBody, YieldExpressionP;
+BindingElement, SingleNameBinding, ForBinding, ForDeclaration, CaseBlock, CaseClauses, DefaultCase, CaseClause, LabeledItem, Catch, Finally, CatchParameter, FormalParameters, FunctionBody, StrictFormalParameters, FormalParameterList, FunctionRestParameter, FormalList, FormalParameter, FunctionStatementList,   GeneratorMethod, PropertySetParameterList, GeneratorBody, Script, ScriptBody, YieldExpressionP;
 
 start with Script;
     
@@ -341,7 +341,15 @@ MemberExpression
     :}
     | SuperProperty
     | MetaProperty
-    | NEW MemberExpression Arguments
+    | NEW MemberExpression:me Arguments:a
+    {:
+        Label obj = new Label("Object", curr_lineno());
+        obj.addChild((Node)me);
+        Label arg = new Label("Arguments", curr_lineno());
+        arg.addChild((Node)a);
+        Constructor c = new Constructor(obj, arg, curr_lineno());
+        RESULT = c;
+    :}
     ;
 
 SuperProperty
@@ -796,64 +804,7 @@ AssignmentExpression
     :}
     ;
 
-/*    
-AssignmentPattern
-    ::= ObjectAssignmentPattern
-    | ArrayAssignmentPattern
-    ;
-    
-ObjectAssignmentPattern
-    ::= LBPAR RBPAR
-    | LBPAR AssignmentPropertyList RBPAR
-    | LBPAR AssignmentPropertyList COMMA RBPAR
-    ;
-    
-ArrayAssignmentPattern
-    ::= LSQPAR Elision AssignmentRestElement RSQPAR
-    | LSQPAR Elision RSQPAR
-    | LSQPAR AssignmentRestElement RSQPAR
-    | LSQPAR RSQPAR
-    | LSQPAR AssignmentElementList RSQPAR
-    | LSQPAR AssignmentElementList COMMA Elision AssignmentRestElement RSQPAR
-    | LSQPAR AssignmentElementList COMMA Elision RSQPAR
-    | LSQPAR AssignmentElementList COMMA AssignmentRestElement RSQPAR
-    | LSQPAR AssignmentElementList COMMA RSQPAR
-    ;
 
-AssignmentPropertyList
-    ::= AssignmentProperty
-    | AssignmentPropertyList COMMA AssignmentProperty
-    ;
-    
-AssignmentElementList
-    ::= AssignmentElisionElement
-    | AssignmentElementList COMMA AssignmentElisionElement
-    ;
- 
-AssignmentElisionElement
-    ::= Elision AssignmentElement
-    | AssignmentElement
-    ;
-
-AssignmentProperty
-    ::= IdentifierReference Initializer
-    | IdentifierReference
-    | PropertyName COLON AssignmentElement
-    ;
-    
-AssignmentElement
-    ::= DestructuringAssignmentTarget Initializer
-    | DestructuringAssignmentTarget
-    ;
-    
-AssignmentRestElement
-    ::= DOT3 DestructuringAssignmentTarget
-    ;
-    
-DestructuringAssignmentTarget
-    ::= LeftHandSideExpression
-    ;
-*/
    
 AssignmentOperator
     ::= STAREQ
@@ -975,8 +926,14 @@ Statement
     :}
     | WithStatement
     | LabeledStatement
-    | ThrowStatement
-    | TryStatement
+    | ThrowStatement:ts
+    {:
+        RESULT = ts;
+    :}
+    | TryStatement:ty
+    {:
+        RESULT = ty;
+    :}
     | DebuggerStatement
     ;
     
@@ -1244,6 +1201,7 @@ BindingRestElement
     
 EmptyStatement
     ::= SEMI
+    | COMMENT
     ;
     
 ExpressionStatement
@@ -1589,26 +1547,78 @@ LabeledItem
     ;
     
 ThrowStatement
-    ::= THROW Expression
+    ::= THROW Expression:e
+    {:
+        ThrowNode tn = new ThrowNode((Node)e, curr_lineno());
+        RESULT = tn;
+    :}
     ;
     
 TryStatement
-    ::= TRY Block Catch
-    | TRY Block Finally
-    | TRY Block Catch Finally
+    ::= TRY Block:b Catch:c
+    {:
+        TryStat ts = new TryStat(curr_lineno());
+        Label body = new Label("Body", curr_lineno());
+        body.addChild((Node)b);
+        ts.addChild(body);
+        ts.addChild((Node)c);
+        RESULT = ts;
+    :}
+    | TRY Block:b Finally:f
+    {:
+        TryStat ts = new TryStat(curr_lineno());
+        Label body = new Label("Body", curr_lineno());
+        body.addChild((Node)b);
+        ts.addChild(body);
+        ts.addChild((Node)f);
+        RESULT = ts;
+    :}
+    | TRY Block:b Catch:c Finally:f
+    {:
+        TryStat ts = new TryStat(curr_lineno());
+        Label body = new Label("Body", curr_lineno());
+        body.addChild((Node)b);
+        ts.addChild(body);
+        ts.addChild((Node)c);
+        ts.addChild((Node)f);
+        RESULT = ts;
+    :}
     ;
     
 Catch
-    ::= CATCH LPAR CatchParameter RPAR Block
+    ::= CATCH LPAR CatchParameter:cp RPAR Block:b
+    {:
+        Label cat = new Label("Catch", curr_lineno());
+        Label param = new Label("Parameter", curr_lineno());
+        param.addChild((Node)cp);
+        Label body = new Label("Body", curr_lineno());
+        body.addChild((Node)b);
+        cat.addChild(param);
+        cat.addChild(body);
+        RESULT = cat;
+    :}
     ;
     
 Finally
-    ::= FINALLY Block
+    ::= FINALLY Block:b
+    {:
+        Label cat = new Label("Finally", curr_lineno());
+        Label body = new Label("Body", curr_lineno());
+        body.addChild((Node)b);
+        cat.addChild(body);
+        RESULT = cat;
+    :}
     ;
     
 CatchParameter
-    ::= BindingIdentifier
-    | BindingPattern
+    ::= BindingIdentifier:bi
+    {:
+        RESULT = bi;
+    :}
+    | BindingPattern:bp
+    {:
+        RESULT = bp;
+    :}
     ;
     
 DebuggerStatement
@@ -1772,27 +1782,6 @@ FunctionStatementList
     |
     ;
 
-/*
-ArrowFunction
-    ::= ArrowParameters ARROW ConciseBody
-    ;
-
- 
-ArrowParameters
-    ::= BindingIdentifier
-    | CPExpAAParList
-    ;
- 
-ConciseBody
-    ::= AssignmentExpression
-    | LBPAR FunctionBody RBPAR
-    ;
-    
-ArrowFormalParameters
-    ::= LPAR StrictFormalParameters RPAR
-    ;
-*/
-
 MethodDefinition
     ::= PropertyName LPAR StrictFormalParameters RPAR LBPAR FunctionBody RBPAR
     | GeneratorMethod
@@ -1831,41 +1820,4 @@ YieldExpressionP
     ::= AssignmentExpression
     | STAR AssignmentExpression
     |
-    ;
-    
-ClassDeclaration
-    ::= CLASS BindingIdentifier ClassTail
-    | CLASS ClassTail
-    ;
-    
-ClassExpression
-    ::= CLASS BindingIdentifier ClassTail
-    | CLASS ClassTail
-    ;
-   
-ClassTail
-    ::= ClassHeritage LBPAR ClassBody RBPAR
-    | ClassHeritage LBPAR RBPAR
-    | LBPAR ClassBody RBPAR
-    | LBPAR RBPAR
-    ;
-    
-ClassHeritage
-    ::= EXTENDS LeftHandSideExpression
-    ;
-    
-ClassBody
-    ::= ClassElementList
-    ;
-    
-ClassElementList
-    ::= ClassElement
-    | ClassElementList ClassElement
-    ;
-
-    
-ClassElement
-    ::= MethodDefinition
-    | STATIC MethodDefinition 
-    | SEMI
     ;
