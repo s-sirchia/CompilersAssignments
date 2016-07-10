@@ -103,14 +103,23 @@ PrimaryExpression
 	| FunctionExpression
 	| ClassExpression
 	| GeneratorExpression
-	| REGEXLITERAL
+	| REGEXLITERAL:rl
+    {:
+        RESULT = new Literal(rl, curr_lineno(), new Node("regex"));
+    :}
 	| TemplateLiteral
-	| CPExpAAParList
+	| CPExpAAParList:ce
+    {:
+        RESULT = ce;
+    :}
 	;
 
     /*CoverParenthesizedExpressionAndArrowParameterList*/
 CPExpAAParList
-	::= LPAR Expression RPAR
+	::= LPAR Expression:e RPAR
+    {:
+        RESULT = e;
+    :}
 	| LPAR RPAR
 	| LPAR DOT3 BindingIdentifier RPAR
     | LPAR DOT3 BindingPattern RPAR
@@ -311,16 +320,24 @@ MemberExpression
     {:
         RESULT = pe;
     :}
-    | MemberExpression LSQPAR Expression RSQPAR
+    | MemberExpression:me LSQPAR Expression:e RSQPAR
+    {:
+        Label source = new Label("Source", curr_lineno());
+        source.addChild((Node)me);
+        Label access = new Label("Property", curr_lineno());
+        access.addChild((Node)e);
+        ItemAccess ia = new ItemAccess(source, access, curr_lineno());
+        RESULT = ia;
+    :}
     | MemberExpression:me DOT IDENTIFIERNAME:fn
     {:
-        Label obj = new Label("Callee", curr_lineno());
-        obj.addChild((Node)me);
-        Label name = new Label("Name", curr_lineno());
-        name.addChild(new Identifier(""+fn, curr_lineno()));
-        Function f = new Function(name, curr_lineno());
-        Call c = new Call(obj, f, curr_lineno());
-        RESULT = c;
+        Label source = new Label("Source", curr_lineno());
+        source.addChild((Node)me);
+        Label access = new Label("Property", curr_lineno());
+        Identifier id = new Identifier(""+fn, curr_lineno());
+        access.addChild((Node)id);
+        ItemAccess ia = new ItemAccess(source, access, curr_lineno());
+        RESULT = ia;
     :}
     | SuperProperty
     | MetaProperty
@@ -360,7 +377,18 @@ CallExpression
             m1 = new Call(obj, f, curr_lineno());
         }
         else{
-            m1 = (Call) m;
+            if(m instanceof ItemAccess){
+                ItemAccess acc = (ItemAccess) m;
+                Label obj = new Label("Callee", curr_lineno());
+                obj.addChild((Node)((Node)acc.getChilds().get(0)).getChilds().get(0));
+                Label name = new Label("Name", curr_lineno());
+                name.addChild((Node)((Node)acc.getChilds().get(1)).getChilds().get(0));
+                Function f = new Function(name, curr_lineno());
+                m1 = new Call(obj, f, curr_lineno()); 
+            }
+            else{
+                m1 = (Call) m;
+            }   
         }
         if(arg instanceof Arguments)
             m1.addArguments((Arguments)arg);
@@ -369,13 +397,42 @@ CallExpression
     | SuperCall
     | CallExpression:c Arguments:arg
     {:
-        Call c1 = (Call) c;
+        Call m1;
+        if(c instanceof ItemAccess){
+            ItemAccess acc = (ItemAccess) c;
+            Label obj = new Label("Callee", curr_lineno());
+            obj.addChild((Node)((Node)acc.getChilds().get(0)).getChilds().get(0));
+            Label name = new Label("Name", curr_lineno());
+            name.addChild((Node)((Node)acc.getChilds().get(1)).getChilds().get(0));
+            Function f = new Function(name, curr_lineno());
+            m1 = new Call(obj, f, curr_lineno()); 
+        }
+        else{
+            m1 = (Call) c;
+        } 
         if(arg instanceof Arguments)
-            c1.addArguments((Arguments)arg);
-        RESULT = c1;
+            m1.addArguments((Arguments)arg);
+        RESULT = m1;
     :}
-    | CallExpression LSQPAR Expression RSQPAR
-    | CallExpression DOT IDENTIFIERNAME
+    | CallExpression:c LSQPAR Expression:e RSQPAR
+    {:
+        Label source = new Label("Source", curr_lineno());
+        source.addChild((Node)c);
+        Label access = new Label("Property", curr_lineno());
+        access.addChild((Node)e);
+        ItemAccess ia = new ItemAccess(source, access, curr_lineno());
+        RESULT = ia;
+    :}
+    | CallExpression:c DOT IDENTIFIERNAME:fn
+    {:
+        Label source = new Label("Source", curr_lineno());
+        source.addChild((Node)c);
+        Label access = new Label("Property", curr_lineno());
+        Identifier id = new Identifier(""+fn, curr_lineno());
+        access.addChild((Node)id);
+        ItemAccess ia = new ItemAccess(source, access, curr_lineno());
+        RESULT = ia;
+    :}
     ;
     
 SuperCall
@@ -427,28 +484,28 @@ UpdateExpression
     {:
         Node me = new Literal("1", curr_lineno(), new Node("int"));
         Operation op = new Operation("PLUS", (Node)lh, (Node)me, curr_lineno());
-        Assign as = new LateAssign(null, (Node)lh, (Node)op, curr_lineno());
+        LateAssign as = new LateAssign((Node)lh, (Node)op, curr_lineno());
         RESULT = as;
     :}
     | LeftHandSideExpression:lh DMINUS
     {:
         Node me = new Literal("1", curr_lineno(), new Node("int"));
         Operation op = new Operation("MINUS", (Node)lh, (Node)me, curr_lineno());
-        Assign as = new LateAssign(null, (Node)lh, (Node)op, curr_lineno());
+        LateAssign as = new LateAssign((Node)lh, (Node)op, curr_lineno());
         RESULT = as;
     :}
     | DPLUS UnaryExpression:ue
     {:
         Node me = new Literal("1", curr_lineno(), new Node("int"));
         Operation op = new Operation("PLUS", (Node)ue, (Node)me, curr_lineno());
-        Assign as = new Assign(null, (Node)ue, (Node)op, curr_lineno());
+        Assign as = new Assign((Node)ue, (Node)op, curr_lineno());
         RESULT = as;
     :}
     | DMINUS UnaryExpression:ue
     {:
         Node me = new Literal("1", curr_lineno(), new Node("int"));
         Operation op = new Operation("MINUS", (Node)ue, (Node)me, curr_lineno());
-        Assign as = new Assign(null, (Node)ue, (Node)op, curr_lineno());
+        Assign as = new Assign((Node)ue, (Node)op, curr_lineno());
         RESULT = as;
     :}
     ;
@@ -458,13 +515,41 @@ UnaryExpression
     {:
         RESULT = ue;
     :}
-    | DELETE UnaryExpression
-    | VOID UnaryExpression
-    | TYPEOF UnaryExpression
-    | PLUS UnaryExpression
-    | MINUS UnaryExpression
-    | TILDE UnaryExpression
-    | NOT UnaryExpression
+    | DELETE UnaryExpression:ue
+    {:
+        Operation op = new Operation("DELETE", (Node)ue, curr_lineno());
+        RESULT = op;
+    :}
+    | VOID UnaryExpression:ue
+    {:
+        Operation op = new Operation("VOID", (Node)ue, curr_lineno());
+        RESULT = op;
+    :}
+    | TYPEOF UnaryExpression:ue
+    {:
+        Operation op = new Operation("TYPEOF", (Node)ue, curr_lineno());
+        RESULT = op;
+    :}
+    | PLUS UnaryExpression:ue
+    {:
+        Operation op = new Operation("PLUS", (Node)ue, curr_lineno());
+        RESULT = op;
+    :}
+    | MINUS UnaryExpression:ue
+    {:
+        Operation op = new Operation("MINUS", (Node)ue, curr_lineno());
+        RESULT = op;
+    :}
+    | TILDE UnaryExpression:ue
+    {:
+        Operation op = new Operation("FLIP BITS", (Node)ue, curr_lineno());
+        RESULT = op;
+    :}
+    | NOT UnaryExpression:ue
+    {:
+        Operation op = new Operation("NOT", (Node)ue, curr_lineno());
+        RESULT = op;
+    :}
     ;
     
 ExponentiationExpression
@@ -682,14 +767,15 @@ AssignmentExpression
         RESULT = ce;
     :}
     | YieldExpression
-    | LeftHandSideExpression ASSIGN AssignmentExpression
+    | LeftHandSideExpression:lh ASSIGN AssignmentExpression:ae
     {:
-        System.out.println("line: "+curr_lineno()+" AssignmentExpression -> LeftHandSideExpression ASSIGN AssignmentExpression");
+        Assign as = new Assign((Node)lh, (Node)ae, curr_lineno());
+        RESULT = as;
     :}
     | LeftHandSideExpression:lh AssignmentOperator:ao AssignmentExpression:ae
     {:
         Operation op = new Operation((String)ao, (Node)lh, (Node)ae, curr_lineno());
-        Assign as = new Assign(null, (Node)lh, op, curr_lineno());
+        Assign as = new Assign((Node)lh, op, curr_lineno());
         RESULT = as;
     :}
     | IdentifierReference:ir Initializer:i
@@ -697,14 +783,14 @@ AssignmentExpression
         Node el = (Node)i;
         if(el instanceof LateAssign){
             Node child = (Node) el.getChilds().get(0);
-            Assign a = new Assign(null, (Node)ir, child, curr_lineno());
+            Assign a = new Assign((Node)ir, child, curr_lineno());
             ArrayList<Node> list = new ArrayList<Node>();
             list.add(a);
             list.add(el);
             RESULT = list;
         }
         else{
-            Assign a = new Assign(null, (Node)ir, el, curr_lineno());
+            Assign a = new Assign((Node)ir, el, curr_lineno());
             RESULT = a;
         }
     :}
@@ -823,9 +909,32 @@ AssignmentOperator
 Expression
     ::= AssignmentExpression:ae
     {:
-        RESULT = ae;
+        Expression<String> exp = new Expression<String>(curr_lineno());
+        if (ae instanceof ArrayList){
+            Iterator it = ((ArrayList) ae).iterator();
+            while(it.hasNext()){
+            	exp.addChild(((Node)it.next()));
+            }
+        }
+        else{
+            exp.addChild((Node)ae);
+        }
+        RESULT = exp;
     :}
-    | Expression COMMA AssignmentExpression
+    | Expression:e COMMA AssignmentExpression:ae
+    {:
+        Expression<String> exp = new Expression<String>(curr_lineno());
+        if (ae instanceof ArrayList){
+            Iterator it = ((ArrayList) ae).iterator();
+            while(it.hasNext()){
+            	exp.addChild(((Node)it.next()));
+            }
+        }
+        else{
+            exp.addChild((Node)ae);
+        }
+        RESULT = exp;
+    :}
     ;
     
 Statement
@@ -872,14 +981,29 @@ Statement
     ;
     
 Declaration
-    ::= HoistableDeclaration
-    | ClassDeclaration
-    | LexicalDeclaration
+    ::= HoistableDeclaration:hd
+    {:
+        RESULT = hd;
+    :}
+    | ClassDeclaration:cd
+    {:
+        RESULT = cd;
+    :}
+    | LexicalDeclaration:ld
+    {:
+        RESULT = ld;
+    :}
     ;
     
 HoistableDeclaration
-    ::= FunctionDeclaration
-    | GeneratorDeclaration
+    ::= FunctionDeclaration:fd
+    {:
+        RESULT = fd;
+    :}
+    | GeneratorDeclaration:gd
+    {:
+        RESULT = gd;
+    :}
     ;
     
 BreakableStatement
@@ -911,32 +1035,76 @@ StatementList
     ::= StatementListItem:sli
     {:
         StatementList list = new StatementList();
-        if (sli instanceof ArrayList){
-            sli = (ArrayList<Node>)sli;
-            Iterator it = ((ArrayList) sli).iterator();
-            while(it.hasNext()){
-            	list.addChild(((Node)it.next()));
+        if(sli != null){
+            if (sli instanceof ArrayList){
+                sli = (ArrayList<Node>)sli;
+                Iterator it = ((ArrayList) sli).iterator();
+                while(it.hasNext()){
+                    Node current = (Node)it.next();
+                    if (current instanceof Expression){
+                        ArrayList<Node> childs = (ArrayList<Node>) current.getChilds();
+                        Iterator it2 = childs.iterator();
+                        while(it2.hasNext()){
+                            list.addChild(((Node)it.next()));
+                        }
+                    }
+                    else{
+                        list.addChild(current);
+                    }
+                }
             }
+            else{
+                Node current = (Node) sli;
+                if (current instanceof Expression){
+                    ArrayList<Node> childs = (ArrayList<Node>) current.getChilds();
+                    Iterator it2 = childs.iterator();
+                    while(it2.hasNext()){
+                        list.addChild(((Node)it2.next()));
+                    }
+                }
+                else{
+                    list.addChild(current);
+                }
+            } 
         }
-        else{
-            list.addChild((Node)sli);
-        }
-        
         RESULT = list;
     :}
     | StatementList:sl StatementListItem:sli
     {:
-        if (sli instanceof ArrayList){
-            sli = (ArrayList<Node>)sli;
-            Iterator it = ((ArrayList) sli).iterator();
-            while(it.hasNext()){
-            	((Node)sl).addChild(((Node)it.next()));
+        StatementList list = (StatementList)sl;
+        if(sli != null){
+            if (sli instanceof ArrayList){
+                sli = (ArrayList<Node>)sli;
+                Iterator it = ((ArrayList) sli).iterator();
+                while(it.hasNext()){
+                    Node current = (Node)it.next();
+                    if (current instanceof Expression){
+                        ArrayList<Node> childs = (ArrayList<Node>) current.getChilds();
+                        Iterator it2 = childs.iterator();
+                        while(it2.hasNext()){
+                            list.addChild(((Node)it.next()));
+                        }
+                    }
+                    else{
+                        list.addChild(current);
+                    }
+                }
+            }
+            else{
+                Node current = (Node) sli;
+                if (current instanceof Expression){
+                    ArrayList<Node> childs = (ArrayList<Node>) current.getChilds();
+                    Iterator it2 = childs.iterator();
+                    while(it2.hasNext()){
+                        list.addChild(((Node)it2.next()));
+                    }
+                }
+                else{
+                    list.addChild(current);
+                }
             }
         }
-        else{
-            ((Node)sl).addChild((Node)sli);
-        }
-        RESULT = sl;
+        RESULT = list;
     :}
     ;
     
@@ -945,7 +1113,10 @@ StatementListItem
     {:
         RESULT = s;
     :}
-    | Declaration
+    | Declaration:d
+    {:
+        RESULT = d;
+    :}
     ;
 
 LexicalDeclaration
@@ -992,7 +1163,7 @@ VariableDeclarationList
 VariableDeclaration
     ::= BindingIdentifier:bi Initializer:i
     {:
-        Assign as = new Assign(null, (Node)bi, (Node)i, curr_lineno());
+        Assign as = new Assign((Node)bi, (Node)i, curr_lineno());
         RESULT = as;
     :}
     | BindingIdentifier:bi
@@ -1046,14 +1217,24 @@ BindingProperty
     ;
     
 BindingElement
-    ::= SingleNameBinding
+    ::= SingleNameBinding:sn
+    {:
+        RESULT = sn;
+    :}
     | BindingPattern Initializer
     | BindingPattern
     ;
     
 SingleNameBinding
-    ::= BindingIdentifier Initializer
-    | BindingIdentifier
+    ::= BindingIdentifier:bi Initializer:i
+    {:
+        Assign sn = new Assign((Node)bi, (Node)i, curr_lineno());
+        RESULT = sn;
+    :}
+    | BindingIdentifier:bi
+    {:
+        RESULT = bi;
+    :}
     ;
     
 BindingRestElement
@@ -1435,13 +1616,95 @@ DebuggerStatement
     ;
     
 FunctionDeclaration
-    ::= FUNCTION BindingIdentifier LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR
-    | FUNCTION LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR
+    ::= FUNCTION BindingIdentifier:bi LPAR FormalParameters:fp RPAR LBPAR FunctionBody:fb RBPAR
+    {:
+        Label name = new Label("Name", curr_lineno());
+        name.addChild((Node)bi);
+        Label param = new Label("Parameters", curr_lineno());
+        if (fp != null){
+            if (fp instanceof ArrayList){
+                Iterator it = ((ArrayList)fp).iterator();
+                while(it.hasNext()){
+                    param.addChild(((Node)it.next()));
+                }
+            }
+            else{ 
+                param.addChild((Node)fp);
+            }
+        }
+        Label body = new Label("Body", curr_lineno());
+        if (fb != null)
+            body.addChild((Node)fb);
+        FunctionDeclaration f = new FunctionDeclaration(name, param, body, curr_lineno());
+        RESULT = f;
+    :}
+    | FUNCTION LPAR FormalParameters:fp RPAR LBPAR FunctionBody:fb RBPAR
+    {:
+        Label name = new Label("Name", curr_lineno());
+        Label param = new Label("Parameters", curr_lineno());
+        if (fp != null){
+            if (fp instanceof ArrayList){
+                Iterator it = ((ArrayList)fp).iterator();
+                while(it.hasNext()){
+                    param.addChild(((Node)it.next()));
+                }
+            }
+            else{ 
+                param.addChild((Node)fp);
+            }
+        }
+        Label body = new Label("Body", curr_lineno());
+        if (fb != null)
+            body.addChild((Node)fb);
+        FunctionDeclaration f = new FunctionDeclaration(name, param, body, curr_lineno());
+        RESULT = f;
+    :}
     ;
     
 FunctionExpression
-    ::= FUNCTION BindingIdentifier LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR
-    | FUNCTION LPAR FormalParameters RPAR LBPAR FunctionBody RBPAR
+    ::= FUNCTION BindingIdentifier:bi LPAR FormalParameters:fp RPAR LBPAR FunctionBody:fb RBPAR
+    {:
+        Label name = new Label("Name", curr_lineno());
+        name.addChild((Node)bi);
+        Label param = new Label("Parameters", curr_lineno());
+        if (fp != null){
+            if (fp instanceof ArrayList){
+                Iterator it = ((ArrayList)fp).iterator();
+                while(it.hasNext()){
+                    param.addChild(((Node)it.next()));
+                }
+            }
+            else{ 
+                param.addChild((Node)fp);
+            }
+        }
+        Label body = new Label("Body", curr_lineno());
+        if (fb != null)
+            body.addChild((Node)fb);
+        FunctionDeclaration f = new FunctionDeclaration(name, param, body, curr_lineno());
+        RESULT = f;
+    :}
+    | FUNCTION LPAR FormalParameters:fp RPAR LBPAR FunctionBody:fb RBPAR
+    {:
+        Label name = new Label("Name", curr_lineno());
+        Label param = new Label("Parameters", curr_lineno());
+        if (fp != null){
+            if (fp instanceof ArrayList){
+                Iterator it = ((ArrayList)fp).iterator();
+                while(it.hasNext()){
+                    param.addChild(((Node)it.next()));
+                }
+            }
+            else{ 
+                param.addChild((Node)fp);
+            }
+        }
+        Label body = new Label("Body", curr_lineno());
+        if (fb != null)
+            body.addChild((Node)fb);
+        FunctionDeclaration f = new FunctionDeclaration(name, param, body, curr_lineno());
+        RESULT = f;
+    :}
     ;
     
 StrictFormalParameters
@@ -1450,18 +1713,37 @@ StrictFormalParameters
     
 FormalParameters
     ::= 
-    | FormalParameterList
+    {:
+        RESULT = null;
+    :}
+    | FormalParameterList:fl
+    {:
+        RESULT = fl;
+    :}
     ;
     
 FormalParameterList
     ::= FunctionRestParameter
-    | FormalList
+    | FormalList:fl
+    {:
+        RESULT = fl;
+    :}
     | FormalList COMMA FunctionRestParameter
     ;
     
 FormalList
-    ::= FormalParameter
-    | FormalList COMMA FormalParameter
+    ::= FormalParameter:fp
+    {:
+        ArrayList<Node> list = new ArrayList<Node>();
+        list.add((Node)fp);
+        RESULT = list;
+    :}
+    | FormalList:fl COMMA FormalParameter:fp
+    {:
+        ArrayList<Node> list = (ArrayList<Node>)fl;
+        list.add((Node)fp);
+        RESULT = list;
+    :}
     ;
     
 FunctionRestParameter
@@ -1469,15 +1751,24 @@ FunctionRestParameter
     ;
     
 FormalParameter
-    ::= BindingElement
+    ::= BindingElement:be
+    {:
+        RESULT = be;
+    :}
     ;
     
 FunctionBody
-    ::= FunctionStatementList
+    ::= FunctionStatementList:fs
+    {:
+        RESULT = fs;
+    :}
     ;
     
 FunctionStatementList
-    ::= StatementList
+    ::= StatementList:sl
+    {:
+        RESULT = sl;
+    :}
     |
     ;
 
