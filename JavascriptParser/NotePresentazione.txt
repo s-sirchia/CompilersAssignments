@@ -1,3 +1,11 @@
+COSE CHE NON ABBIAMO FATTO
+
+	Classi
+	oggetti
+	valutazioni regex
+	template
+	(PanicMode)
+
 COSE OP CHE ABBIAMO FATTO
 
 AGGIUNTA NODI LABEL PER SCRITTURA PIU' BELLA
@@ -106,6 +114,16 @@ MemberExpression
 Invece abbiamo preferito per semplicità e non modificare troppo la struttura del codice
 creare un nodo expression, che se si trova come condizione di un if while ecc
 viene appesa questa condizione come expressione che ha al suo interno le varie operazioni di cui è composto
+
+
+MENTRE SCRIVEVAMO LA GRAMMATICA
+abbiamo incontrato la dimensione massimo della static initializer di 65535
+1938 righe di codice!!!!!!
+
+
+Empty statement restituisce vuoto
+che viene propagato
+nelle varie produzioni superiori si controlla di non aggiungere statement vuoti
 
 
 
