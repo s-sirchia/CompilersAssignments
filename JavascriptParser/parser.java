@@ -12818,7 +12818,20 @@ class CUP$parser$actions {
           case 189: // LexicalDeclaration ::= LetOrConst BindingList 
             {
               Object RESULT =null;
-
+		int lcleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int lcright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Object lc = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		int blleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int blright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object bl = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+        Label l = new Label(""+lc, curr_lineno());
+        Iterator it = ((ArrayList) bl).iterator();
+        while(it.hasNext()){
+            l.addChild(((Node)it.next()));
+        }
+        RESULT = l;
+    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("LexicalDeclaration",71, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -12827,7 +12840,12 @@ class CUP$parser$actions {
           case 190: // LetOrConst ::= LET 
             {
               Object RESULT =null;
-
+		int lleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int lright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object l = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+        RESULT = "LET";  
+    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("LetOrConst",79, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -12836,7 +12854,12 @@ class CUP$parser$actions {
           case 191: // LetOrConst ::= CONST 
             {
               Object RESULT =null;
-
+		int cleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int cright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object c = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+        RESULT = "CONST";
+    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("LetOrConst",79, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -12845,7 +12868,14 @@ class CUP$parser$actions {
           case 192: // BindingList ::= LexicalBinding 
             {
               Object RESULT =null;
-
+		int lbleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int lbright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object lb = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+        ArrayList<Node> list = new ArrayList<Node>();
+        list.add((Node)lb);
+        RESULT = list;
+    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("BindingList",80, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -12854,7 +12884,17 @@ class CUP$parser$actions {
           case 193: // BindingList ::= BindingList COMMA LexicalBinding 
             {
               Object RESULT =null;
-
+		int blleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
+		int blright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
+		Object bl = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
+		int lbleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int lbright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object lb = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+        ArrayList<Node> list = ((ArrayList<Node>)bl);
+        list.add((Node)lb);
+        RESULT = list;
+    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("BindingList",80, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -12872,7 +12912,12 @@ class CUP$parser$actions {
           case 195: // LexicalBinding ::= BindingIdentifier 
             {
               Object RESULT =null;
-
+		int bileft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int biright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object bi = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+        RESULT = bi;
+    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("LexicalBinding",81, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;

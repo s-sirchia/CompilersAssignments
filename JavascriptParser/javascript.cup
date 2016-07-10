@@ -1077,22 +1077,49 @@ StatementListItem
     ;
 
 LexicalDeclaration
-    ::= LetOrConst BindingList
+    ::= LetOrConst:lc BindingList:bl
+    {:
+        Label l = new Label(""+lc, curr_lineno());
+        Iterator it = ((ArrayList) bl).iterator();
+        while(it.hasNext()){
+            l.addChild(((Node)it.next()));
+        }
+        RESULT = l;
+    :}
     ;
     
 LetOrConst
-    ::= LET
-    | CONST
+    ::= LET:l
+    {:
+        RESULT = "LET";  
+    :}
+    | CONST:c
+    {:
+        RESULT = "CONST";
+    :}
     ;
     
 BindingList
-    ::= LexicalBinding
-    | BindingList COMMA LexicalBinding
+    ::= LexicalBinding:lb
+    {:
+        ArrayList<Node> list = new ArrayList<Node>();
+        list.add((Node)lb);
+        RESULT = list;
+    :}
+    | BindingList:bl COMMA LexicalBinding:lb
+    {:
+        ArrayList<Node> list = ((ArrayList<Node>)bl);
+        list.add((Node)lb);
+        RESULT = list;
+    :}
     ;
     
 LexicalBinding
     ::= BindingIdentifier Initializer
-    | BindingIdentifier
+    | BindingIdentifier:bi
+    {:
+        RESULT = bi;
+    :}
     | BindingPattern Initializer
     ;
     
