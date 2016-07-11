@@ -11,7 +11,9 @@ public class Main {
 	            p.parse();
 		    System.out.println("Parsing finished!");
 		    
-		    JSTree.tree.printTree();
+		    //JSTree.tree.printTree();
+		    
+		    JSTree.tree.generateJson("D:/xampp/htdocs/program.json");
 	            
 		} catch (Exception e) {
 		    e.printStackTrace();
