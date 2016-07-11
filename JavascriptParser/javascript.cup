@@ -64,9 +64,9 @@ nonterminal Literal, ArrayLiteral, ObjectLiteral, FunctionExpression, ClassExpre
 nonterminal TemplateLiteral, CPExpAAParList, Expression, NumericLiteral, Elision, ElementList, AssignmentExpression, SpreadElement, PropertyDefinitionList, PropertyDefinition,
 PropertyName, LiteralPropertyName, ComputedPropertyName, CoverInizializedName, Initializer, MethodDefinition,
 MemberExpression, SuperProperty, MetaProperty, Arguments, NewTarget, NewExpression,
-CallExpression, SuperCall, ArgumentList, LeftHandSideExpression, UpdateExpression, UnaryExpression, ExponentiationExpression, MultiplicativeExpression, MultiplicativeOperator, AdditiveExpression, ShiftExpression, RelationalExpression,  EqualityExpression, BitwiseAndExpression, BitwiseXOrExpression,  BitwiseOrExpression, LogicalAndExpression, LogicalOrExpression, ConditionalExpression, YieldExpression, AssignmentOperator, Statement, BlockStatement, VariableStatement, EmptyStatement, ExpressionStatement, IfStatement, BreakableStatement, ContinueStatement, BreakStatement, ReturnStatement, WithStatement, LabeledStatement, ThrowStatement, TryStatement, DebuggerStatement, Declaration, HoistableDeclaration, ClassDeclaration, LexicalDeclaration, 
+CallExpression, SuperCall, ArgumentList, LeftHandSideExpression, UpdateExpression, UnaryExpression, ExponentiationExpression, MultiplicativeExpression, MultiplicativeOperator, AdditiveExpression, ShiftExpression, RelationalExpression,  EqualityExpression, BitwiseAndExpression, BitwiseXOrExpression,  BitwiseOrExpression, LogicalAndExpression, LogicalOrExpression, ConditionalExpression, YieldExpression, AssignmentOperator, Statement, BlockStatement, VariableStatement, EmptyStatement, ExpressionStatement, IfStatement, BreakableStatement, ContinueStatement, BreakStatement, ReturnStatement, WithStatement, LabelledStatement, ThrowStatement, TryStatement, DebuggerStatement, Declaration, HoistableDeclaration, ClassDeclaration, LexicalDeclaration, 
 FunctionDeclaration, GeneratorDeclaration, IterationStatement, SwitchStatement, Block, StatementList, StatementListItem,  LetOrConst, BindingList, LexicalBinding, BindingPattern, VariableDeclarationList, VariableDeclaration, ObjectBindingPattern, ArrayBindingPattern, BindingPropertyList, BindingRestElement, BindingElementList, BindingProperty, BindingElisionElement, Identifier,
-BindingElement, SingleNameBinding, ForBinding, ForDeclaration, CaseBlock, CaseClauses, DefaultCase, CaseClause, LabeledItem, Catch, Finally, CatchParameter, FormalParameters, FunctionBody, StrictFormalParameters, FormalParameterList, FunctionRestParameter, FormalList, FormalParameter, FunctionStatementList,   GeneratorMethod, PropertySetParameterList, GeneratorBody, Script, ScriptBody, YieldExpressionP;
+BindingElement, SingleNameBinding, ForBinding, ForDeclaration, CaseBlock, CaseClauses, DefaultCase, CaseClause, LabelledItem, Catch, Finally, CatchParameter, FormalParameters, FunctionBody, StrictFormalParameters, FormalParameterList, FunctionRestParameter, FormalList, FormalParameter, FunctionStatementList,   GeneratorMethod, PropertySetParameterList, GeneratorBody, Script, ScriptBody, YieldExpressionP;
 
 start with Script;
     
@@ -958,7 +958,10 @@ Statement
         RESULT = r;
     :}
     | WithStatement
-    | LabeledStatement
+    | LabelledStatement:ls
+    {:
+        RESULT = ls;
+    :}
     | ThrowStatement:ts
     {:
         RESULT = ts;
@@ -1597,13 +1600,27 @@ DefaultCase
     :}
     ;
     
-LabeledStatement
-    ::= LabelIdentifier COLON LabeledItem
+LabelledStatement
+    ::= LabelIdentifier:lid COLON LabelledItem:lit
+    {:
+        Label l = new Label("Label", curr_lineno());
+        l.addChild((Node)lid);
+        Label it = new Label("Item", curr_lineno());
+        it.addChild((Node)lit);
+        Operation op = new Operation("LABELING", l, it, curr_lineno());
+        RESULT = op;
+    :}
     ;
    
-LabeledItem
-    ::= Statement
-    | FunctionDeclaration
+LabelledItem
+    ::= Statement:s
+    {:
+        RESULT = ((Node)((Node)s).getChilds().get(0));
+    :}
+    | FunctionDeclaration:fd
+    {:
+        RESULT = fd;
+    :}
     ;
     
 ThrowStatement

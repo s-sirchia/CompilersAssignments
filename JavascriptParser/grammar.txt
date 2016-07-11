@@ -211,14 +211,14 @@ Warning : *** Shift/Reduce conflict found in state #24
   under symbol BOOLEANLITERAL
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #58
+Warning : *** Shift/Reduce conflict found in state #59
   between LeftHandSideExpression ::= CallExpression (*) 
   and     Arguments ::= (*) LPAR ArgumentList RPAR 
   and     Arguments ::= (*) LPAR RPAR 
   under symbol LPAR
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #58
+Warning : *** Shift/Reduce conflict found in state #59
   between LeftHandSideExpression ::= CallExpression (*) 
   and     CallExpression ::= CallExpression (*) LSQPAR Expression RSQPAR 
   under symbol LSQPAR
@@ -358,7 +358,7 @@ Warning : *** Reduce/Reduce conflict found in state #132
   under symbols: {LPAR, COLON}
   Resolved in favor of the second production.
 
-Warning : *** Shift/Reduce conflict found in state #73
+Warning : *** Shift/Reduce conflict found in state #74
   between PrimaryExpression ::= IdentifierReference (*) 
   and     Initializer ::= (*) ASSIGN AssignmentExpression 
   under symbol ASSIGN
@@ -370,13 +370,13 @@ Warning : *** Shift/Reduce conflict found in state #316
   under symbol RSQPAR
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #54
+Warning : *** Shift/Reduce conflict found in state #55
   between UpdateExpression ::= LeftHandSideExpression (*) 
   and     UpdateExpression ::= LeftHandSideExpression (*) DPLUS 
   under symbol DPLUS
   Resolved in favor of shifting.
 
-Warning : *** Shift/Reduce conflict found in state #54
+Warning : *** Shift/Reduce conflict found in state #55
   between UpdateExpression ::= LeftHandSideExpression (*) 
   and     UpdateExpression ::= LeftHandSideExpression (*) DMINUS 
   under symbol DMINUS
@@ -419,7 +419,7 @@ Warning : *** Shift/Reduce conflict found in state #54
 [45]BitwiseAndExpression [46]BitwiseXOrExpression [47]BitwiseOrExpression [48]LogicalAndExpression [49]LogicalOrExpression 
 [50]ConditionalExpression [51]YieldExpression [52]AssignmentOperator [53]Statement [54]BlockStatement 
 [55]VariableStatement [56]EmptyStatement [57]ExpressionStatement [58]IfStatement [59]BreakableStatement 
-[60]ContinueStatement [61]BreakStatement [62]ReturnStatement [63]WithStatement [64]LabeledStatement 
+[60]ContinueStatement [61]BreakStatement [62]ReturnStatement [63]WithStatement [64]LabelledStatement 
 [65]ThrowStatement [66]TryStatement [67]DebuggerStatement [68]Declaration [69]HoistableDeclaration 
 [70]ClassDeclaration [71]LexicalDeclaration [72]FunctionDeclaration [73]GeneratorDeclaration [74]IterationStatement 
 [75]SwitchStatement [76]Block [77]StatementList [78]StatementListItem [79]LetOrConst 
@@ -427,7 +427,7 @@ Warning : *** Shift/Reduce conflict found in state #54
 [85]ObjectBindingPattern [86]ArrayBindingPattern [87]BindingPropertyList [88]BindingRestElement [89]BindingElementList 
 [90]BindingProperty [91]BindingElisionElement [92]Identifier [93]BindingElement [94]SingleNameBinding 
 [95]ForBinding [96]ForDeclaration [97]CaseBlock [98]CaseClauses [99]DefaultCase 
-[100]CaseClause [101]LabeledItem [102]Catch [103]Finally [104]CatchParameter 
+[100]CaseClause [101]LabelledItem [102]Catch [103]Finally [104]CatchParameter 
 [105]FormalParameters [106]FunctionBody [107]StrictFormalParameters [108]FormalParameterList [109]FunctionRestParameter 
 [110]FormalList [111]FormalParameter [112]FunctionStatementList [113]GeneratorMethod [114]PropertySetParameterList 
 [115]GeneratorBody [116]Script [117]ScriptBody [118]YieldExpressionP 
@@ -605,7 +605,7 @@ Warning : *** Shift/Reduce conflict found in state #54
 [169] Statement ::= BreakStatement 
 [170] Statement ::= ReturnStatement 
 [171] Statement ::= WithStatement 
-[172] Statement ::= LabeledStatement 
+[172] Statement ::= LabelledStatement 
 [173] Statement ::= ThrowStatement 
 [174] Statement ::= TryStatement 
 [175] Statement ::= DebuggerStatement 
@@ -717,9 +717,9 @@ Warning : *** Shift/Reduce conflict found in state #54
 [281] CaseClause ::= CASE Expression COLON 
 [282] DefaultCase ::= DEFAULT COLON StatementList 
 [283] DefaultCase ::= DEFAULT COLON 
-[284] LabeledStatement ::= LabelIdentifier COLON LabeledItem 
-[285] LabeledItem ::= Statement 
-[286] LabeledItem ::= FunctionDeclaration 
+[284] LabelledStatement ::= LabelIdentifier COLON LabelledItem 
+[285] LabelledItem ::= Statement 
+[286] LabelledItem ::= FunctionDeclaration 
 [287] ThrowStatement ::= THROW Expression 
 [288] TryStatement ::= TRY Block Catch 
 [289] TryStatement ::= TRY Block Finally 
