@@ -237,6 +237,7 @@ IfStatement ::= IF LPAR Expression RPAR Statement ELSE Statement
 IfStatement ::= IF LPAR Expression RPAR Statement 
 IterationStatement ::= DO Statement WHILE LPAR Expression RPAR SEMI 
 IterationStatement ::= WHILE LPAR Expression RPAR Statement 
+WHILE LPAR Expression RPAR Statement ::= Expression
 IterationStatement ::= FOR LPAR Expression SEMI Expression SEMI Expression RPAR Statement 
 IterationStatement ::= FOR LPAR Expression SEMI SEMI RPAR Statement 
 IterationStatement ::= FOR LPAR SEMI Expression SEMI RPAR Statement 
