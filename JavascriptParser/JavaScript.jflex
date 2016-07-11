@@ -297,7 +297,7 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 	
 	"/*"						{yybegin(COMMENT); }
 	
-	"*/"						{return symbol(sym.ERROR, "Unmatched */");}
+	"*/"						{return symbol(sym.ERROR_B, "Unmatched */ on line "+(yyline+1));}
 	/* keywords */
 	"break"						{return symbol(sym.BREAK); }
 	"do"						{return symbol(sym.DO); }
@@ -484,7 +484,7 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 
 /*String States*/
 <STRING1> {
-  <<EOF>>						 { return symbol(sym.ERROR_B,"EOF in string constant");}
+  <<EOF>>						 { return symbol(sym.ERROR_B,"EOF in string constant on line "+(yyline+1));}
   \'                             { yybegin(YYINITIAL); 
 								   return symbol(sym.STRING_LITERAL, 
 								   string.toString()); }
@@ -499,7 +499,7 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 }
 
 <STRING2> {
-  <<EOF>>						 {  return symbol(sym.ERROR_B,"EOF in string constant");}
+  <<EOF>>						 {  return symbol(sym.ERROR_B,"EOF in string constant on line "+(yyline+1));}
   \"                             { yybegin(YYINITIAL); 
 								   return symbol(sym.STRING_LITERAL, 
 								   string.toString()); }
@@ -514,7 +514,7 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 }
 
 <COMMENT> {
-  <<EOF>>						 {  return symbol(sym.ERROR_B,"EOF in comment");}
+  <<EOF>>						 {  return symbol(sym.ERROR_B,"EOF in comment on line "+(yyline+1));}
   "*/"                           { yybegin(YYINITIAL); }
   .                   			 {  }
   {UnknownTerminators}			 {	}
@@ -522,7 +522,7 @@ Template ={NoSubstitutionTemplate} | {TemplateHead}
 
 /* error fallback */
 [^]                              { return symbol(sym.ERROR,"Illegal character <"+
-													yytext()+"> at row "+(yyline+1)+" column "+yycolumn); }
+													yytext()+"> at row "+(yyline+1)+" column "+(yycolumn+1)); }
 
 
 

@@ -256,3 +256,9 @@ class Constructor<String> extends JSNode{
 		this.addChild(arg);
 	}
 }
+
+class ErrorNode<String> extends JSNode{
+	public ErrorNode(String message, int line){
+		super(message, line);
+	}
+}

@@ -8,7 +8,7 @@ public class Main {
 		    // start parsing
 		    parser p = new parser(lexer);
 		    System.out.println("Parser runs: ");
-	            p.debug_parse();
+	            p.parse();
 		    System.out.println("Parsing finished!");
 		    
 		    JSTree.tree.printTree();

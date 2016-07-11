@@ -1,6 +1,8 @@
 import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.lang.*;
+import java.util.List;
 
 action code {:
     int curr_lineno() {
@@ -15,11 +17,38 @@ action code {:
 
 parser code {:
     int omerrs = 0;
-
+    
+    TokenUtils tokenMap = new TokenUtils();
+    
     public void syntax_error(Symbol cur_token){
-        int lineno = action_obj.curr_lineno();
-	System.err.println("Syntax error at "+ cur_token + " at line " + (lineno + 1));
-	
+        report_error("Syntax error: ", cur_token);
+    }
+    
+    public void report_error(String message, Object info){
+        System.err.print(message+": ");
+        Symbol curr = (Symbol)info;
+        String name = symbl_name_from_id(curr.sym);
+        if(name.equals("ERROR")|| name.equals("ERROR_B")){
+            System.err.println(curr.value);
+        }
+        else{
+            System.err.println("on line "+(action_obj.curr_lineno()+1));
+            List<Integer> ids = expected_token_ids();
+            System.err.print("Expected token: ");
+            for (Integer expected : ids){
+                System.err.print("\"");
+                String token = TokenUtils.getSymbol(symbl_name_from_id(expected));
+                if(token != ""){
+                    System.err.print(token);
+                }
+                System.err.print("\", ");
+            }
+            System.err.println("");
+        }
+    }
+    
+    public void report_fatal_error(String message, Object info){
+        done_parsing();
     }
 
 :}
@@ -73,7 +102,6 @@ BindingIdentifier
 Identifier
     ::= IDENTIFIERNAME:in
     {:
-        System.out.println("line: "+curr_lineno()+" "+""+in);
         RESULT = new Identifier(in, curr_lineno());
     :}
     ;
@@ -149,7 +177,12 @@ Literal
 NumericLiteral
     ::= DECIMALLITERAL:num
     {:
-        RESULT = new Literal(num, curr_lineno(), new Node("Decimal int"));
+        if(((String)num).contains(".")){
+            RESULT = new Literal(num, curr_lineno(), new Node("Decimal float"));
+        }
+        else{
+            RESULT = new Literal(num, curr_lineno(), new Node("Decimal int"));
+        }
     :}
     | OCTALLITERAL:num
     {:

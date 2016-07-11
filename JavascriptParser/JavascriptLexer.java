@@ -984,15 +984,15 @@ class JavascriptLexer implements java_cup.runtime.Scanner {
             zzDoEOF();
             switch (zzLexicalState) {
             case STRING1: {
-              return symbol(sym.ERROR_B,"EOF in string constant");
+              return symbol(sym.ERROR_B,"EOF in string constant on line "+(yyline+1));
             }
             case 284: break;
             case STRING2: {
-              return symbol(sym.ERROR_B,"EOF in string constant");
+              return symbol(sym.ERROR_B,"EOF in string constant on line "+(yyline+1));
             }
             case 285: break;
             case COMMENT: {
-              return symbol(sym.ERROR_B,"EOF in comment");
+              return symbol(sym.ERROR_B,"EOF in comment on line "+(yyline+1));
             }
             case 286: break;
             default:
@@ -1003,7 +1003,7 @@ class JavascriptLexer implements java_cup.runtime.Scanner {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { return symbol(sym.ERROR,"Illegal character <"+
-													yytext()+"> at row "+(yyline+1)+" column "+yycolumn);
+													yytext()+"> at row "+(yyline+1)+" column "+(yycolumn+1));
             }
           case 117: break;
           case 2: 
@@ -1156,7 +1156,7 @@ class JavascriptLexer implements java_cup.runtime.Scanner {
             }
           case 152: break;
           case 37: 
-            { return symbol(sym.ERROR, "Unmatched */");
+            { return symbol(sym.ERROR_B, "Unmatched */ on line "+(yyline+1));
             }
           case 153: break;
           case 38: 

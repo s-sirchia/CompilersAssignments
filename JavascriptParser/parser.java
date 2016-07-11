@@ -6,6 +6,8 @@
 import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.lang.*;
+import java.util.List;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20150930 (SVN rev 66) generated parser.
@@ -10062,11 +10064,38 @@ public class parser extends java_cup.runtime.lr_parser {
 
 
     int omerrs = 0;
-
+    
+    TokenUtils tokenMap = new TokenUtils();
+    
     public void syntax_error(Symbol cur_token){
-        int lineno = action_obj.curr_lineno();
-	System.err.println("Syntax error at "+ cur_token + " at line " + (lineno + 1));
-	
+        report_error("Syntax error: ", cur_token);
+    }
+    
+    public void report_error(String message, Object info){
+        System.err.print(message+": ");
+        Symbol curr = (Symbol)info;
+        String name = symbl_name_from_id(curr.sym);
+        if(name.equals("ERROR")|| name.equals("ERROR_B")){
+            System.err.println(curr.value);
+        }
+        else{
+            System.err.println("on line "+(action_obj.curr_lineno()+1));
+            List<Integer> ids = expected_token_ids();
+            System.err.print("Expected token: ");
+            for (Integer expected : ids){
+                System.err.print("\"");
+                String token = TokenUtils.getSymbol(symbl_name_from_id(expected));
+                if(token != ""){
+                    System.err.print(token);
+                }
+                System.err.print("\", ");
+            }
+            System.err.println("");
+        }
+    }
+    
+    public void report_fatal_error(String message, Object info){
+        done_parsing();
     }
 
 
@@ -10184,7 +10213,6 @@ class CUP$parser$actions {
 		int inright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object in = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        System.out.println("line: "+curr_lineno()+" "+""+in);
         RESULT = new Identifier(in, curr_lineno());
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("Identifier",92, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
@@ -10449,7 +10477,12 @@ class CUP$parser$actions {
 		int numright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object num = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        RESULT = new Literal(num, curr_lineno(), new Node("Decimal int"));
+        if(((String)num).contains(".")){
+            RESULT = new Literal(num, curr_lineno(), new Node("Decimal float"));
+        }
+        else{
+            RESULT = new Literal(num, curr_lineno(), new Node("Decimal int"));
+        }
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("NumericLiteral",13, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
