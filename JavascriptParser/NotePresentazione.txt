@@ -6,6 +6,23 @@ COSE CHE NON ABBIAMO FATTO
 	template
 	(PanicMode)
 
+    non è proprio vero che non l'abbiamo fatto
+    ma javascript sia la grammatica del lexer che quella del parser
+    tratta i numeri decimali con virgola e non allo stesso modo
+    mentre per ottale binario e esadecimale vengono visti come interi
+
+    quindi per avere se è intero o floating controlliamo se dentro 
+    la stringa del numero è contenuto un punto allora lo definiamo come floating
+    altrimenti int
+
+    recovery mode infattibile perchè dovremmo modificare tutta la grammatica
+    e non abbiamo la capa
+    provato con la schifezza SuperProduction
+    ErrorStatement ::= SuperProduction ERROR
+
+    ma sta cosa creatava un radoppio delle produzioni
+    che creava una tavola delle produzioni che java si lamentava.
+
 COSE OP CHE ABBIAMO FATTO
 
 AGGIUNTA NODI LABEL PER SCRITTURA PIU' BELLA
