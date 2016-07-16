@@ -102,7 +102,8 @@ BindingIdentifier
 Identifier
     ::= IDENTIFIERNAME:in
     {:
-        RESULT = new Identifier(in, curr_lineno());
+        String id = "Key: "+((Integer)in)+" ID: "+(((JavascriptLexer)parser.getScanner()).getIdName((Integer)in));
+        RESULT = new Identifier(id, curr_lineno());
     :}
     ;
 
@@ -357,8 +358,8 @@ MemberExpression
     {:
         Label source = new Label("Source", curr_lineno());
         source.addChild((Node)me);
-        Label access = new Label("Property", curr_lineno());
-        access.addChild((Node)e);
+        Node access = (Node) e;
+        access.setData("Property");
         ItemAccess ia = new ItemAccess(source, access, curr_lineno());
         RESULT = ia;
     :}
@@ -367,7 +368,8 @@ MemberExpression
         Label source = new Label("Source", curr_lineno());
         source.addChild((Node)me);
         Label access = new Label("Property", curr_lineno());
-        Identifier id = new Identifier(""+fn, curr_lineno());
+        String idstring = "Key: "+((Integer)fn)+" ID: "+(((JavascriptLexer)parser.getScanner()).getIdName((Integer)fn));
+        Identifier id = new Identifier(idstring, curr_lineno());
         access.addChild((Node)id);
         ItemAccess ia = new ItemAccess(source, access, curr_lineno());
         RESULT = ia;
@@ -378,9 +380,7 @@ MemberExpression
     {:
         Label obj = new Label("Object", curr_lineno());
         obj.addChild((Node)me);
-        Label arg = new Label("Arguments", curr_lineno());
-        arg.addChild((Node)a);
-        Constructor c = new Constructor(obj, arg, curr_lineno());
+        Constructor c = new Constructor(obj, (Node)a, curr_lineno());
         RESULT = c;
     :}
     ;
@@ -403,7 +403,14 @@ NewExpression
     {:
         RESULT = me;
     :}
-    | NEW NewExpression
+    | NEW NewExpression:ne
+    {:
+        Label obj = new Label("Object", curr_lineno());
+        obj.addChild((Node)ne);
+        Label arg = new Label("Arguments", curr_lineno());
+        Constructor c = new Constructor(obj, arg, curr_lineno());
+        RESULT = c;
+    :}
     ;
 
 CallExpression
@@ -469,7 +476,8 @@ CallExpression
         Label source = new Label("Source", curr_lineno());
         source.addChild((Node)c);
         Label access = new Label("Property", curr_lineno());
-        Identifier id = new Identifier(""+fn, curr_lineno());
+        String idstring = "Key: "+((Integer)fn)+" ID: "+(((JavascriptLexer)parser.getScanner()).getIdName((Integer)fn));
+        Identifier id = new Identifier(idstring, curr_lineno());
         access.addChild((Node)id);
         ItemAccess ia = new ItemAccess(source, access, curr_lineno());
         RESULT = ia;
@@ -1277,21 +1285,42 @@ ExpressionStatement
 IfStatement
     ::= IF LPAR Expression:e RPAR Statement:s1 ELSE Statement:s2
     {:
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e);
-        Label tl = new Label("Then Body", curr_lineno());
-        tl.addChild((Node)s1);
-        Label el = new Label("Else Body", curr_lineno());
-        el.addChild((Node)s2);
+        Node cl = (Node) e;
+        cl.setData("Condition");
+        Node tl;
+        if(s1 instanceof ThrowNode){
+            tl = new Label("Then Body", curr_lineno());
+            tl.addChild((Node)s1);
+        }
+        else{
+            tl = (Node) s1;
+            tl.setData("Then Body");
+        }
+        Node el;
+        if(s2 instanceof ThrowNode){
+            el = new Label("Else Body", curr_lineno());
+            el.addChild((Node)s2);
+        }
+        else{
+            el = (Node) s2;
+            el.setData("Else Body");
+        }
         IfNode ifn = new IfNode(cl, tl, el, curr_lineno());
         RESULT = ifn;
     :}
     | IF LPAR Expression:e RPAR Statement:s
     {:
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e);
-        Label tl = new Label("Then Body", curr_lineno());
-        tl.addChild((Node)s);
+        Node cl = (Node) e;
+        cl.setData("Condition");
+        Node tl;
+        if(s instanceof ThrowNode){
+            tl = new Label("Then Body", curr_lineno());
+            tl.addChild((Node)s);
+        }
+        else{
+            tl = (Node) s;
+            tl.setData("Then Body");
+        }
         IfNode ifn = new IfNode(cl, tl, curr_lineno());
         RESULT = ifn;
     :}
@@ -1300,158 +1329,157 @@ IfStatement
 IterationStatement
     ::= DO Statement:s WHILE LPAR Expression:e RPAR SEMI
     {:
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
+        Node cl = (Node) e;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
         WhileOp w = new WhileOp("DO WHILE",bl, cl, curr_lineno());
         RESULT = w;
     :}
     | WHILE LPAR Expression:e RPAR Statement:s
     {:
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
+        Node cl = (Node) e;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
         WhileOp w = new WhileOp("WHILE",cl, bl, curr_lineno());
         RESULT = w;
     :}
     | FOR LPAR Expression:e1 SEMI Expression:e2 SEMI Expression:e3 RPAR Statement:s
     {:
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e2);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
-        Label ul = new Label("Update", curr_lineno());
-        ul.addChild((Node)e3);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node cl = (Node) e2;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
+        Node ul = (Node) e3;
+        ul.setData("Update");
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     :}
     | FOR LPAR Expression:e1 SEMI SEMI RPAR Statement:s
     {:
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node bl = (Node) s;
+        bl.setData("Body");
         Label cl = new Label("Condition", curr_lineno());
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     :}
     | FOR LPAR SEMI Expression:e2 SEMI RPAR Statement:s
     {:
+        Node cl = (Node) e2;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
         Label il = new Label("Initialization", curr_lineno());
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e2);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     :}
     | FOR LPAR SEMI SEMI Expression:e3 RPAR Statement:s
     {:
+        Node bl = (Node) s;
+        bl.setData("Body");
+        Node ul = (Node) e3;
+        ul.setData("Update");
         Label il = new Label("Initialization", curr_lineno());
         Label cl = new Label("Condition", curr_lineno());
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
-        Label ul = new Label("Update", curr_lineno());
-        ul.addChild((Node)e3);
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     :}
     | FOR LPAR Expression:e1 SEMI Expression:e2 SEMI RPAR Statement:s
     {:
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e2);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node cl = (Node) e2;
+        cl.setData("Condition");
+        Node bl = (Node) s;
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     :}
     | FOR LPAR Expression:e1 SEMI SEMI Expression:e3 RPAR Statement:s
     {:
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node bl = (Node) s;
+        bl.setData("Body");
+        Node ul = (Node) e3;
+        ul.setData("Update");
         Label cl = new Label("Condition", curr_lineno());
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
-        Label ul = new Label("Update", curr_lineno());
-        ul.addChild((Node)e3);
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     :}
     | FOR LPAR SEMI Expression:e2 SEMI Expression:e3 RPAR Statement:s
     {:
-        Label il = new Label("Initialization", curr_lineno());
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e2);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
-        Label ul = new Label("Update", curr_lineno());
-        ul.addChild((Node)e3);
+        Node cl = (Node) e2;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
+        Node ul = (Node) e3;
+        ul.setData("Update");
+        Label il = new Label("Initialization", curr_lineno());  
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     :}
     | FOR LPAR SEMI SEMI RPAR Statement:s
     {:
+        Node bl = (Node) s;
+        bl.setData("Body");;
         Label il = new Label("Initialization", curr_lineno());
         Label cl = new Label("Condition", curr_lineno());
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     :}
     | FOR LPAR VAR VariableDeclarationList:e1 SEMI Expression:e2 SEMI Expression:e3 RPAR Statement:s
     {:
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e2);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
-        Label ul = new Label("Update", curr_lineno());
-        ul.addChild((Node)e3);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node cl = (Node) e2;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
+        Node ul = (Node) e3;
+        ul.setData("Update");
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     :}
     | FOR LPAR VAR VariableDeclarationList:e1 SEMI Expression:e2 SEMI RPAR Statement:s
     {:
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e2);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node cl = (Node) e2;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     :}
     | FOR LPAR VAR VariableDeclarationList:e1 SEMI SEMI Expression:e3 RPAR Statement:s
     {:
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node bl = (Node) s;
+        bl.setData("Body");
+        Node ul = (Node) e3;
+        ul.setData("Update"); 
         Label cl = new Label("Condition", curr_lineno());
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
-        Label ul = new Label("Update", curr_lineno());
-        ul.addChild((Node)e3);
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     :}
     | FOR LPAR VAR VariableDeclarationList:e1 SEMI SEMI RPAR Statement:s
     {:
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node bl = (Node) s;
+        bl.setData("Body");
         Label cl = new Label("Condition", curr_lineno());
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
@@ -1462,12 +1490,12 @@ IterationStatement
     | FOR LPAR LexicalDeclaration SEMI RPAR Statement
     | FOR LPAR LeftHandSideExpression:lh IN Expression:e RPAR Statement:s
     {:
+        Node bl = (Node) s;
+        bl.setData("Body");
         Operation b = new Operation("IN", (Node)lh, (Node)e, curr_lineno());
         Label il = new Label("Initialization", curr_lineno());
         Label cl = new Label("Condition", curr_lineno());
         cl.addChild(b);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
@@ -1518,8 +1546,8 @@ WithStatement
 SwitchStatement
     ::= SWITCH LPAR Expression:e RPAR CaseBlock:cb
     {:
-        Label l = new Label("Expression", curr_lineno());
-        l.addChild((Node)e);
+        Node l = (Node) e;
+        l.setData("Condition");
         Switch sw = new Switch(l, curr_lineno());
         if (cb instanceof ArrayList){
             cb = (ArrayList<Node>)cb;
@@ -1581,18 +1609,26 @@ CaseClauses
 CaseClause
     ::= CASE Expression:e COLON StatementList:sl
     {:
-        RESULT = new Clause("CASE",  (Node)e, (Node)sl, curr_lineno());
+        Node val = (Node) e;
+        val.setData("Value");
+        Node body = (Node) sl;
+        body.setData("Body");
+        RESULT = new Clause("CASE",  val, body, curr_lineno());
     :}
     | CASE Expression:e COLON
     {:
-        RESULT = new Clause("CASE", (Node)e, curr_lineno());
+        Node val = (Node) e;
+        val.setData("Value");
+        RESULT = new Clause("CASE", val, curr_lineno());
     :}
     ;
     
 DefaultCase
     ::= DEFAULT COLON StatementList:sl
     {:
-        RESULT = new Clause("DEFAULT", (Node)sl, curr_lineno());
+        Node body = (Node) sl;
+        body.setData("Body");
+        RESULT = new Clause("DEFAULT", body, curr_lineno());
     :}
     | DEFAULT COLON
     {:
@@ -1626,7 +1662,7 @@ LabelledItem
 ThrowStatement
     ::= THROW Expression:e
     {:
-        ThrowNode tn = new ThrowNode((Node)e, curr_lineno());
+        ThrowNode tn = new ThrowNode(((Node)(((Node)e).getChilds()).get(0)), curr_lineno());
         RESULT = tn;
     :}
     ;
@@ -1635,8 +1671,8 @@ TryStatement
     ::= TRY Block:b Catch:c
     {:
         TryStat ts = new TryStat(curr_lineno());
-        Label body = new Label("Body", curr_lineno());
-        body.addChild((Node)b);
+        Node body = (Node) b;
+        body.setData("Body");
         ts.addChild(body);
         ts.addChild((Node)c);
         RESULT = ts;
@@ -1644,8 +1680,8 @@ TryStatement
     | TRY Block:b Finally:f
     {:
         TryStat ts = new TryStat(curr_lineno());
-        Label body = new Label("Body", curr_lineno());
-        body.addChild((Node)b);
+        Node body = (Node) b;
+        body.setData("Body");
         ts.addChild(body);
         ts.addChild((Node)f);
         RESULT = ts;
@@ -1653,8 +1689,8 @@ TryStatement
     | TRY Block:b Catch:c Finally:f
     {:
         TryStat ts = new TryStat(curr_lineno());
-        Label body = new Label("Body", curr_lineno());
-        body.addChild((Node)b);
+        Node body = (Node) b;
+        body.setData("Body");
         ts.addChild(body);
         ts.addChild((Node)c);
         ts.addChild((Node)f);
@@ -1668,8 +1704,8 @@ Catch
         Label cat = new Label("Catch", curr_lineno());
         Label param = new Label("Parameter", curr_lineno());
         param.addChild((Node)cp);
-        Label body = new Label("Body", curr_lineno());
-        body.addChild((Node)b);
+        Node body = (Node) b;
+        body.setData("Body");
         cat.addChild(param);
         cat.addChild(body);
         RESULT = cat;
@@ -1680,8 +1716,8 @@ Finally
     ::= FINALLY Block:b
     {:
         Label cat = new Label("Finally", curr_lineno());
-        Label body = new Label("Body", curr_lineno());
-        body.addChild((Node)b);
+        Node body = (Node) b;
+        body.setData("Body");
         cat.addChild(body);
         RESULT = cat;
     :}
@@ -1719,9 +1755,14 @@ FunctionDeclaration
                 param.addChild((Node)fp);
             }
         }
-        Label body = new Label("Body", curr_lineno());
-        if (fb != null)
-            body.addChild((Node)fb);
+        Node body;
+        if (fb != null){
+            body = (Node) fb;
+            body.setData("Body");
+        }
+        else{
+            body = new Label("Body", curr_lineno());
+        }
         FunctionDeclaration f = new FunctionDeclaration(name, param, body, curr_lineno());
         RESULT = f;
     :}
@@ -1740,9 +1781,14 @@ FunctionDeclaration
                 param.addChild((Node)fp);
             }
         }
-        Label body = new Label("Body", curr_lineno());
-        if (fb != null)
-            body.addChild((Node)fb);
+        Node body;
+        if (fb != null){
+            body = (Node) fb;
+            body.setData("Body");
+        }
+        else{
+            body = new Label("Body", curr_lineno());
+        }
         FunctionDeclaration f = new FunctionDeclaration(name, param, body, curr_lineno());
         RESULT = f;
     :}
@@ -1765,9 +1811,14 @@ FunctionExpression
                 param.addChild((Node)fp);
             }
         }
-        Label body = new Label("Body", curr_lineno());
-        if (fb != null)
-            body.addChild((Node)fb);
+        Node body;
+        if (fb != null){
+            body = (Node) fb;
+            body.setData("Body");
+        }
+        else{
+            body = new Label("Body", curr_lineno());
+        }
         FunctionDeclaration f = new FunctionDeclaration(name, param, body, curr_lineno());
         RESULT = f;
     :}
@@ -1786,9 +1837,14 @@ FunctionExpression
                 param.addChild((Node)fp);
             }
         }
-        Label body = new Label("Body", curr_lineno());
-        if (fb != null)
-            body.addChild((Node)fb);
+        Node body;
+        if (fb != null){
+            body = (Node) fb;
+            body.setData("Body");
+        }
+        else{
+            body = new Label("Body", curr_lineno());
+        }
         FunctionDeclaration f = new FunctionDeclaration(name, param, body, curr_lineno());
         RESULT = f;
     :}

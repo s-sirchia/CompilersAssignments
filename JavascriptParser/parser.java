@@ -10213,7 +10213,8 @@ class CUP$parser$actions {
 		int inright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object in = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        RESULT = new Identifier(in, curr_lineno());
+        String id = "Key: "+((Integer)in)+" ID: "+(((JavascriptLexer)parser.getScanner()).getIdName((Integer)in));
+        RESULT = new Identifier(id, curr_lineno());
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("Identifier",92, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -10977,8 +10978,8 @@ class CUP$parser$actions {
 		
         Label source = new Label("Source", curr_lineno());
         source.addChild((Node)me);
-        Label access = new Label("Property", curr_lineno());
-        access.addChild((Node)e);
+        Node access = (Node) e;
+        access.setData("Property");
         ItemAccess ia = new ItemAccess(source, access, curr_lineno());
         RESULT = ia;
     
@@ -11000,7 +11001,8 @@ class CUP$parser$actions {
         Label source = new Label("Source", curr_lineno());
         source.addChild((Node)me);
         Label access = new Label("Property", curr_lineno());
-        Identifier id = new Identifier(""+fn, curr_lineno());
+        String idstring = "Key: "+((Integer)fn)+" ID: "+(((JavascriptLexer)parser.getScanner()).getIdName((Integer)fn));
+        Identifier id = new Identifier(idstring, curr_lineno());
         access.addChild((Node)id);
         ItemAccess ia = new ItemAccess(source, access, curr_lineno());
         RESULT = ia;
@@ -11040,9 +11042,7 @@ class CUP$parser$actions {
 		
         Label obj = new Label("Object", curr_lineno());
         obj.addChild((Node)me);
-        Label arg = new Label("Arguments", curr_lineno());
-        arg.addChild((Node)a);
-        Constructor c = new Constructor(obj, arg, curr_lineno());
+        Constructor c = new Constructor(obj, (Node)a, curr_lineno());
         RESULT = c;
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("MemberExpression",26, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
@@ -11103,7 +11103,16 @@ class CUP$parser$actions {
           case 77: // NewExpression ::= NEW NewExpression 
             {
               Object RESULT =null;
-
+		int neleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int neright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object ne = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+        Label obj = new Label("Object", curr_lineno());
+        obj.addChild((Node)ne);
+        Label arg = new Label("Arguments", curr_lineno());
+        Constructor c = new Constructor(obj, arg, curr_lineno());
+        RESULT = c;
+    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("NewExpression",31, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -11226,7 +11235,8 @@ class CUP$parser$actions {
         Label source = new Label("Source", curr_lineno());
         source.addChild((Node)c);
         Label access = new Label("Property", curr_lineno());
-        Identifier id = new Identifier(""+fn, curr_lineno());
+        String idstring = "Key: "+((Integer)fn)+" ID: "+(((JavascriptLexer)parser.getScanner()).getIdName((Integer)fn));
+        Identifier id = new Identifier(idstring, curr_lineno());
         access.addChild((Node)id);
         ItemAccess ia = new ItemAccess(source, access, curr_lineno());
         RESULT = ia;
@@ -13384,12 +13394,26 @@ class CUP$parser$actions {
 		int s2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s2 = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e);
-        Label tl = new Label("Then Body", curr_lineno());
-        tl.addChild((Node)s1);
-        Label el = new Label("Else Body", curr_lineno());
-        el.addChild((Node)s2);
+        Node cl = (Node) e;
+        cl.setData("Condition");
+        Node tl;
+        if(s1 instanceof ThrowNode){
+            tl = new Label("Then Body", curr_lineno());
+            tl.addChild((Node)s1);
+        }
+        else{
+            tl = (Node) s1;
+            tl.setData("Then Body");
+        }
+        Node el;
+        if(s2 instanceof ThrowNode){
+            el = new Label("Else Body", curr_lineno());
+            el.addChild((Node)s2);
+        }
+        else{
+            el = (Node) s2;
+            el.setData("Else Body");
+        }
         IfNode ifn = new IfNode(cl, tl, el, curr_lineno());
         RESULT = ifn;
     
@@ -13408,10 +13432,17 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e);
-        Label tl = new Label("Then Body", curr_lineno());
-        tl.addChild((Node)s);
+        Node cl = (Node) e;
+        cl.setData("Condition");
+        Node tl;
+        if(s instanceof ThrowNode){
+            tl = new Label("Then Body", curr_lineno());
+            tl.addChild((Node)s);
+        }
+        else{
+            tl = (Node) s;
+            tl.setData("Then Body");
+        }
         IfNode ifn = new IfNode(cl, tl, curr_lineno());
         RESULT = ifn;
     
@@ -13430,10 +13461,10 @@ class CUP$parser$actions {
 		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
 		
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
+        Node cl = (Node) e;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
         WhileOp w = new WhileOp("DO WHILE",bl, cl, curr_lineno());
         RESULT = w;
     
@@ -13452,10 +13483,10 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
+        Node cl = (Node) e;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
         WhileOp w = new WhileOp("WHILE",cl, bl, curr_lineno());
         RESULT = w;
     
@@ -13480,14 +13511,14 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e2);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
-        Label ul = new Label("Update", curr_lineno());
-        ul.addChild((Node)e3);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node cl = (Node) e2;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
+        Node ul = (Node) e3;
+        ul.setData("Update");
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     
@@ -13506,11 +13537,11 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node bl = (Node) s;
+        bl.setData("Body");
         Label cl = new Label("Condition", curr_lineno());
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
@@ -13530,11 +13561,11 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
+        Node cl = (Node) e2;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
         Label il = new Label("Initialization", curr_lineno());
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e2);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
@@ -13554,12 +13585,12 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
+        Node bl = (Node) s;
+        bl.setData("Body");
+        Node ul = (Node) e3;
+        ul.setData("Update");
         Label il = new Label("Initialization", curr_lineno());
         Label cl = new Label("Condition", curr_lineno());
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
-        Label ul = new Label("Update", curr_lineno());
-        ul.addChild((Node)e3);
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     
@@ -13581,12 +13612,11 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e2);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node cl = (Node) e2;
+        cl.setData("Condition");
+        Node bl = (Node) s;
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
@@ -13609,13 +13639,13 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node bl = (Node) s;
+        bl.setData("Body");
+        Node ul = (Node) e3;
+        ul.setData("Update");
         Label cl = new Label("Condition", curr_lineno());
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
-        Label ul = new Label("Update", curr_lineno());
-        ul.addChild((Node)e3);
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     
@@ -13637,13 +13667,13 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label il = new Label("Initialization", curr_lineno());
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e2);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
-        Label ul = new Label("Update", curr_lineno());
-        ul.addChild((Node)e3);
+        Node cl = (Node) e2;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
+        Node ul = (Node) e3;
+        ul.setData("Update");
+        Label il = new Label("Initialization", curr_lineno());  
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     
@@ -13659,10 +13689,10 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
+        Node bl = (Node) s;
+        bl.setData("Body");;
         Label il = new Label("Initialization", curr_lineno());
         Label cl = new Label("Condition", curr_lineno());
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
@@ -13688,14 +13718,14 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e2);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
-        Label ul = new Label("Update", curr_lineno());
-        ul.addChild((Node)e3);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node cl = (Node) e2;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
+        Node ul = (Node) e3;
+        ul.setData("Update");
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     
@@ -13717,12 +13747,12 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
-        Label cl = new Label("Condition", curr_lineno());
-        cl.addChild((Node)e2);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node cl = (Node) e2;
+        cl.setData("Condition");
+        Node bl = (Node) s;
+        bl.setData("Body");
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
@@ -13745,13 +13775,13 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node bl = (Node) s;
+        bl.setData("Body");
+        Node ul = (Node) e3;
+        ul.setData("Update"); 
         Label cl = new Label("Condition", curr_lineno());
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
-        Label ul = new Label("Update", curr_lineno());
-        ul.addChild((Node)e3);
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
     
@@ -13770,11 +13800,11 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label il = new Label("Initialization", curr_lineno());
-        il.addChild((Node)e1);
+        Node il = (Node) e1;
+        il.setData("Initialization");
+        Node bl = (Node) s;
+        bl.setData("Body");
         Label cl = new Label("Condition", curr_lineno());
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
@@ -13833,12 +13863,12 @@ class CUP$parser$actions {
 		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
+        Node bl = (Node) s;
+        bl.setData("Body");
         Operation b = new Operation("IN", (Node)lh, (Node)e, curr_lineno());
         Label il = new Label("Initialization", curr_lineno());
         Label cl = new Label("Condition", curr_lineno());
         cl.addChild(b);
-        Label bl = new Label("Body", curr_lineno());
-        bl.addChild((Node)s);
         Label ul = new Label("Update", curr_lineno());
         ForOp w = new ForOp(il, cl, bl, ul, curr_lineno());
         RESULT = w;
@@ -14002,8 +14032,8 @@ class CUP$parser$actions {
 		int cbright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object cb = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        Label l = new Label("Expression", curr_lineno());
-        l.addChild((Node)e);
+        Node l = (Node) e;
+        l.setData("Condition");
         Switch sw = new Switch(l, curr_lineno());
         if (cb instanceof ArrayList){
             cb = (ArrayList<Node>)cb;
@@ -14162,7 +14192,11 @@ class CUP$parser$actions {
 		int slright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object sl = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        RESULT = new Clause("CASE",  (Node)e, (Node)sl, curr_lineno());
+        Node val = (Node) e;
+        val.setData("Value");
+        Node body = (Node) sl;
+        body.setData("Body");
+        RESULT = new Clause("CASE",  val, body, curr_lineno());
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("CaseClause",100, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -14176,7 +14210,9 @@ class CUP$parser$actions {
 		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		
-        RESULT = new Clause("CASE", (Node)e, curr_lineno());
+        Node val = (Node) e;
+        val.setData("Value");
+        RESULT = new Clause("CASE", val, curr_lineno());
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("CaseClause",100, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -14190,7 +14226,9 @@ class CUP$parser$actions {
 		int slright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object sl = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        RESULT = new Clause("DEFAULT", (Node)sl, curr_lineno());
+        Node body = (Node) sl;
+        body.setData("Body");
+        RESULT = new Clause("DEFAULT", body, curr_lineno());
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("DefaultCase",99, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -14265,7 +14303,7 @@ class CUP$parser$actions {
 		int eright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-        ThrowNode tn = new ThrowNode((Node)e, curr_lineno());
+        ThrowNode tn = new ThrowNode(((Node)(((Node)e).getChilds()).get(0)), curr_lineno());
         RESULT = tn;
     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("ThrowStatement",65, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
@@ -14284,8 +14322,8 @@ class CUP$parser$actions {
 		Object c = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
         TryStat ts = new TryStat(curr_lineno());
-        Label body = new Label("Body", curr_lineno());
-        body.addChild((Node)b);
+        Node body = (Node) b;
+        body.setData("Body");
         ts.addChild(body);
         ts.addChild((Node)c);
         RESULT = ts;
@@ -14306,8 +14344,8 @@ class CUP$parser$actions {
 		Object f = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
         TryStat ts = new TryStat(curr_lineno());
-        Label body = new Label("Body", curr_lineno());
-        body.addChild((Node)b);
+        Node body = (Node) b;
+        body.setData("Body");
         ts.addChild(body);
         ts.addChild((Node)f);
         RESULT = ts;
@@ -14331,8 +14369,8 @@ class CUP$parser$actions {
 		Object f = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
         TryStat ts = new TryStat(curr_lineno());
-        Label body = new Label("Body", curr_lineno());
-        body.addChild((Node)b);
+        Node body = (Node) b;
+        body.setData("Body");
         ts.addChild(body);
         ts.addChild((Node)c);
         ts.addChild((Node)f);
@@ -14356,8 +14394,8 @@ class CUP$parser$actions {
         Label cat = new Label("Catch", curr_lineno());
         Label param = new Label("Parameter", curr_lineno());
         param.addChild((Node)cp);
-        Label body = new Label("Body", curr_lineno());
-        body.addChild((Node)b);
+        Node body = (Node) b;
+        body.setData("Body");
         cat.addChild(param);
         cat.addChild(body);
         RESULT = cat;
@@ -14375,8 +14413,8 @@ class CUP$parser$actions {
 		Object b = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
         Label cat = new Label("Finally", curr_lineno());
-        Label body = new Label("Body", curr_lineno());
-        body.addChild((Node)b);
+        Node body = (Node) b;
+        body.setData("Body");
         cat.addChild(body);
         RESULT = cat;
     
@@ -14449,9 +14487,14 @@ class CUP$parser$actions {
                 param.addChild((Node)fp);
             }
         }
-        Label body = new Label("Body", curr_lineno());
-        if (fb != null)
-            body.addChild((Node)fb);
+        Node body;
+        if (fb != null){
+            body = (Node) fb;
+            body.setData("Body");
+        }
+        else{
+            body = new Label("Body", curr_lineno());
+        }
         FunctionDeclaration f = new FunctionDeclaration(name, param, body, curr_lineno());
         RESULT = f;
     
@@ -14483,9 +14526,14 @@ class CUP$parser$actions {
                 param.addChild((Node)fp);
             }
         }
-        Label body = new Label("Body", curr_lineno());
-        if (fb != null)
-            body.addChild((Node)fb);
+        Node body;
+        if (fb != null){
+            body = (Node) fb;
+            body.setData("Body");
+        }
+        else{
+            body = new Label("Body", curr_lineno());
+        }
         FunctionDeclaration f = new FunctionDeclaration(name, param, body, curr_lineno());
         RESULT = f;
     
@@ -14521,9 +14569,14 @@ class CUP$parser$actions {
                 param.addChild((Node)fp);
             }
         }
-        Label body = new Label("Body", curr_lineno());
-        if (fb != null)
-            body.addChild((Node)fb);
+        Node body;
+        if (fb != null){
+            body = (Node) fb;
+            body.setData("Body");
+        }
+        else{
+            body = new Label("Body", curr_lineno());
+        }
         FunctionDeclaration f = new FunctionDeclaration(name, param, body, curr_lineno());
         RESULT = f;
     
@@ -14555,9 +14608,14 @@ class CUP$parser$actions {
                 param.addChild((Node)fp);
             }
         }
-        Label body = new Label("Body", curr_lineno());
-        if (fb != null)
-            body.addChild((Node)fb);
+        Node body;
+        if (fb != null){
+            body = (Node) fb;
+            body.setData("Body");
+        }
+        else{
+            body = new Label("Body", curr_lineno());
+        }
         FunctionDeclaration f = new FunctionDeclaration(name, param, body, curr_lineno());
         RESULT = f;
     

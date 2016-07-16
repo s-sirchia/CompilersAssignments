@@ -2,6 +2,7 @@
 
 import java_cup.runtime.*;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -585,6 +586,15 @@ class JavascriptLexer implements java_cup.runtime.Scanner {
 	
 	public HashMap<String,Integer> table = new HashMap<String,Integer>();
 	
+    public String getIdName(int idval){
+        for (Map.Entry<String, Integer> e : table.entrySet()) {
+            int value = e.getValue();
+            if (value == idval)
+                return e.getKey();
+        }
+        return "";
+    }
+    
 	int lastKey = 0;
 
 	private Symbol symbol(int type){
