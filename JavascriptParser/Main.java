@@ -11,9 +11,15 @@ public class Main {
 	            p.parse();
 		    System.out.println("Parsing finished!");
 		    
-		    //JSTree.tree.printTree();
+		    JSTree.tree.printTree();
 		    
-		    JSTree.tree.generateJson("D:/xampp/htdocs/program.json");
+		    if (!(JSTree.tree.getRootChilds().isEmpty())){
+		    	String filename = args[0];
+			    filename = filename.replace("Input/", "");
+			    filename = filename.replace(".js", "");
+			    String jsonName = "D:/xampp/htdocs/Visualizzatore alberi/"+filename+".json";
+			    JSTree.tree.generateJson(jsonName);
+		    }
 	            
 		} catch (Exception e) {
 		    e.printStackTrace();
