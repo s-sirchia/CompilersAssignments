@@ -1,0 +1,4 @@
+First Version:
+Versione iniziale del lexer, cui è associata la documentazione e che è stata consegnata per l'assignment.
+Second Version:
+Versione modificata del lexer. Uguale al lexer utilizzato dal parser, quindi con le modifiche necessarie, ma sempre in versione stand-alone.
