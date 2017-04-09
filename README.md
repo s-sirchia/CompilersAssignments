@@ -5,3 +5,5 @@ It also produce a Syntax Tree of the parsed file, that can be visited through a 
   
 Language reference:  
 http://www.ecma-international.org/ecma-262/5.1/Ecma-262.pdf
+
+Realized by Steven Rosario Sirchia and Luigi Giugliano, during the 'Compilers' course.
